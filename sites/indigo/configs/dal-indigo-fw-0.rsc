@@ -200,3 +200,26 @@ add chain=forward action=drop comment="drop all other forward"
 #
 # VLAN Security
 #
+/interface bridge port
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether3]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether4]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether5]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether6]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether7]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus1]
+
+
+#
+# MAC Server
+#
+
+/ip neighbor discovery-settings set discover-interface-list=MANAGEMENT
+/tool mac-server mac-winbox set allowed-interface-list=MANAGEMENT
+/tool mac-server set allowed-interface-list=MANAGEMENT
+
+#
+# Enable VLAN Filtering
+#
+
+/interface bridge set CORE vlan-filtering=yes
