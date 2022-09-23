@@ -24,15 +24,16 @@
 # 108 = SERVICES       = 192.168.79.128/26  =  62
 # 109 = MANAGEMENT     = 192.168.79.192/26  =  62
 
+
 #
 # Bridge
 #
 
-/interface bridge add name=CORE protocol=mode=none vlan-filtering=no
+/interface bridge add name=CORE protocol-mode=none vlan-filtering=no
 
 
 #
-# Trunk ports
+# Trunk Ports
 #
 
 /interface bridge port
