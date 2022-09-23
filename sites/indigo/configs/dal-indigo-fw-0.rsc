@@ -79,7 +79,7 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 # Guest VLAN
 /interface vlan add interface=CORE name=GUEST_VLAN vlan-id=101
 /ip address add interface=GUEST_VLAN address=192.168.76.129/26
-/ip pool add name=general-dhcp ranges=192.168.76.130-192.168.76.190
+/ip pool add name=guest-dhcp ranges=192.168.76.130-192.168.76.190
 /ip dhcp-server add address-pool=guest-dhcp interface=GUEST_VLAN name=guest-dhcp disabled=no
 /ip dhcp-server network add address=192.168.76.128/26 dns-server=192.168.76.129 gateway=192.168.76.129
 
