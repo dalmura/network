@@ -106,8 +106,8 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 # IOT Restricted VLAN
 /interface vlan add interface=CORE name=IOT_RESTRICTED_VLAN vlan-id=106
 /ip address add interface=IOT_RESTRICTED_VLAN address=192.168.78.129/25
-/ip pool add name=iot-internet-static ranges=192.168.78.130-192.168.76.199
-/ip pool add name=iot-internet-dhcp ranges=192.168.78.200-192.168.76.254
+/ip pool add name=iot-restricted-static ranges=192.168.78.130-192.168.76.199
+/ip pool add name=iot-restricted-dhcp ranges=192.168.78.200-192.168.76.254
 /ip dhcp-server add address-pool=iot-restricted-dhcp interface=IOT_RESTRICTED_VLAN name=iot-restricted-dhcp disabled=no
 /ip dhcp-server network add address=192.168.78.128/25 dns-server=192.168.78.128 gateway=192.168.78.128
 
@@ -124,12 +124,13 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 # Firewall & NAT
 #
 
-/interface list add name=WAN
-/interface list add name=VLAN
-/interface list add name=LAN
-/interface list add name=INTERNET_ONLY
-/interface list add name=BLACKHOLE
-/interface list add name=MANAGEMENT
+/interface list
+add name=WAN
+add name=VLAN
+add name=LAN
+add name=INTERNET_ONLY
+add name=BLACKHOLE
+add name=MANAGEMENT
 
 /interface list member
 add interface=ether1              list=WAN
@@ -150,6 +151,11 @@ add interface=IOT_INTERNET_VLAN   list=INTERNET_ONLY
 add interface=IOT_RESTRICTED_VLAN list=BLACKHOLE
 add interface=SERVICES_VLAN       list=LAN
 add interface=MANAGEMENT_VLAN     list=LAN
+
+
+#
+# Firewall
+#
 
 /ip firewall filter
 
