@@ -24,13 +24,11 @@
 #
 
 /interface/wireless/security-profiles
-
 add name=general mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="yourPasswordGoesHere"
 add name=guest mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="yourPasswordGoesHere"
 add name=management mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="yourPasswordGoesHere"
 
 /interface/wireless
-
 # General Wireless & VLAN
 set wireless-protocol=802.11 mode=ap-bridge band=2ghz-g/n channel-width="20/40mhz-XX" frequency=auto ssid="dal-indigo-general" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan1]
 set wireless-protocol=802.11 mode=ap-bridge band=5ghz-n/ac channel-width="20/40/80mhz-XXXX" frequency=auto ssid="dal-indigo-general" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan2]
@@ -51,7 +49,7 @@ enable [find]
 # Bridge
 #
 
-/interface/bridge/add name=CORE protocol-mode=none vlan-filtering=no
+/interface/bridge/add name=CORE vlan-filtering=no
 
 
 #
@@ -86,7 +84,6 @@ add bridge=CORE tagged=CORE,ether1,ether2,wlan1-management,wlan2-management vlan
 /interface/list/member/add interface=MANAGEMENT_VLAN list=MANAGEMENT
 
 /ip/firewall/filter
-
 # Input Chain
 add chain=input action=accept connection-state=established,related,untracked comment="accept established,related,untracked"
 add chain=input action=accept connection-state=invalid comment="drop invalid"

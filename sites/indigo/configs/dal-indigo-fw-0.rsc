@@ -6,7 +6,7 @@
 # Naming
 #
 
-/system identity set name="dal-indigo-fw-0"
+/system/identity/set name="dal-indigo-fw-0"
 
 
 #
@@ -29,14 +29,14 @@
 # Bridge
 #
 
-/interface bridge add name=CORE protocol-mode=none vlan-filtering=no
+/interface/bridge/add name=CORE vlan-filtering=no
 
 
 #
 # Trunk Ports
 #
 
-/interface bridge port
+/interface/bridge/port
 add bridge=CORE interface=ether2
 add bridge=CORE interface=ether3
 add bridge=CORE interface=ether4
@@ -46,7 +46,7 @@ add bridge=CORE interface=ether7
 add bridge=CORE interface=ether8
 add bridge=CORE interface=sfp-sfpplus1
 
-/interface bridge vlan
+/interface/bridge/vlan
 add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=100
 add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=101
 add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=102
@@ -64,65 +64,65 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 #
 
 # General router settings
-/ip dns set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
-/ip dhcp-client add interface=ether1 use-peer-dns=no use-peer-ntp=no add-default-route=yes dhcp-options=""
+/ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
+/ip/dhcp-client/add interface=ether1 use-peer-dns=no use-peer-ntp=no add-default-route=yes dhcp-options=""
 
 # General VLAN
-/interface vlan add interface=CORE name=GENERAL_VLAN vlan-id=100
-/ip address add interface=GENERAL_VLAN address=192.168.76.1/25
-/ip pool add name=general-dhcp ranges=192.168.76.10-192.168.76.126
-/ip dhcp-server add address-pool=general-dhcp interface=GENERAL_VLAN name=general-dhcp disabled=no
-/ip dhcp-server network add address=192.168.76.0/25 dns-server=192.168.76.1 gateway=192.168.76.1
+/interface/vlan/add interface=CORE name=GENERAL_VLAN vlan-id=100
+/ip/address/add interface=GENERAL_VLAN address=192.168.76.1/25
+/ip/pool/add name=general-dhcp ranges=192.168.76.10-192.168.76.126
+/ip/dhcp-server/add address-pool=general-dhcp interface=GENERAL_VLAN name=general-dhcp disabled=no
+/ip/dhcp-server/network/add address=192.168.76.0/25 dns-server=192.168.76.1 gateway=192.168.76.1
 
 # Guest VLAN
-/interface vlan add interface=CORE name=GUEST_VLAN vlan-id=101
-/ip address add interface=GUEST_VLAN address=192.168.76.129/26
-/ip pool add name=guest-dhcp ranges=192.168.76.130-192.168.76.190
-/ip dhcp-server add address-pool=guest-dhcp interface=GUEST_VLAN name=guest-dhcp disabled=no
-/ip dhcp-server network add address=192.168.76.128/26 dns-server=192.168.76.129 gateway=192.168.76.129
+/interface/vlan/add interface=CORE name=GUEST_VLAN vlan-id=101
+/ip/address/add interface=GUEST_VLAN address=192.168.76.129/26
+/ip/pool/add name=guest-dhcp ranges=192.168.76.130-192.168.76.190
+/ip/dhcp-server/add address-pool=guest-dhcp interface=GUEST_VLAN name=guest-dhcp disabled=no
+/ip/dhcp-server/network/add address=192.168.76.128/26 dns-server=192.168.76.129 gateway=192.168.76.129
 
 # VPN VLAN
-/interface vlan add interface=CORE name=VPN_VLAN vlan-id=102
-/ip address add interface=VPN_VLAN address=192.168.76.193/26
+/interface/vlan/add interface=CORE name=VPN_VLAN vlan-id=102
+/ip/address/add interface=VPN_VLAN address=192.168.76.193/26
 
 # Servers VLAN
-/interface vlan add interface=CORE name=SERVERS_VLAN vlan-id=103
-/ip address add interface=SERVERS_VLAN address=192.168.77.1/25
-/ip pool add name=servers-static ranges=192.168.77.2-192.168.77.63
-/ip pool add name=servers-dhcp ranges=192.168.77.64-192.168.77.126
-/ip dhcp-server add address-pool=servers-dhcp interface=SERVERS_VLAN name=servers-dhcp disabled=no
-/ip dhcp-server network add address=192.168.77.0/25 dns-server=192.168.77.1 gateway=192.168.77.1
+/interface/vlan/add interface=CORE name=SERVERS_VLAN vlan-id=103
+/ip/address/add interface=SERVERS_VLAN address=192.168.77.1/25
+/ip/pool/add name=servers-static ranges=192.168.77.2-192.168.77.63
+/ip/pool/add name=servers-dhcp ranges=192.168.77.64-192.168.77.126
+/ip/dhcp-server/add address-pool=servers-dhcp interface=SERVERS_VLAN name=servers-dhcp disabled=no
+/ip/dhcp-server/network/add address=192.168.77.0/25 dns-server=192.168.77.1 gateway=192.168.77.1
 
 # IOT Internet VLAN
-/interface vlan add interface=CORE name=IOT_INTERNET_VLAN vlan-id=105
-/ip address add interface=IOT_INTERNET_VLAN address=192.168.78.1/25
-/ip pool add name=iot-internet-static ranges=192.168.78.2-192.168.78.69
-/ip pool add name=iot-internet-dhcp ranges=192.168.78.70-192.168.78.126
-/ip dhcp-server add address-pool=iot-internet-dhcp interface=IOT_INTERNET_VLAN name=iot-internet-dhcp disabled=no
-/ip dhcp-server network add address=192.168.78.0/25 dns-server=192.168.78.1 gateway=192.168.78.1
+/interface/vlan/add interface=CORE name=IOT_INTERNET_VLAN vlan-id=105
+/ip/address/add/interface=IOT_INTERNET_VLAN address=192.168.78.1/25
+/ip/pool/add name=iot-internet-static ranges=192.168.78.2-192.168.78.69
+/ip/pool/add name=iot-internet-dhcp ranges=192.168.78.70-192.168.78.126
+/ip/dhcp-server/add address-pool=iot-internet-dhcp interface=IOT_INTERNET_VLAN name=iot-internet-dhcp disabled=no
+/ip/dhcp-server/network/add address=192.168.78.0/25 dns-server=192.168.78.1 gateway=192.168.78.1
 
 # IOT Restricted VLAN
-/interface vlan add interface=CORE name=IOT_RESTRICTED_VLAN vlan-id=106
-/ip address add interface=IOT_RESTRICTED_VLAN address=192.168.78.129/25
-/ip pool add name=iot-restricted-static ranges=192.168.78.130-192.168.78.199
-/ip pool add name=iot-restricted-dhcp ranges=192.168.78.200-192.168.78.254
-/ip dhcp-server add address-pool=iot-restricted-dhcp interface=IOT_RESTRICTED_VLAN name=iot-restricted-dhcp disabled=no
-/ip dhcp-server network add address=192.168.78.128/25 dns-server=192.168.78.128 gateway=192.168.78.128
+/interface/vlan/add interface=CORE name=IOT_RESTRICTED_VLAN vlan-id=106
+/ip/address/add/interface=IOT_RESTRICTED_VLAN address=192.168.78.129/25
+/ip/pool/add name=iot-restricted-static ranges=192.168.78.130-192.168.78.199
+/ip/pool/add name=iot-restricted-dhcp ranges=192.168.78.200-192.168.78.254
+/ip/dhcp-server/add address-pool=iot-restricted-dhcp interface=IOT_RESTRICTED_VLAN name=iot-restricted-dhcp disabled=no
+/ip/dhcp-server/network/add address=192.168.78.128/25 dns-server=192.168.78.128 gateway=192.168.78.128
 
 # Services VLAN
-/interface vlan add interface=CORE name=SERVICES_VLAN vlan-id=108
-/ip address add address=192.168.79.129/26 interface=SERVICES_VLAN
+/interface/vlan/add interface=CORE name=SERVICES_VLAN vlan-id=108
+/ip/address/add address=192.168.79.129/26 interface=SERVICES_VLAN
 
 # Management VLAN
-/interface vlan add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
-/ip address add address=192.168.79.193/26 interface=MANAGEMENT_VLAN
+/interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
+/ip/address/add address=192.168.79.193/26 interface=MANAGEMENT_VLAN
 
 
 #
 # Firewall & NAT
 #
 
-/interface list
+/interface/list
 add name=WAN
 add name=VLAN
 add name=LAN
@@ -130,7 +130,7 @@ add name=INTERNET_ONLY
 add name=BLACKHOLE
 add name=MANAGEMENT
 
-/interface list member
+/interface/list/member
 add interface=ether1              list=WAN
 add interface=GENERAL_VLAN        list=VLAN
 add interface=GUEST_VLAN          list=VLAN
@@ -151,7 +151,7 @@ add interface=SERVICES_VLAN       list=LAN
 add interface=MANAGEMENT_VLAN     list=LAN
 add interface=MANAGEMENT_VLAN     list=MANAGEMENT
 
-/ip firewall filter
+/ip/firewall/filter
 
 # Input Chain
 add chain=input action=accept connection-state=established,related,untracked comment="accept established,related,untracked"
@@ -187,14 +187,14 @@ add chain=forward action=drop comment="drop all other forward"
 # NAT
 #
 
-/ip firewall nat add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade comment="Default masquerade"
+/ip/firewall/nat/add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade comment="Default masquerade"
 
 
 #
 # VLAN Security
 #
 
-/interface bridge port
+/interface/bridge/port
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether3]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether4]
@@ -208,13 +208,13 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 # MAC Server
 #
 
-/ip neighbor discovery-settings set discover-interface-list=MANAGEMENT
-/tool mac-server mac-winbox set allowed-interface-list=MANAGEMENT
-/tool mac-server set allowed-interface-list=MANAGEMENT
+/ip/neighbor/discovery-settings/set discover-interface-list=MANAGEMENT
+/tool/mac-server/mac-winbox/set allowed-interface-list=MANAGEMENT
+/tool/mac-server/set allowed-interface-list=MANAGEMENT
 
 
 #
 # Enable VLAN Filtering
 #
 
-/interface bridge set CORE vlan-filtering=yes
+/interface/bridge/set CORE vlan-filtering=yes
