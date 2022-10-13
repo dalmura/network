@@ -51,12 +51,12 @@ add bridge=CORE interface=ether11      pvid=100 comment="left-study-1"
 add bridge=CORE interface=ether12      pvid=100 comment="left-study-2"
 add bridge=CORE interface=ether13      pvid=100 comment="right-study-1"
 add bridge=CORE interface=ether14      pvid=100 comment="right-study-2"
-add bridge=CORE interface=ether15               comment=""
-add bridge=CORE interface=ether16               comment=""
-add bridge=CORE interface=ether17      pvid=100 comment="living-room-1"
-add bridge=CORE interface=ether18      pvid=100 comment="living-room-2"
-add bridge=CORE interface=ether19      pvid=100 comment="media-room-1"
-add bridge=CORE interface=ether20      pvid=100 comment="media-room-2"
+add bridge=CORE interface=ether15      pvid=100 comment="living-room-1"
+add bridge=CORE interface=ether16      pvid=100 comment="living-room-2"
+add bridge=CORE interface=ether17      pvid=100 comment="media-room-1"
+add bridge=CORE interface=ether18      pvid=100 comment="media-room-2"
+add bridge=CORE interface=ether19               comment=""
+add bridge=CORE interface=ether20               comment=""
 add bridge=CORE interface=ether21               comment=""
 add bridge=CORE interface=ether22               comment=""
 add bridge=CORE interface=ether23               comment=""
@@ -118,10 +118,27 @@ add chain=input action=drop comment="drop all other input"
 #
 
 /interface/bridge/port
+
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether1]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether3]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether4]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether5]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether7]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether8]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether9]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether10]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether11]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether12]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether13]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether14]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether15]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether16]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether17]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether18]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus1]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus2]
+
 
 #
 # MAC Server
