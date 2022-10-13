@@ -71,9 +71,17 @@ add bridge=CORE tagged=CORE,ether1,ether2,wlan1,wlan2 vlan-ids=100
 add bridge=CORE tagged=CORE,ether1,ether2,wlan1-guest,wlan2-guest vlan-ids=101
 add bridge=CORE tagged=CORE,ether1,ether2,wlan1-management,wlan2-management vlan-ids=109
 
+
+#
+# IP Addressing & Routing
+#
+
+# General router settings
+/ip/dns/set servers="192.168.79.192"
+
 # Management VLAN
 /interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
-/ip/address/add address=192.168.79.195/26 interface=MANAGEMENT_VLAN
+/ip/address/add address=192.168.79.196/26 interface=MANAGEMENT_VLAN
 
 
 #
@@ -84,6 +92,7 @@ add bridge=CORE tagged=CORE,ether1,ether2,wlan1-management,wlan2-management vlan
 /interface/list/member/add interface=MANAGEMENT_VLAN list=MANAGEMENT
 
 /ip/firewall/filter
+
 # Input Chain
 add chain=input action=accept connection-state=established,related,untracked comment="accept established,related,untracked"
 add chain=input action=accept connection-state=invalid comment="drop invalid"

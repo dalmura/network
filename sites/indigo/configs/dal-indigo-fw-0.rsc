@@ -37,14 +37,14 @@
 #
 
 /interface/bridge/port
-add bridge=CORE interface=ether2
-add bridge=CORE interface=ether3
-add bridge=CORE interface=ether4
-add bridge=CORE interface=ether5
-add bridge=CORE interface=ether6
-add bridge=CORE interface=ether7
-add bridge=CORE interface=ether8
-add bridge=CORE interface=sfp-sfpplus1
+add bridge=CORE interface=ether2       comment=""
+add bridge=CORE interface=ether3       comment=""
+add bridge=CORE interface=ether4       comment=""
+add bridge=CORE interface=ether5       comment=""
+add bridge=CORE interface=ether6       comment=""
+add bridge=CORE interface=ether7       comment=""
+add bridge=CORE interface=ether8       comment=""
+add bridge=CORE interface=sfp-sfpplus1 comment="dal-indigo-sw-0"
 
 /interface/bridge/vlan
 add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=100
@@ -65,6 +65,8 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 
 # General router settings
 /ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
+
+# WAN settings
 /ip/dhcp-client/add interface=ether1 use-peer-dns=no use-peer-ntp=no add-default-route=yes dhcp-options=""
 
 # General VLAN
