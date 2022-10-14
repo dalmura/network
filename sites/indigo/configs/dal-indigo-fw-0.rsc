@@ -97,7 +97,7 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 
 # IOT Internet VLAN
 /interface/vlan/add interface=CORE name=IOT_INTERNET_VLAN vlan-id=105
-/ip/address/add/interface=IOT_INTERNET_VLAN address=192.168.78.1/25
+/ip/address/add interface=IOT_INTERNET_VLAN address=192.168.78.1/25
 /ip/pool/add name=iot-internet-static ranges=192.168.78.2-192.168.78.69
 /ip/pool/add name=iot-internet-dhcp ranges=192.168.78.70-192.168.78.126
 /ip/dhcp-server/add address-pool=iot-internet-dhcp interface=IOT_INTERNET_VLAN name=iot-internet-dhcp disabled=no
@@ -105,7 +105,7 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 
 # IOT Restricted VLAN
 /interface/vlan/add interface=CORE name=IOT_RESTRICTED_VLAN vlan-id=106
-/ip/address/add/interface=IOT_RESTRICTED_VLAN address=192.168.78.129/25
+/ip/address/add interface=IOT_RESTRICTED_VLAN address=192.168.78.129/25
 /ip/pool/add name=iot-restricted-static ranges=192.168.78.130-192.168.78.199
 /ip/pool/add name=iot-restricted-dhcp ranges=192.168.78.200-192.168.78.254
 /ip/dhcp-server/add address-pool=iot-restricted-dhcp interface=IOT_RESTRICTED_VLAN name=iot-restricted-dhcp disabled=no
