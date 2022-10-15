@@ -1,78 +1,109 @@
 networks:
   GENERAL:
+    description: "PCs, Phones, etc"
     vlan_id: 100
     cidr: "192.168.76.0/25"
+    mask: "255.255.255.128"
     start: "192.168.76.1"
     end: "192.168.76.126"
+    dhcp: true
     allocations:
       "192.168.76.1": "dal-indigo-fw-0"
 
   GUEST:
+    description: "Internet only"
     vlan_id: 101
     cidr: "192.168.76.128/26"
+    mask: "255.255.255.192"
     start: "192.168.76.129"
     end: "192.168.76.190"
+    dhcp: true
     allocations:
       "192.168.76.129": "dal-indigo-fw-0"
+
   VPN:
+    description: "VPN Users"
     vlan_id: 102
     cidr: "192.168.76.192/26"
+    mask: "255.255.255.192"
     start: "192.168.76.193"
     end: "192.168.76.254"
+    dhcp: true
     allocations:
       "192.168.76.193": "dal-indigo-fw-0"
 
   SERVERS:
+    description: "Kubernetes Clusters"
     vlan_id: 103
     cidr: "192.168.77.0/25"
+    mask: "255.255.255.128"
     start: "192.168.77.1"
     end: "192.168.77.126"
+    dhcp: true
     allocations:
       "192.168.77.1": "dal-indigo-fw-0"
 
   SPARE_1:
+    description: ""
     vlan_id: 104
     cidr: "192.168.77.128/25"
+    mask: "255.255.255.128"
     start: "192.168.77.129"
     end: "192.168.77.254"
+    dhcp: false
     allocations: []
 
   IOT_INTERNET:
+    description: "Chromecast, TV, etc"
     vlan_id: 105
     cidr: "192.168.78.0/25"
+    mask: "255.255.255.128"
     start: "192.168.78.1"
     end: "192.168.78.126"
+    dhcp: true
     allocations:
       "192.168.78.1": "dal-indigo-fw-0"
 
   IOT_RESTRICTED:
+    description: "Security Cameras, Printers, etc"
     vlan_id: 106
     cidr: "192.168.78.128/25"
+    mask: "255.255.255.128"
     start: "192.168.78.129"
     end: "192.168.78.254"
+    dhcp: true
     allocations:
       "192.168.78.129": "dal-indigo-fw-0"
 
   SPARE_2:
+    description: ""
     vlan_id: 107
     cidr: "192.168.79.0/25"
+    mask: "255.255.255.128"
     start: "192.168.79.1"
     end: "192.168.79.126"
+    dhcp: false
     allocations: []
 
   SERVICES:
+    description: "Monitoring"
     vlan_id: 108
     cidr: "192.168.79.128/26"
+    mask: "255.255.255.192"
     start: "192.168.79.129"
     end: "192.168.79.190"
+    dhcp: false
     allocations:
       "192.168.79.129": "dal-indigo-fw-0"
 
   MANAGEMENT:
+    description: "Network Hardware, IPMIs, UPSs"
     vlan_id: 109
     cidr: "192.168.79.192/26"
+    mask: "255.255.255.192"
     start: "192.168.79.193"
     end: "192.168.79.254"
+    dhcp: false
     allocations:
       "192.168.79.193": "dal-indigo-fw-0"
       "192.168.79.194": "dal-indigo-sw-0"
