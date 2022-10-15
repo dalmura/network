@@ -57,14 +57,14 @@ enable [find]
 #
 
 /interface/bridge/port
-add bridge=CORE interface=ether1
-add bridge=CORE interface=ether2
-add bridge=CORE interface=wlan1
-add bridge=CORE interface=wlan2
-add bridge=CORE interface=wlan1-guest
-add bridge=CORE interface=wlan2-guest
-add bridge=CORE interface=wlan1-management
-add bridge=CORE interface=wlan2-management
+add bridge=CORE interface=ether1           comment="dal-indigo-sw-0"
+add bridge=CORE interface=ether2           comment=""
+add bridge=CORE interface=wlan1            comment=""
+add bridge=CORE interface=wlan2            comment=""
+add bridge=CORE interface=wlan1-guest      comment=""
+add bridge=CORE interface=wlan2-guest      comment=""
+add bridge=CORE interface=wlan1-management comment=""
+add bridge=CORE interface=wlan2-management comment=""
 
 /interface/bridge/vlan
 add bridge=CORE tagged=CORE,ether1,ether2,wlan1,wlan2 vlan-ids=100
@@ -99,11 +99,11 @@ add chain=input action=accept connection-state=invalid comment="drop invalid"
 add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loopback (for CAPsMAN)"
 
 # Add more general input related access here
-add chain=input action=accept in-interface=MANAGEMENT_VLAN
+add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
 
-# Remove the catchall once comfortable
-add chain=input action=accept comment="catchall"
-add chain=input action=drop comment="drop all other input"
+# Finally drop everything else
+add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
+add chain=input action=drop log=yes log-prefix=input-drop comment="drop all other input"
 
 
 #

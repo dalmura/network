@@ -106,11 +106,11 @@ add chain=input action=accept connection-state=invalid comment="drop invalid"
 add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loopback (for CAPsMAN)"
 
 # Add more general input related access here
-add chain=input action=accept in-interface=MANAGEMENT_VLAN
+add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
 
 # Remove the catchall once comfortable
-add chain=input action=accept comment="catchall"
-add chain=input action=drop comment="drop all other input"
+add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
+add chain=input action=drop log=yes log-prefix=input-drop comment="drop all other input"
 
 
 #
