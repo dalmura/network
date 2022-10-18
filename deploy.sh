@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
 set -e
 
-if [ "${AWS_PROFILE}" == '' ]; then
-    echo 'ERROR: Missing AWS_PROFILE env var'
-    exit 1
-fi
-
 SITE="${1}"
 TYPE="${2}"
 DATA="${3}"
 
+if [ "${SITE}" == '' ] || [ "${SITE}" == '-h' ] || [ "${SITE}" == '--help' ]; then
+    echo "USAGE: ${0} SITE (configs|terraform) [EXTRA_DATA]"
+    echo "Eg #1: ${0} global terraform"
+    echo "Eg #2: ${0} indigo configs dal-indigo-fw-0"
+    exit 0
+fi
+
 echo "Site: ${SITE}"
 echo "Type: ${TYPE}"
-echo "Data: ${DATA}"
+
+if [ "${DATA}" != '' ]; then
+    echo "Data: ${DATA}"
+fi
 
 SITE_FOLDER="sites/${SITE}"
 TYPE_FOLDER="${SITE_FOLDER}/${TYPE}"
@@ -26,6 +31,9 @@ if [ ! -d "${TYPE_FOLDER}" ]; then
     echo "ERROR: Type '${TYPE}' folder is missing (${TYPE_FOLDER})"
     exit 1
 fi
+
+echo "WARN: Deploying in 5s"
+sleep 5
 
 if [ "${TYPE}" == 'configs' ]; then
     if [ "${DATA}" == 'global' ]; then
@@ -88,5 +96,12 @@ if [ "${TYPE}" == 'configs' ]; then
         "https://${DEVICE_IP}/rest/system/reset-configuration"
 
 elif [ "${TYPE}" == 'terraform' ]; then
-    echo "Not implemented yet"
+    if [ "${AWS_PROFILE}" == '' ]; then
+        echo 'ERROR: Missing AWS_PROFILE env var'
+        exit 1
+    fi
+
+    rm -rf "${TYPE_FOLDER}/.terraform"
+    terraform -chdir="${TYPE_FOLDER}" init
+    terraform -chdir="${TYPE_FOLDER}" apply
 fi

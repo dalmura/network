@@ -5,11 +5,21 @@ terraform {
       version = "~> 4.0"
     }
   }
+
+  backend "s3" {
+    bucket = "dalmura-artifacts-678501865904"
+    key    = "network/sites/indigo/terraform.tfstate"
+    region = "ap-southeast-2"
+  }
 }
 
-default_tags {
-  tags = {
-    domain = "dalmura"
-    site   = "indigo"
+provider "aws" {
+  region = "us-east-1"
+
+  default_tags {
+    tags = {
+      domain = "dalmura"
+      site   = "indigo"
+    }
   }
 }
