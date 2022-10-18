@@ -65,7 +65,7 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 
 # General router settings
 /ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
-/ip/cloud/set ddns-enabled=yes
+/ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
 
 # WAN settings
 /ip/dhcp-client/add interface=ether1 use-peer-dns=no use-peer-ntp=no add-default-route=yes dhcp-options=""
@@ -161,12 +161,12 @@ add interface=MANAGEMENT_VLAN     list=MANAGEMENT
 
 # Input Chain
 add chain=input action=accept connection-state=established,related,untracked comment="accept established,related,untracked"
-add chain=input action=accept connection-state=invalid comment="drop invalid"
+add chain=input action=drop connection-state=invalid comment="drop invalid"
 add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loopback (for CAPsMAN)"
 
 # Add more general input related access here
 add chain=input action=accept protocol=icmp in-interface-list=LAN comment="accept ICMP from non-restricted"
-add chain=input action=accept protocol=udp dst-port=53 comment="accept DNS"
+add chain=input action=accept protocol=udp dst-port=53 in-interface-list=VLAN comment="accept DNS from internal networks"
 add chain=input action=accept src-address=0.0.0.0 dst-address=255.255.255.255 protocol=udp src-port=68 dst-port=67 in-interface-list=VLAN comment="allow DHCP broadcasts"
 add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
 

@@ -1,12 +1,15 @@
 terraform {
   required_providers {
-    routeros = {
-      source  = "GNewbury1/routeros"
-      version = "0.3.2"
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
     }
   }
 }
 
-provider "routeros" {
-  hosturl = var.hosturl
+default_tags {
+  tags = {
+    domain = "dalmura"
+    site   = "indigo"
+  }
 }
