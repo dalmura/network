@@ -64,8 +64,21 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 #
 
 # General router settings
+/certificate
+add name=ca days-valid=10950 common-name=dal-indigo-fw-0.indigo.dalmura.au key-usage=key-cert-sign,crl-sign
+add name=server days-valid=10950 common-name=dal-indigo-fw-0.indigo.dalmura.au
+
+sign ca name=root-ca
+:delay 2
+sign ca=root-ca server name=server
+:delay 2
+
+set root-ca trusted=yes
+set server trusted=yes
+
 /ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
 /ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
+/ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
 
 # WAN settings
 /ip/dhcp-client/add interface=ether1 use-peer-dns=no use-peer-ntp=no add-default-route=yes dhcp-options=""

@@ -84,7 +84,20 @@ add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=109
 #
 
 # General router settings
-/ip/dns/set servers="192.168.79.192"
+/certificate
+add name=ca days-valid=10950 common-name=dal-indigo-sw-0.indigo.dalmura.au key-usage=key-cert-sign,crl-sign
+add name=server days-valid=10950 common-name=dal-indigo-sw-0.indigo.dalmura.au
+
+sign ca name=root-ca
+:delay 2
+sign ca=root-ca server name=server
+:delay 2
+
+set root-ca trusted=yes
+set server trusted=yes
+
+/ip/dns/set servers="192.168.79.193"
+/ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
 
 # Management VLAN
 /interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
