@@ -12,11 +12,11 @@ if [ "${SITE}" == '' ] || [ "${SITE}" == '-h' ] || [ "${SITE}" == '--help' ]; th
     exit 0
 fi
 
-echo "Site: ${SITE}"
-echo "Type: ${TYPE}"
+echo "INFO: Site: ${SITE}"
+echo "INFO: Type: ${TYPE}"
 
 if [ "${DATA}" != '' ]; then
-    echo "Data: ${DATA}"
+    echo "INFO: Data: ${DATA}"
 fi
 
 SITE_FOLDER="sites/${SITE}"
@@ -49,18 +49,15 @@ if [ "${TYPE}" == 'configs' ]; then
         exit 1
     fi
 
-    if [ "${ROUTEROS_USERNAME}" == '' ] || [ "${ROUTEROS_PASSWORD}" == '' ]; then
-        echo "ERROR: Missing 'ROUTEROS_USERNAME' or 'ROUTEROS_PASSWORD' env vars"
-        exit 1
-    fi
-
     # Find the IP of the device from networks.yml
-    DEVICE_IP=$(yq ".networks.MANAGEMENT.allocations | with_entries(select(.value == '${DATA}')) | keys | .[0]" "${SITE_FOLDER}/networks.yml")
+    DEVICE_IP=$(yq ".networks.MANAGEMENT.allocations | with_entries(select(.value == \"${DATA}\")) | keys | .[0]" "${SITE_FOLDER}/networks.yml")
 
     if [ "${DEVICE_IP}" == '' ]; then
         echo "ERROR: Couldn't extract device IP for '${DATA}' from '${SITE_FOLDER}/networks.yml'"
         exit 1
     fi
+
+    echo "INFO: Deploying ${CONFIG_FILE} => ${DEVICE_IP} (aka ${DATA})"
 
     if [ "${MY_IP}" == '' ]; then
         # Just give it go and fail if not
@@ -72,13 +69,22 @@ if [ "${TYPE}" == 'configs' ]; then
         fi
     fi
 
+    if [ "${ROUTEROS_USERNAME}" == '' ] || [ "${ROUTEROS_PASSWORD}" == '' ]; then
+        echo "ERROR: Missing 'ROUTEROS_USERNAME' or 'ROUTEROS_PASSWORD' env vars"
+        exit 1
+    fi
+
+    echo "INFO: Client IP: ${MY_IP}"
+
     # Upload our device config into the router
-    python3 -m http.server --bind 0.0.0.0 8000 &
+    python3 -m http.server --bind 0.0.0.0 --directory "${TYPE_FOLDER}" 8000 &
     PYTHON_PID=$!
+
+    sleep 2
 
     curl \
         --insecure \
-        --user "${ROUTEROS_USERNAME}:${ROUTEROS_PASSWORD}"
+        --user "${ROUTEROS_USERNAME}:${ROUTEROS_PASSWORD}" \
         -X POST \
         --header 'content-type: application/json' \
         --data "{\"mode\":\"http\",\"url\":\"http://${MY_IP}:8000/${DATA}.rsc\"}" \
@@ -89,11 +95,13 @@ if [ "${TYPE}" == 'configs' ]; then
     # Reset the router with the uploaded file
     curl \
         --insecure \
-        --user "${ROUTEROS_USERNAME}:${ROUTEROS_PASSWORD}"
+        --user "${ROUTEROS_USERNAME}:${ROUTEROS_PASSWORD}" \
         -X POST \
         --header 'content-type: application/json' \
         --data "{\"keep-users\":\"yes\",\"no-defaults\":\"yes\",\"run-after-reset\":\"${DATA}.rsc\"}" \
         "https://${DEVICE_IP}/rest/system/reset-configuration"
+
+    echo 'INFO: Successfully reset, wait for the reboot and double check'
 
 elif [ "${TYPE}" == 'terraform' ]; then
     if [ "${AWS_PROFILE}" == '' ]; then
