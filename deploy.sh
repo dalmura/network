@@ -45,8 +45,14 @@ if [ "${TYPE}" == 'configs' ]; then
     CONFIG_FILE="${TYPE_FOLDER}/${DATA}.rsc"
 
     if [ ! -f "${CONFIG_FILE}" ]; then
-        echo "ERROR: Provided device config '${CONFIG_FILE}' doesn't exist?"
-        exit 1
+        TEMPLATE_FILE="${CONFIG_FILE}.j2"
+
+        if [ ! -f "${TEMPLATE_FILE}" ]; then
+            echo "ERROR: Provided device config for '${DATA}' doesn't exist?"
+            exit 1
+        fi
+
+        jinja2 --strict "${TEMPLATE_FILE}" secrets.json -o "${CONFIG_FILE}"
     fi
 
     # Find the IP of the device from networks.yml
