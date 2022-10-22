@@ -45,10 +45,10 @@ We also require you be on the same network as the RouterOS device as it needs to
 export ROUTEROS_USERNAME='my-device-username'
 export ROUTEROS_PASSWORD='my-device-password'
 
-./deploy.sh [SITE] configs [DEVICE]
+./deploy.sh [SITE] devices [DEVICE]
 
 # Examples
-./deploy.sh indigo configs dal-indigo-fw-0
-./deploy.sh indigo configs dal-indigo-sw-0
-./deploy.sh indigo configs dal-indigo-wap-0
+./deploy.sh indigo devices dal-indigo-fw-0
+./deploy.sh indigo devices dal-indigo-sw-0
+./deploy.sh indigo devices dal-indigo-wap-0
 ```

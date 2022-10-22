@@ -6,9 +6,9 @@ TYPE="${2}"
 DATA="${3}"
 
 if [ "${SITE}" == '' ] || [ "${SITE}" == '-h' ] || [ "${SITE}" == '--help' ]; then
-    echo "USAGE: ${0} SITE (configs|terraform) [EXTRA_DATA]"
+    echo "USAGE: ${0} SITE (devices|terraform) [EXTRA_DATA]"
     echo "Eg #1: ${0} global terraform"
-    echo "Eg #2: ${0} indigo configs dal-indigo-fw-0"
+    echo "Eg #2: ${0} indigo devices dal-indigo-fw-0"
     exit 0
 fi
 
@@ -35,7 +35,7 @@ fi
 echo "WARN: Deploying in 5s"
 sleep 5
 
-if [ "${TYPE}" == 'configs' ]; then
+if [ "${TYPE}" == 'devices' ]; then
     if [ "${DATA}" == 'global' ]; then
         echo "ERROR: Global has no networks"
         exit 1
