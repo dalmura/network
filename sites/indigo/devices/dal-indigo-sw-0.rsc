@@ -55,12 +55,12 @@ add bridge=CORE interface=ether15      pvid=100 comment="living-room-1"
 add bridge=CORE interface=ether16      pvid=100 comment="living-room-2"
 add bridge=CORE interface=ether17      pvid=100 comment="media-room-1"
 add bridge=CORE interface=ether18      pvid=100 comment="media-room-2"
-add bridge=CORE interface=ether19               comment=""
-add bridge=CORE interface=ether20               comment=""
-add bridge=CORE interface=ether21               comment=""
-add bridge=CORE interface=ether22               comment=""
-add bridge=CORE interface=ether23               comment=""
-add bridge=CORE interface=ether24               comment=""
+add bridge=CORE interface=ether19      pvid=103 comment="laptop"
+add bridge=CORE interface=ether20      pvid=103 comment="rpi1"
+add bridge=CORE interface=ether21      pvid=103 comment="rpi2"
+add bridge=CORE interface=ether22      pvid=103 comment="rpi3"
+add bridge=CORE interface=ether23      pvid=103 comment="rpi4"
+add bridge=CORE interface=ether24      pvid=103 comment="rpi5"
 add bridge=CORE interface=sfp-sfpplus1          comment="dal-indigo-fw-0"
 add bridge=CORE interface=sfp-sfpplus2          comment="dal-indigo-sw-1"
 add bridge=CORE interface=sfp-sfpplus3          comment=""
@@ -70,7 +70,7 @@ add bridge=CORE interface=sfp-sfpplus4          comment=""
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether17,ether18,ether19,ether20 vlan-ids=100
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=101
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=102
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=103
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether19,ether20,ether21,ether22,ether23,ether24 vlan-ids=103
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=104
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether5 vlan-ids=105
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
