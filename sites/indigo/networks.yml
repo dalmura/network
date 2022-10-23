@@ -124,12 +124,12 @@ networks:
       static:
         start: "192.168.79.193"
         end: "192.168.79.249"
+        allocations:
+          "192.168.79.193": "dal-indigo-fw-0"
+          "192.168.79.194": "dal-indigo-sw-0"
+          "192.168.79.195": "dal-indigo-sw-1"
+          "192.168.79.196": "dal-indigo-wap-0"
+          "192.168.79.197": "dal-indigo-wap-1"
       dhcp:
         start: "192.168.79.250"
         end: "192.168.79.254"
-    allocations:
-      "192.168.79.193": "dal-indigo-fw-0"
-      "192.168.79.194": "dal-indigo-sw-0"
-      "192.168.79.195": "dal-indigo-sw-1"
-      "192.168.79.196": "dal-indigo-wap-0"
-      "192.168.79.197": "dal-indigo-wap-1"
