@@ -43,11 +43,25 @@ networks:
       static:
         start: "192.168.77.1"
         end: "192.168.77.63"
+        allocations:
+          "192.168.77.1": "dal-indigo-fw-0"
+        subranges:
+          dal-k8s-vips:
+            start: "192.168.77.2"
+            end: "192.168.77.19"
+            allocations:
+              "192.168.77.2": "dal-k8s-mgmt-1-vip"
+              "192.168.77.2": "dal-k8s-core-1-vip"
+          dal-k8s-nodes:
+            start: "192.168.77.20"
+            end: "192.168.77.49"
+            allocations:
+              "192.168.77.20": "dal-k8s-mgmt-1-rpi4-1"
+              "192.168.77.21": "dal-k8s-mgmt-1-rpi4-2"
+              "192.168.77.22": "dal-k8s-mgmt-1-rpi4-3"
       dhcp:
         start: "192.168.77.64"
         end: "192.168.77.126"
-    allocations:
-      "192.168.77.1": "dal-indigo-fw-0"
 
   SPARE_1:
     description: ""
