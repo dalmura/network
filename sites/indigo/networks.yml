@@ -39,7 +39,13 @@ networks:
     mask: "255.255.255.128"
     start: "192.168.77.1"
     end: "192.168.77.126"
-    dhcp: true
+    subranges:
+      static:
+        start: "192.168.77.1"
+        end: "192.168.77.63"
+      dhcp:
+        start: "192.168.77.64"
+        end: "192.168.77.126"
     allocations:
       "192.168.77.1": "dal-indigo-fw-0"
 
@@ -50,7 +56,6 @@ networks:
     mask: "255.255.255.128"
     start: "192.168.77.129"
     end: "192.168.77.254"
-    dhcp: false
     allocations: []
 
   IOT_INTERNET:
@@ -82,7 +87,6 @@ networks:
     mask: "255.255.255.128"
     start: "192.168.79.1"
     end: "192.168.79.126"
-    dhcp: false
     allocations: []
 
   SERVICES:
@@ -92,7 +96,6 @@ networks:
     mask: "255.255.255.192"
     start: "192.168.79.129"
     end: "192.168.79.190"
-    dhcp: false
     allocations:
       "192.168.79.129": "dal-indigo-fw-0"
 
@@ -103,7 +106,13 @@ networks:
     mask: "255.255.255.192"
     start: "192.168.79.193"
     end: "192.168.79.254"
-    dhcp: false
+    subranges:
+      static:
+        start: "192.168.79.193"
+        end: "192.168.79.249"
+      dhcp:
+        start: "192.168.79.250"
+        end: "192.168.79.254"
     allocations:
       "192.168.79.193": "dal-indigo-fw-0"
       "192.168.79.194": "dal-indigo-sw-0"
