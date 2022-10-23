@@ -72,6 +72,7 @@ if [ "${TYPE}" == 'devices' ]; then
 
         if [ "${MY_IP}" == '' ]; then
             echo "ERROR: Unable to determine your LAN IP, please set MY_IP"
+            exit 1
         fi
     fi
 
