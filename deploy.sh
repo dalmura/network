@@ -56,7 +56,7 @@ if [ "${TYPE}" == 'devices' ]; then
     fi
 
     # Find the IP of the device from networks.yml
-    DEVICE_IP=$(yq ".networks.MANAGEMENT.allocations | with_entries(select(.value == \"${DATA}\")) | keys | .[0]" "${SITE_FOLDER}/networks.yml")
+    DEVICE_IP=$(yq ".networks.MANAGEMENT.subranges.static.allocations | with_entries(select(.value == \"${DATA}\")) | keys | .[0]" "${SITE_FOLDER}/networks.yml")
 
     if [ "${DEVICE_IP}" == '' ]; then
         echo "ERROR: Couldn't extract device IP for '${DATA}' from '${SITE_FOLDER}/networks.yml'"
