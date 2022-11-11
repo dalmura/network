@@ -13,16 +13,16 @@
 # Network Overview
 #
 
-# 100 = GENERAL        = 192.168.76.0/25    = 126
-# 101 = GUEST          = 192.168.76.128/26  =  62
-# 102 = VPN            = 192.168.76.192/26  =  62
-# 103 = SERVERS        = 192.168.77.0/25    = 126
-# 104 =                = 192.168.77.128/25  = 126
-# 105 = IOT_INTERNET   = 192.168.78.0/25    = 126
-# 106 = IOT_RESTRICTED = 192.168.78.128/25  = 126
-# 107 =                = 192.168.79.0/25    = 126
-# 108 = SERVICES       = 192.168.79.128/26  =  62
-# 109 = MANAGEMENT     = 192.168.79.192/26  =  62
+# 100 = GENERAL         = 192.168.76.0/25    = 126
+# 101 = GUEST           = 192.168.76.128/26  =  62
+# 102 = VPN             = 192.168.76.192/26  =  62
+# 103 = SERVERS         = 192.168.77.0/25    = 126
+# 104 = SERVERS_STAGING = 192.168.77.128/25  = 126
+# 105 = IOT_INTERNET    = 192.168.78.0/25    = 126
+# 106 = IOT_RESTRICTED  = 192.168.78.128/25  = 126
+# 107 =                 = 192.168.79.0/25    = 126
+# 108 = SERVICES        = 192.168.79.128/26  =  62
+# 109 = MANAGEMENT      = 192.168.79.192/26  =  62
 
 
 #
@@ -55,12 +55,12 @@ add bridge=CORE interface=ether15      pvid=100 comment="living-room-1"
 add bridge=CORE interface=ether16      pvid=100 comment="living-room-2"
 add bridge=CORE interface=ether17      pvid=100 comment="media-room-1"
 add bridge=CORE interface=ether18      pvid=100 comment="media-room-2"
-add bridge=CORE interface=ether19      pvid=103 comment="laptop"
-add bridge=CORE interface=ether20      pvid=103 comment="rpi-access-servers"
-add bridge=CORE interface=ether21      pvid=103 comment="rpi-access-servers"
-add bridge=CORE interface=ether22               comment="rpi-trunk"
-add bridge=CORE interface=ether23               comment="rpi-trunk"
-add bridge=CORE interface=ether24               comment="rpi-trunk"
+add bridge=CORE interface=ether19      pvid=103 comment="laptop-servers"
+add bridge=CORE interface=ether20      pvid=104 comment="laptop-servers-staging"
+add bridge=CORE interface=ether21      pvid=104 comment="rpi-hybrid"
+add bridge=CORE interface=ether22      pvid=104 comment="rpi-hybrid"
+add bridge=CORE interface=ether23      pvid=104 comment="rpi-hybrid"
+add bridge=CORE interface=ether24      pvid=104 comment="rpi-hybrid"
 add bridge=CORE interface=sfp-sfpplus1          comment="dal-indigo-fw-0"
 add bridge=CORE interface=sfp-sfpplus2          comment="dal-indigo-sw-1"
 add bridge=CORE interface=sfp-sfpplus3          comment=""
@@ -70,8 +70,8 @@ add bridge=CORE interface=sfp-sfpplus4          comment=""
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether17,ether18,ether19,ether20 vlan-ids=100
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=101
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=102
-add bridge=CORE tagged=CORE,ether7,ether8,ether22,ether23,ether24,sfp-sfpplus1,sfp-sfpplus2 untagged=ether19,ether20,ether21 vlan-ids=103
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=104
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether19 vlan-ids=103
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether20,ether21,ether22,ether23,ether24 vlan-ids=104
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether5 vlan-ids=105
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=107
@@ -152,9 +152,9 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priori
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether19]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether20]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether21]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether22]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether23]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether24]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether22]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether23]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether24]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus1]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus2]
 

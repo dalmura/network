@@ -13,16 +13,16 @@
 # Network Overview
 #
 
-# 100 = GENERAL        = 192.168.76.0/25    = 126
-# 101 = GUEST          = 192.168.76.128/26  =  62
-# 102 = VPN            = 192.168.76.192/26  =  62
-# 103 = SERVERS        = 192.168.77.0/25    = 126
-# 104 =                = 192.168.77.128/25  = 126
-# 105 = IOT_INTERNET   = 192.168.78.0/25    = 126
-# 106 = IOT_RESTRICTED = 192.168.78.128/25  = 126
-# 107 =                = 192.168.79.0/25    = 126
-# 108 = SERVICES       = 192.168.79.128/26  =  62
-# 109 = MANAGEMENT     = 192.168.79.192/26  =  62
+# 100 = GENERAL         = 192.168.76.0/25    = 126
+# 101 = GUEST           = 192.168.76.128/26  =  62
+# 102 = VPN             = 192.168.76.192/26  =  62
+# 103 = SERVERS         = 192.168.77.0/25    = 126
+# 104 = SERVERS_STAGING = 192.168.77.128/25  = 126
+# 105 = IOT_INTERNET    = 192.168.78.0/25    = 126
+# 106 = IOT_RESTRICTED  = 192.168.78.128/25  = 126
+# 107 =                 = 192.168.79.0/25    = 126
+# 108 = SERVICES        = 192.168.79.128/26  =  62
+# 109 = MANAGEMENT      = 192.168.79.192/26  =  62
 
 
 #
@@ -109,6 +109,14 @@ set server trusted=yes
 /ip/dhcp-server/add address-pool=servers-dhcp interface=SERVERS_VLAN name=servers-dhcp disabled=no
 /ip/dhcp-server/network/add address=192.168.77.0/25 dns-server=192.168.77.1 gateway=192.168.77.1 comment="SERVERS_VLAN"
 
+# Servers Staging VLAN
+/interface/vlan/add interface=CORE name=SERVERS_STAGING_VLAN vlan-id=104
+/ip/address/add interface=SERVERS_STAGING_VLAN address=192.168.77.129/25
+/ip/pool/add name=servers-staging-static ranges=192.168.77.129-192.168.77.149
+/ip/pool/add name=servers-staging-dhcp ranges=192.168.77.150-192.168.77.254
+/ip/dhcp-server/add address-pool=servers-staging-dhcp interface=SERVERS_STAGING_VLAN name=servers-staging-dhcp disabled=no
+/ip/dhcp-server/network/add address=192.168.77.128/25 dns-server=192.168.77.129 gateway=192.168.77.129 comment="SERVERS_STAGING_VLAN"
+
 # IOT Internet VLAN
 /interface/vlan/add interface=CORE name=IOT_INTERNET_VLAN vlan-id=105
 /ip/address/add interface=IOT_INTERNET_VLAN address=192.168.78.1/25
@@ -150,25 +158,27 @@ add name=BLACKHOLE
 add name=MANAGEMENT
 
 /interface/list/member
-add interface=ether1              list=WAN
-add interface=GENERAL_VLAN        list=VLAN
-add interface=GUEST_VLAN          list=VLAN
-add interface=VPN_VLAN            list=VLAN
-add interface=SERVERS_VLAN        list=VLAN
-add interface=IOT_INTERNET_VLAN   list=VLAN
-add interface=IOT_RESTRICTED_VLAN list=VLAN
-add interface=SERVICES_VLAN       list=VLAN
-add interface=MANAGEMENT_VLAN     list=VLAN
+add interface=ether1               list=WAN
+add interface=GENERAL_VLAN         list=VLAN
+add interface=GUEST_VLAN           list=VLAN
+add interface=VPN_VLAN             list=VLAN
+add interface=SERVERS_VLAN         list=VLAN
+add interface=SERVERS_STAGING_VLAN list=VLAN
+add interface=IOT_INTERNET_VLAN    list=VLAN
+add interface=IOT_RESTRICTED_VLAN  list=VLAN
+add interface=SERVICES_VLAN        list=VLAN
+add interface=MANAGEMENT_VLAN      list=VLAN
 
-add interface=GENERAL_VLAN        list=LAN
-add interface=GUEST_VLAN          list=INTERNET_ONLY
-add interface=VPN_VLAN            list=LAN
-add interface=SERVERS_VLAN        list=LAN
-add interface=IOT_INTERNET_VLAN   list=INTERNET_ONLY
-add interface=IOT_RESTRICTED_VLAN list=BLACKHOLE
-add interface=SERVICES_VLAN       list=LAN
-add interface=MANAGEMENT_VLAN     list=LAN
-add interface=MANAGEMENT_VLAN     list=MANAGEMENT
+add interface=GENERAL_VLAN         list=LAN
+add interface=GUEST_VLAN           list=INTERNET_ONLY
+add interface=VPN_VLAN             list=LAN
+add interface=SERVERS_VLAN         list=LAN
+add interface=SERVERS_STAGING_VLAN list=INTERNET_ONLY
+add interface=IOT_INTERNET_VLAN    list=INTERNET_ONLY
+add interface=IOT_RESTRICTED_VLAN  list=BLACKHOLE
+add interface=SERVICES_VLAN        list=LAN
+add interface=MANAGEMENT_VLAN      list=LAN
+add interface=MANAGEMENT_VLAN      list=MANAGEMENT
 
 /ip/firewall/filter
 
@@ -194,8 +204,15 @@ add chain=forward action=drop connection-state=invalid comment="drop invalid"
 add chain=forward action=drop in-interface-list=WAN connection-state=new connection-nat-state=!dstnat comment="drop all from WAN not DSTNATed"
 
 # Add more general forward related access here
+
+## Allow internet access
 add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN comment="accept LAN to WAN"
 add chain=forward action=accept connection-state=new in-interface-list=INTERNET_ONLY out-interface-list=WAN comment="accept INTERNET_ONLY to WAN"
+
+## Allow MANAGEMENT_VLAN => SERVERS_VLAN
+add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVERS_VLAN comment="accept MANAGEMENT_VLAN => SERVERS_VLAN"
+## Allow MANAGEMENT_VLAN => SERVERS_STAGING_VLAN
+add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT_VLAN => SERVERS_STAGING_VLAN"
 
 # Finally drop everything else
 add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall" disabled=yes
