@@ -213,6 +213,8 @@ add chain=forward action=accept connection-state=new in-interface-list=INTERNET_
 add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVERS_VLAN comment="accept MANAGEMENT_VLAN => SERVERS_VLAN"
 ## Allow MANAGEMENT_VLAN => SERVERS_STAGING_VLAN
 add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT_VLAN => SERVERS_STAGING_VLAN"
+## Allow SERVERS_VLAN => SERVERS_STAGING_VLAN
+add chain=forward action=accept protocol=udp src-port=69 in-interface=SERVERS_VLAN out-interface=SERVERS_STAGING_VLAN comment="accept udp/69 (tftp) SERVERS_VLAN => SERVERS_STAGING_VLAN"
 
 # Finally drop everything else
 add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall" disabled=yes
