@@ -51,6 +51,10 @@ networks:
             allocations:
               "192.168.77.2": "dal-k8s-mgmt-1-vip"
               "192.168.77.3": "dal-k8s-core-1-vip"
+            subranges:
+              dal-k8s-vips-metallb:
+                start: "192.168.77.10"
+                end: "192.168.77.19"
           dal-k8s-nodes:
             start: "192.168.77.20"
             end: "192.168.77.49"
@@ -85,6 +89,10 @@ networks:
         allocations:
           "192.168.77.129": "dal-indigo-fw-0"
           "192.168.77.130": "dal-k8s-mgmt-1-vip"
+        subranges:
+          static-metallb:
+            start: "192.168.77.140"
+            end: "192.168.77.149"
       dhcp:
         start: "192.168.77.150"
         end: "192.168.77.254"
