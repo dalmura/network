@@ -96,6 +96,8 @@ networks:
           dal-k8s-mgmt-vips-metallb:
             start: "192.168.77.140"
             end: "192.168.77.149"
+            allocations:
+              "192.168.77.140": "dal-k8s-mgmt-1-sidero"
       dhcp:
         start: "192.168.77.150"
         end: "192.168.77.254"
