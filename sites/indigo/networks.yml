@@ -45,26 +45,19 @@ networks:
         allocations:
           "192.168.77.1": "dal-indigo-fw-0"
         subranges:
-          dal-k8s-vips:
+          dal-indigo-vips:
             start: "192.168.77.2"
             end: "192.168.77.19"
             allocations:
-              "192.168.77.2": "dal-k8s-mgmt-1-vip"
-              "192.168.77.3": "dal-k8s-core-1-vip"
+              "192.168.77.2": "dal-indigo-core-1-vip"
             subranges:
-              dal-k8s-mgmt-vips-metallb:
+              dal-indigo-core-1-vips-metallb:
                 start: "192.168.77.10"
-                end: "192.168.77.14"
-              dal-k8s-core-vips-metallb:
-                start: "192.168.77.15"
                 end: "192.168.77.19"
-          dal-k8s-nodes:
+          dal-indigo-nodes:
             start: "192.168.77.20"
             end: "192.168.77.49"
-            allocations:
-              "192.168.77.20": "dal-k8s-mgmt-1-controlplane-rpi4-4gb-arm-1"
-              "192.168.77.21": "dal-k8s-mgmt-1-controlplane-rpi4-4gb-arm-2"
-              "192.168.77.22": "dal-k8s-mgmt-1-controlplane-rpi4-4gb-arm-3"
+            allocations: {}
       dhcp:
         start: "192.168.77.64"
         end: "192.168.77.126"
@@ -82,13 +75,7 @@ networks:
         end: "192.168.77.149"
         allocations:
           "192.168.77.129": "dal-indigo-fw-0"
-          "192.168.77.130": "dal-k8s-mgmt-1-vip"
-        subranges:
-          dal-k8s-mgmt-vips-metallb:
-            start: "192.168.77.140"
-            end: "192.168.77.149"
-            allocations:
-              "192.168.77.140": "dal-k8s-mgmt-1-sidero"
+          "192.168.77.130": "dal-indigo-core-1-vip"
       dhcp:
         start: "192.168.77.150"
         end: "192.168.77.254"
@@ -151,8 +138,7 @@ networks:
           "192.168.79.195": "dal-indigo-sw-1"
           "192.168.79.196": "dal-indigo-wap-0"
           "192.168.79.197": "dal-indigo-wap-1"
-          "192.168.79.220": "dal-k8s-mgmt-1-vip"
-          "192.168.79.221": "dal-k8s-core-1-vip"
+          "192.168.79.220": "dal-indigo-core-1-vip"
       dhcp:
         start: "192.168.79.250"
         end: "192.168.79.254"
