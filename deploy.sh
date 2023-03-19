@@ -117,6 +117,6 @@ elif [ "${TYPE}" == 'terraform' ]; then
     fi
 
     rm -rf "${TYPE_FOLDER}/.terraform"
-    terraform -chdir="${TYPE_FOLDER}" init
+    terraform -chdir="${TYPE_FOLDER}" init -upgrade
     terraform -chdir="${TYPE_FOLDER}" apply
 fi
