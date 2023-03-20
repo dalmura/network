@@ -16,6 +16,16 @@ resource "aws_iam_user" "k8s_dns_updater" {
 data "aws_iam_policy_document" "k8s_dns_permissions" {
   statement {
     actions = [
+      "route53:GetChange",
+    ]
+
+    resources = [
+      "arn:aws:route53:::change/*",
+    ]
+  }
+
+  statement {
+    actions = [
       "route53:ChangeResourceRecordSets",
     ]
 
@@ -28,6 +38,7 @@ data "aws_iam_policy_document" "k8s_dns_permissions" {
   statement {
     actions = [
       "route53:ListHostedZones",
+      "route53:ListHostedZonesByName",
       "route53:ListResourceRecordSets",
     ]
 
