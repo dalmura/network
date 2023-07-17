@@ -61,22 +61,22 @@ add bridge=CORE interface=ether21      pvid=104 comment="rpi-hybrid"            
 add bridge=CORE interface=ether22      pvid=104 comment="rpi-hybrid"                    # hybrid   - SERVERS_STAGING
 add bridge=CORE interface=ether23      pvid=104 comment="rpi-hybrid"                    # hybrid   - SERVERS_STAGING
 add bridge=CORE interface=ether24      pvid=104 comment="rpi-hybrid"                    # hybrid   - SERVERS_STAGING
-add bridge=CORE interface=sfp-sfpplus1          comment="dal-indigo-fw-0"               # trunk
-add bridge=CORE interface=sfp-sfpplus2          comment="dal-indigo-sw-1"               # trunk
-add bridge=CORE interface=sfp-sfpplus3          comment=""                              # N/A
+add bridge=CORE interface=sfp-sfpplus1 pvid=103 comment="dal-indigo-atlas"              # untagged - SERVERS
+add bridge=CORE interface=sfp-sfpplus2          comment="dal-indigo-fw-0"               # trunk
+add bridge=CORE interface=sfp-sfpplus3 pvid=103 comment="dal-indigo-vulcan"             # untagged - SERVERS
 add bridge=CORE interface=sfp-sfpplus4          comment=""                              # N/A
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether17,ether18,ether19,ether20 vlan-ids=100
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=101
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=102
-add bridge=CORE tagged=CORE,ether7,ether8,ether21,ether22,ether23,ether24,sfp-sfpplus1,sfp-sfpplus2 untagged=ether19 vlan-ids=103
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether20,ether21,ether22,ether23,ether24 vlan-ids=104
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether5 vlan-ids=105
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=107
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=108
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus1,sfp-sfpplus2 vlan-ids=109
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=101
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=102
+add bridge=CORE tagged=CORE,ether7,ether8,ether21,ether22,ether23,ether24,sfp-sfpplus2 untagged=ether19,sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 untagged=ether20,ether21,ether22,ether23,ether24 vlan-ids=104
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 untagged=ether5 vlan-ids=105
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=107
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=108
+add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=109
 
 
 #
