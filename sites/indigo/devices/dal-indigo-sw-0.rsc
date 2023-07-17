@@ -37,34 +37,91 @@
 #
 
 /interface/bridge/port
-add bridge=CORE interface=ether1       pvid=106 comment="front-1 camera"                # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether2       pvid=106 comment="rear-1 camera"                 # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether3       pvid=106 comment="rear-2 camera"                 # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether4       pvid=106 comment="garage-1 camera"               # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether5       pvid=105 comment="doorbell"                      # untagged - IOT_INTERNET
-add bridge=CORE interface=ether6                comment=""                              # N/A
-add bridge=CORE interface=ether7                comment="dal-indigo-wap-0 (upstairs)"   # trunk
-add bridge=CORE interface=ether8                comment="dal-indigo-wap-1 (downstairs)" # trunk
-add bridge=CORE interface=ether9       pvid=100 comment="master-bedroom-1"              # untagged - GENERAL
-add bridge=CORE interface=ether10      pvid=100 comment="master-bedroom-2"              # untagged - GENERAL
-add bridge=CORE interface=ether11      pvid=100 comment="left-study-1"                  # untagged - GENERAL
-add bridge=CORE interface=ether12      pvid=100 comment="left-study-2"                  # untagged - GENERAL
-add bridge=CORE interface=ether13      pvid=100 comment="right-study-1"                 # untagged - GENERAL
-add bridge=CORE interface=ether14      pvid=100 comment="right-study-2"                 # untagged - GENERAL
-add bridge=CORE interface=ether15      pvid=100 comment="living-room-1"                 # untagged - GENERAL
-add bridge=CORE interface=ether16      pvid=100 comment="living-room-2"                 # untagged - GENERAL
-add bridge=CORE interface=ether17      pvid=100 comment="media-room-1"                  # untagged - GENERAL
-add bridge=CORE interface=ether18      pvid=100 comment="media-room-2"                  # untagged - GENERAL
-add bridge=CORE interface=ether19      pvid=103 comment="laptop-servers"                # untagged - SERVERS
-add bridge=CORE interface=ether20      pvid=104 comment="laptop-servers-staging"        # untagged - SERVERS_STAGING
-add bridge=CORE interface=ether21      pvid=104 comment="rpi-hybrid"                    # hybrid   - SERVERS_STAGING
-add bridge=CORE interface=ether22      pvid=104 comment="rpi-hybrid"                    # hybrid   - SERVERS_STAGING
-add bridge=CORE interface=ether23      pvid=104 comment="rpi-hybrid"                    # hybrid   - SERVERS_STAGING
-add bridge=CORE interface=ether24      pvid=104 comment="rpi-hybrid"                    # hybrid   - SERVERS_STAGING
-add bridge=CORE interface=sfp-sfpplus1 pvid=103 comment="dal-indigo-atlas"              # untagged - SERVERS
-add bridge=CORE interface=sfp-sfpplus2          comment="dal-indigo-fw-0"               # trunk
-add bridge=CORE interface=sfp-sfpplus3 pvid=103 comment="dal-indigo-vulcan"             # untagged - SERVERS
-add bridge=CORE interface=sfp-sfpplus4          comment=""                              # N/A
+
+# untagged - IOT_RESTRICTED
+add bridge=CORE interface=ether1       pvid=106 comment="front-1 camera"
+
+# untagged - IOT_RESTRICTED
+add bridge=CORE interface=ether2       pvid=106 comment="rear-1 camera"
+
+# untagged - IOT_RESTRICTED
+add bridge=CORE interface=ether3       pvid=106 comment="rear-2 camera"
+
+# untagged - IOT_RESTRICTED
+add bridge=CORE interface=ether4       pvid=106 comment="garage-1 camera"
+
+# untagged - IOT_INTERNET
+add bridge=CORE interface=ether5       pvid=105 comment="doorbell"
+
+# N/A
+add bridge=CORE interface=ether6                comment=""
+
+# trunk
+add bridge=CORE interface=ether7                comment="dal-indigo-wap-0 (upstairs)"
+
+# trunk
+add bridge=CORE interface=ether8                comment="dal-indigo-wap-1 (downstairs)"
+
+# untagged - GENERAL
+add bridge=CORE interface=ether9       pvid=100 comment="master-bedroom-1"
+
+# untagged - GENERAL
+add bridge=CORE interface=ether10      pvid=100 comment="master-bedroom-2"
+
+# untagged - GENERAL
+add bridge=CORE interface=ether11      pvid=100 comment="left-study-1"
+
+# untagged - GENERAL
+add bridge=CORE interface=ether12      pvid=100 comment="left-study-2"
+
+# untagged - GENERAL
+add bridge=CORE interface=ether13      pvid=100 comment="right-study-1"
+
+# untagged - GENERAL
+add bridge=CORE interface=ether14      pvid=100 comment="right-study-2"
+
+# untagged - GENERAL
+add bridge=CORE interface=ether15      pvid=100 comment="living-room-1"
+
+# untagged - GENERAL
+add bridge=CORE interface=ether16      pvid=100 comment="living-room-2"
+
+# untagged - GENERAL
+add bridge=CORE interface=ether17      pvid=100 comment="media-room-1"
+
+# untagged - GENERAL
+add bridge=CORE interface=ether18      pvid=100 comment="media-room-2"
+
+# untagged - SERVERS
+add bridge=CORE interface=ether19      pvid=103 comment="laptop-servers"
+
+# untagged - SERVERS_STAGING
+add bridge=CORE interface=ether20      pvid=104 comment="laptop-servers-staging"
+
+# hybrid   - SERVERS_STAGING
+add bridge=CORE interface=ether21      pvid=104 comment="rpi-hybrid"
+
+# hybrid   - SERVERS_STAGING
+add bridge=CORE interface=ether22      pvid=104 comment="rpi-hybrid"
+
+# hybrid   - SERVERS_STAGING
+add bridge=CORE interface=ether23      pvid=104 comment="rpi-hybrid"
+
+# hybrid   - SERVERS_STAGING
+add bridge=CORE interface=ether24      pvid=104 comment="rpi-hybrid"
+
+# untagged - SERVERS
+add bridge=CORE interface=sfp-sfpplus1 pvid=103 comment="dal-indigo-atlas"
+
+# trunk
+add bridge=CORE interface=sfp-sfpplus2          comment="dal-indigo-fw-0"
+
+# untagged - SERVERS
+add bridge=CORE interface=sfp-sfpplus3 pvid=103 comment="dal-indigo-vulcan"
+
+# N/A
+add bridge=CORE interface=sfp-sfpplus4          comment=""
+
 
 /interface/bridge/vlan
 add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
@@ -155,8 +212,9 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ethe
 set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether22]
 set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether23]
 set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether24]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus1]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp-sfpplus1]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp-sfpplus3]
 
 
 #
