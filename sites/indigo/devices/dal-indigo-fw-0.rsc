@@ -168,17 +168,21 @@ add interface=IOT_INTERNET_VLAN    list=VLAN
 add interface=IOT_RESTRICTED_VLAN  list=VLAN
 add interface=SERVICES_VLAN        list=VLAN
 add interface=MANAGEMENT_VLAN      list=VLAN
-
 add interface=GENERAL_VLAN         list=LAN
-add interface=GUEST_VLAN           list=INTERNET_ONLY
 add interface=VPN_VLAN             list=LAN
 add interface=SERVERS_VLAN         list=LAN
+add interface=SERVICES_VLAN        list=LAN
+add interface=MANAGEMENT_VLAN      list=LAN
+add interface=GUEST_VLAN           list=INTERNET_ONLY
 add interface=SERVERS_STAGING_VLAN list=INTERNET_ONLY
 add interface=IOT_INTERNET_VLAN    list=INTERNET_ONLY
 add interface=IOT_RESTRICTED_VLAN  list=BLACKHOLE
-add interface=SERVICES_VLAN        list=LAN
-add interface=MANAGEMENT_VLAN      list=LAN
 add interface=MANAGEMENT_VLAN      list=MANAGEMENT
+add interface=GENERAL_VLAN         list=INTERNAL_PUBLIC_ACCESS
+add interface=GUEST_VLAN           list=INTERNAL_PUBLIC_ACCESS
+add interface=VPN_VLAN             list=INTERNAL_PUBLIC_ACCESS
+add interface=GENERAL_VLAN         list=INTERNAL_PRIVATE_ACCESS
+add interface=VPN_VLAN             list=INTERNAL_PRIVATE_ACCESS
 
 /ip/firewall/filter
 
@@ -214,6 +218,12 @@ add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVE
 ## Allow MANAGEMENT_VLAN => SERVERS_STAGING_VLAN
 add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT_VLAN => SERVERS_STAGING_VLAN"
 
+## Allow WAN => SERVERS_VLAN (Plex dst-nat traffic)
+add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=SERVERS_VLAN in-interface-list=WAN connection-nat-state=dstnat comment="accept DSTNAT => PLEX"
+
+## Allow INTERNAL_PUBLIC_ACCESS => SERVERS_VLAN (Plex local traffic)
+add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PUBLIC_ACCESS => PLEX"
+
 # Finally drop everything else
 add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall" disabled=yes
 add chain=forward action=drop log=yes log-prefix=forward-drop comment="drop all other forward"
@@ -223,7 +233,15 @@ add chain=forward action=drop log=yes log-prefix=forward-drop comment="drop all 
 # NAT
 #
 
-/ip/firewall/nat/add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade comment="Default masquerade"
+/ip/firewall/nat
+
+# Masquerade outgoing packets as WAN IP
+add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade comment="Default masquerade"
+
+# Add more general NAT access here
+
+## dst-nat Plex => Vulcan
+add chain=dstnat action=dst-nat to-address=192.168.77.64 to-ports=32400 protocol=tcp in-interface-list=WAN dst-port=32405 ipsec-policy=in,none
 
 
 #
