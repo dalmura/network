@@ -214,7 +214,7 @@ add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVE
 ## Allow MANAGEMENT_VLAN => SERVERS_STAGING_VLAN
 add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT_VLAN => SERVERS_STAGING_VLAN"
 
-## Alow Plex forward traffic
+## Alow WAN => SERVERS_VLAN (Plex dst-nat traffic)
 add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=SERVERS_VLAN in-interface-list=WAN connection-nat-state=dstnat comment="accept DSTNAT => PLEX"
 
 # Finally drop everything else
