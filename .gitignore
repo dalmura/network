@@ -6,3 +6,4 @@ secrets.json
 
 # Templates that require rendering (so ignore their rendered form)
 sites/indigo/devices/dal-indigo-wap-0.rsc
+sites/indigo/devices/dal-indigo-wap-1.rsc
