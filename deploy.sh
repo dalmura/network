@@ -6,9 +6,10 @@ TYPE="${2}"
 DATA="${3}"
 
 if [ "${SITE}" == '' ] || [ "${SITE}" == '-h' ] || [ "${SITE}" == '--help' ]; then
-    echo "USAGE: ${0} SITE (devices|terraform) [EXTRA_DATA]"
+    echo "USAGE: ${0} SITE (devices|render|terraform) [EXTRA_DATA]"
     echo "Eg #1: ${0} global terraform"
     echo "Eg #2: ${0} indigo devices dal-indigo-fw-0"
+    echo "Eg #3: ${0} indigo render dal-indigo-wap-0"
     exit 0
 fi
 
@@ -17,6 +18,13 @@ echo "INFO: Type: ${TYPE}"
 
 if [ "${DATA}" != '' ]; then
     echo "INFO: Data: ${DATA}"
+fi
+
+if [ "${TYPE}" == "render" ]; then
+    TYPE='devices'
+    RENDER='true'
+else
+    RENDER='false'
 fi
 
 SITE_FOLDER="sites/${SITE}"
@@ -43,16 +51,20 @@ if [ "${TYPE}" == 'devices' ]; then
 
     # Deploy RouterOS config
     CONFIG_FILE="${TYPE_FOLDER}/${DATA}.rsc"
+    TEMPLATE_FILE="${CONFIG_FILE}.j2"
+
+    if [ -f "${TEMPLATE_FILE}" ]; then
+        jinja2 --strict "${TEMPLATE_FILE}" secrets.json -o "${CONFIG_FILE}"
+    fi
 
     if [ ! -f "${CONFIG_FILE}" ]; then
-        TEMPLATE_FILE="${CONFIG_FILE}.j2"
+        echo "ERROR: Device file missing? (${CONFIG_FILE})"
+        exit 1
+    fi
 
-        if [ ! -f "${TEMPLATE_FILE}" ]; then
-            echo "ERROR: Provided device config for '${DATA}' doesn't exist?"
-            exit 1
-        fi
-
-        jinja2 --strict "${TEMPLATE_FILE}" secrets.json -o "${CONFIG_FILE}"
+    if [ "${RENDER}" == 'true' ]; then
+        echo "INFO: Rendering done, exiting cleanly"
+        exit 0
     fi
 
     # Find the IP of the device from networks.yml
@@ -82,6 +94,8 @@ if [ "${TYPE}" == 'devices' ]; then
     fi
 
     echo "INFO: Client IP: ${MY_IP}"
+    echo "INFO: About to apply device config in 2s"
+    sleep 2
 
     # Upload our device config into the router
     python3 -m http.server --bind 0.0.0.0 --directory "${TYPE_FOLDER}" 8000 &
