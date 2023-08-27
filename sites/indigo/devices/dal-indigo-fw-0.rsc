@@ -314,15 +314,15 @@ add peer=cerulean auth-mode=digital-signature certificate=server match-by=certif
 add name=dalmura auth-algorithms=sha256 enc-algorithms=aes-256-cbc lifetime=08:00:00 pfs-group=modp2048
 
 /ip/ipsec/policy
-add peer=salmon tunnel=yes sa-src-address=TODO sa-dst-address=TODO action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=amethyst tunnel=yes sa-src-address=TODO sa-dst-address=TODO action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=cerulean tunnel=yes sa-src-address=TODO sa-dst-address=TODO action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=salmon tunnel=yes sa-src-address=172.16.0.2/30 sa-dst-address=172.16.0.1/30 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=amethyst tunnel=yes sa-src-address=172.16.0.17/30 sa-dst-address=172.16.0.18/30 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=cerulean tunnel=yes sa-src-address=172.16.0.61/30 sa-dst-address=172.16.0.61/30 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
 
 # GRE tunnel interfaces
 /interface/gre
-add name=salmon   local-address=TODO remote-address=TODO allow-fast-path=no
-add name=amethyst local-address=TODO remote-address=TODO allow-fast-path=no
-add name=cerulean local-address=TODO remote-address=TODO allow-fast-path=no
+add name=salmon   local-address=172.16.0.2/30  remote-address=172.16.0.1/30  allow-fast-path=no
+add name=amethyst local-address=172.16.0.17/30 remote-address=172.16.0.18/30 allow-fast-path=no
+add name=cerulean local-address=172.16.0.61/30 remote-address=172.16.0.61/30 allow-fast-path=no
 
 /interface/list/member
 add interface=salmon   list=WAN_HUB
@@ -334,8 +334,8 @@ add interface=cerulean list=WAN_HUB
 add list=indigo-bgp-networks address=192.168.76.0/22
 
 /routing/bgp/template
-add name=indigo-hub   as=TODO router-id=192.168.76.0
-add name=indigo-spoke as=TODO router-id=192.168.76.0
+add name=indigo-hub   as=65208 router-id=192.168.76.0
+add name=indigo-spoke as=65208 router-id=192.168.76.0
 
 /routing/bgp/connection
 add remote.address=192.168.64.0/18 template=indigo-hub   local.role=ebgp output.network=indigo-bgp-networks
