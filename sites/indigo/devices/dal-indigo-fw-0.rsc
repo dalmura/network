@@ -162,6 +162,8 @@ add name=LAN
 add name=INTERNET_ONLY
 add name=BLACKHOLE
 add name=MANAGEMENT
+add name=INTERNAL_PUBLIC_ACCESS
+add name=INTERNAL_PRIVATE_ACCESS
 
 /interface/list/member
 add interface=ether1               list=WAN
@@ -303,26 +305,27 @@ add name=cerulean address=cerulean.dalmura.cloud profile=dalmura exchange-mode=i
 /certificate/import name=remote-salmon file-name=remote-salmon.crt
 /certificate/import name=remote-amethyst file-name=remote-amethyst.crt
 /certificate/import name=remote-cerulean file-name=remote-cerulean.crt
+:delay 2
 
 /ip/ipsec/identity
-add peer=salmon auth-mode=digital-signature certificate=server match-by=certificate remote-certificate=remote-salmon
-add peer=amethyst auth-mode=digital-signature certificate=server match-by=certificate remote-certificate=remote-amethyst
-add peer=cerulean auth-mode=digital-signature certificate=server match-by=certificate remote-certificate=remote-cerulean
+add peer=salmon auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-salmon
+add peer=amethyst auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-amethyst
+add peer=cerulean auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-cerulean
 
 # IKE Phase 2
 /ip/ipsec/proposal
 add name=dalmura auth-algorithms=sha256 enc-algorithms=aes-256-cbc lifetime=08:00:00 pfs-group=modp2048
 
 /ip/ipsec/policy
-add peer=salmon tunnel=yes sa-src-address=172.16.0.2/30 sa-dst-address=172.16.0.1/30 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=amethyst tunnel=yes sa-src-address=172.16.0.17/30 sa-dst-address=172.16.0.18/30 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=cerulean tunnel=yes sa-src-address=172.16.0.61/30 sa-dst-address=172.16.0.61/30 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=salmon tunnel=yes sa-src-address=172.16.0.2 sa-dst-address=172.16.0.1 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=amethyst tunnel=yes sa-src-address=172.16.0.17 sa-dst-address=172.16.0.18 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=cerulean tunnel=yes sa-src-address=172.16.0.61 sa-dst-address=172.16.0.61 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
 
 # GRE tunnel interfaces
 /interface/gre
-add name=salmon   local-address=172.16.0.2/30  remote-address=172.16.0.1/30  allow-fast-path=no
-add name=amethyst local-address=172.16.0.17/30 remote-address=172.16.0.18/30 allow-fast-path=no
-add name=cerulean local-address=172.16.0.61/30 remote-address=172.16.0.61/30 allow-fast-path=no
+add name=salmon   local-address=172.16.0.2  remote-address=172.16.0.1  allow-fast-path=no
+add name=amethyst local-address=172.16.0.17 remote-address=172.16.0.18 allow-fast-path=no
+add name=cerulean local-address=172.16.0.61 remote-address=172.16.0.61 allow-fast-path=no
 
 /interface/list/member
 add interface=salmon   list=WAN_HUB
@@ -334,9 +337,10 @@ add interface=cerulean list=WAN_HUB
 add list=indigo-bgp-networks address=192.168.76.0/22
 
 /routing/bgp/template
-add name=indigo-hub   as=65208 router-id=192.168.76.0
-add name=indigo-spoke as=65208 router-id=192.168.76.0
+add name=indigo-hub   as=65208 router-id=192.168.76.0 output.network=indigo-bgp-networks
+add name=indigo-spoke as=65208 router-id=192.168.76.0 output.network=indigo-bgp-networks
 
 /routing/bgp/connection
-add remote.address=192.168.64.0/18 template=indigo-hub   local.role=ebgp output.network=indigo-bgp-networks
-add remote.address=192.168.0.0/18  template=indigo-spoke local.role=ebgp output.network=indigo-bgp-networks
+add name=salmon   template=indigo-hub local.address=172.16.0.2 local.role=ebgp remote.address=172.16.0.1/30   remote.as=65207
+add name=amethyst template=indigo-hub local.address=172.16.0.17 local.role=ebgp remote.address=172.16.0.18/30 remote.as=65210
+add name=cerulean template=indigo-hub local.address=172.16.0.61 local.role=ebgp remote.address=172.16.0.61/30 remote.as=65209
