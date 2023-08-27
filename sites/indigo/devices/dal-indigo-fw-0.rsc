@@ -65,8 +65,8 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 
 # General router settings
 /certificate
-add name=ca days-valid=10950 common-name=dal-indigo-fw-0.indigo.dalmura.au key-usage=key-cert-sign,crl-sign
-add name=server days-valid=10950 common-name=dal-indigo-fw-0.indigo.dalmura.au
+add name=ca days-valid=10950 common-name=fw-0.indigo.dalmura.cloud key-usage=key-cert-sign,crl-sign
+add name=server days-valid=10950 common-name=fw-0.indigo.dalmura.cloud subject-alt-name=DNS:fw-0.indigo.dalmura.cloud organization=dalmura unit=indigo
 
 sign ca name=root-ca
 :delay 2
@@ -75,6 +75,10 @@ sign ca=root-ca server name=server
 
 set root-ca trusted=yes
 set server trusted=yes
+
+# Export cert for use in remote systems
+# No private key material is exported here, just the crt
+export-certificate file-name=remote-indigo type=pem server
 
 /ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
 /ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
@@ -151,6 +155,8 @@ set server trusted=yes
 
 /interface/list
 add name=WAN
+add name=WAN_HUB
+add name=WAN_SPOKE
 add name=VLAN
 add name=LAN
 add name=INTERNET_ONLY
@@ -196,6 +202,12 @@ add chain=input action=accept protocol=icmp in-interface-list=LAN comment="accep
 add chain=input action=accept protocol=udp dst-port=53 in-interface-list=VLAN comment="accept DNS from internal networks"
 add chain=input action=accept src-address=0.0.0.0 dst-address=255.255.255.255 protocol=udp src-port=68 dst-port=67 in-interface-list=VLAN comment="allow DHCP broadcasts"
 add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
+
+# Legacy IPSec
+add chain=input action=accept protocol=udp src-port=4500 in-interface-list=WAN comment="Legacy IPSec"
+add chain=input action=accept protocol=ipsec-esp in-interface-list=WAN comment="Legacy IPSec"
+add chain=input action=accept protocol=gre in-interface-list=WAN ipsec-policy=in,ipsec comment="Legacy IPSec - GRE"
+add chain=input action=accept protocol=tcp dst-port=179 in-interface-list=WAN ipsec-policy=in,ipsec comment="Legacy IPSec - BGP"
 
 # Finally drop everything else
 add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
@@ -272,3 +284,59 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 #
 
 /interface/bridge/set CORE vlan-filtering=yes
+
+
+#
+# Legacy IPSec
+#
+
+# IKE Phase 1
+/ip/ipsec/profile
+add name=dalmura hash-algorithm=sha256 enc-algorithm=aes-256 dh-group=modp2048,modp4096,ecp521 nat-traversal=no dpd-interval=30 dpd-maximum-failures=5
+
+/ip/ipsec/peer
+add name=salmon address=salmon.dalmura.cloud profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
+add name=amethyst address=amethyst.dalmura.cloud profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
+add name=cerulean address=cerulean.dalmura.cloud profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
+
+# This step will fail unless remote certificates have been uploaded to the device
+/certificate/import name=remote-salmon file-name=remote-salmon.crt
+/certificate/import name=remote-amethyst file-name=remote-amethyst.crt
+/certificate/import name=remote-cerulean file-name=remote-cerulean.crt
+
+/ip/ipsec/identity
+add peer=salmon auth-mode=digital-signature certificate=server match-by=certificate remote-certificate=remote-salmon
+add peer=amethyst auth-mode=digital-signature certificate=server match-by=certificate remote-certificate=remote-amethyst
+add peer=cerulean auth-mode=digital-signature certificate=server match-by=certificate remote-certificate=remote-cerulean
+
+# IKE Phase 2
+/ip/ipsec/proposal
+add name=dalmura auth-algorithms=sha256 enc-algorithms=aes-256-cbc lifetime=08:00:00 pfs-group=modp2048
+
+/ip/ipsec/policy
+add peer=salmon tunnel=yes sa-src-address=172.16.0.2/30 sa-dst-address=172.16.0.1/30 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=amethyst tunnel=yes sa-src-address=172.16.0.17/30 sa-dst-address=172.16.0.18/30 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=cerulean tunnel=yes sa-src-address=172.16.0.61/30 sa-dst-address=172.16.0.61/30 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+
+# GRE tunnel interfaces
+/interface/gre
+add name=salmon   local-address=172.16.0.2/30  remote-address=172.16.0.1/30  allow-fast-path=no
+add name=amethyst local-address=172.16.0.17/30 remote-address=172.16.0.18/30 allow-fast-path=no
+add name=cerulean local-address=172.16.0.61/30 remote-address=172.16.0.61/30 allow-fast-path=no
+
+/interface/list/member
+add interface=salmon   list=WAN_HUB
+add interface=amethyst list=WAN_HUB
+add interface=cerulean list=WAN_HUB
+
+# BGP
+/ip/firewall/address-list
+add list=indigo-bgp-networks address=192.168.76.0/22
+
+/routing/bgp/template
+add name=indigo-hub   as=65208 router-id=192.168.76.0
+add name=indigo-spoke as=65208 router-id=192.168.76.0
+
+/routing/bgp/connection
+add remote.address=192.168.64.0/18 template=indigo-hub   local.role=ebgp output.network=indigo-bgp-networks
+add remote.address=192.168.0.0/18  template=indigo-spoke local.role=ebgp output.network=indigo-bgp-networks
