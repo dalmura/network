@@ -143,7 +143,7 @@ add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=109
 # General router settings
 /certificate
 add name=ca days-valid=10950 common-name=sw-0.indigo.dalmura.cloud key-usage=key-cert-sign,crl-sign
-add name=server days-valid=10950 common-name=sw-0.indigo.dalmura.cloud
+add name=server days-valid=10950 common-name=sw-0.indigo.dalmura.cloud subject-alt-name=DNS:sw-0.indigo.dalmura.cloud organization=dalmura unit=indigo
 
 sign ca name=root-ca
 :delay 2
