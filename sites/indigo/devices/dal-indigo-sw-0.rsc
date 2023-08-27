@@ -57,10 +57,10 @@ add bridge=CORE interface=ether5       pvid=105 comment="doorbell"
 add bridge=CORE interface=ether6                comment=""
 
 # trunk
-add bridge=CORE interface=ether7                comment="dal-indigo-wap-0 (upstairs)"
+add bridge=CORE interface=ether7                comment="dal-indigo-wap-0 (garage)"
 
 # trunk
-add bridge=CORE interface=ether8                comment="dal-indigo-wap-1 (downstairs)"
+add bridge=CORE interface=ether8                comment="dal-indigo-wap-1 (upstairs)"
 
 # untagged - GENERAL
 add bridge=CORE interface=ether9       pvid=100 comment="master-bedroom-1"
