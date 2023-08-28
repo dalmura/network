@@ -53,8 +53,8 @@ add bridge=CORE interface=ether4       pvid=106 comment="garage-1 camera"
 # untagged - IOT_INTERNET
 add bridge=CORE interface=ether5       pvid=105 comment="doorbell"
 
-# N/A
-add bridge=CORE interface=ether6                comment=""
+# trunk
+add bridge=CORE interface=ether6                comment="trunk port for local access"
 
 # trunk
 add bridge=CORE interface=ether7                comment="dal-indigo-wap-0 (garage)"
@@ -124,16 +124,16 @@ add bridge=CORE interface=sfp-sfpplus4          comment=""
 
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=101
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=102
-add bridge=CORE tagged=CORE,ether7,ether8,ether21,ether22,ether23,ether24,sfp-sfpplus2 untagged=ether19,sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 untagged=ether20,ether21,ether22,ether23,ether24 vlan-ids=104
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 untagged=ether5 vlan-ids=105
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=107
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=108
-add bridge=CORE tagged=CORE,ether7,ether8,sfp-sfpplus2 vlan-ids=109
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 vlan-ids=101
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 vlan-ids=102
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether21,ether22,ether23,ether24,sfp-sfpplus2 untagged=ether19,sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 untagged=ether20,ether21,ether22,ether23,ether24 vlan-ids=104
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 untagged=ether5 vlan-ids=105
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 vlan-ids=107
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 vlan-ids=108
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 vlan-ids=109
 
 
 #
@@ -193,7 +193,7 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priori
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether3]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether4]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether5]
-# ether6
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether6]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether7]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether8]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether9]
