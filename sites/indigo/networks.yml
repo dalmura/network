@@ -90,12 +90,12 @@ networks:
     subranges:
       static:
         start: "192.168.78.1"
-        end: "192.168.78.63"
+        end: "192.168.78.69"
         allocations:
           "192.168.78.1": "dal-indigo-fw-0"
           "192.168.78.2": "dal-indigo-doorbell"
       dhcp:
-        start: "192.168.78.64"
+        start: "192.168.78.70"
         end: "192.168.78.126"
 
   IOT_RESTRICTED:
@@ -105,9 +105,15 @@ networks:
     mask: "255.255.255.128"
     start: "192.168.78.129"
     end: "192.168.78.254"
-    dhcp: true
-    allocations:
-      "192.168.78.129": "dal-indigo-fw-0"
+    subranges:
+      static:
+        start: "192.168.78.129"
+        end: "192.168.78.199"
+        allocations:
+          "192.168.78.129": "dal-indigo-fw-0"
+      dhcp:
+        start: "192.168.78.200"
+        end: "192.168.78.254"
 
   SPARE_2:
     description: ""
