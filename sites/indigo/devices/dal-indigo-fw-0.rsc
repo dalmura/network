@@ -124,7 +124,7 @@ export-certificate file-name=remote-indigo type=pem server
 # IOT Internet VLAN
 /interface/vlan/add interface=CORE name=IOT_INTERNET_VLAN vlan-id=105
 /ip/address/add interface=IOT_INTERNET_VLAN address=192.168.78.1/25
-/ip/pool/add name=iot-internet-static ranges=192.168.78.2-192.168.78.69
+/ip/pool/add name=iot-internet-static ranges=192.168.78.1-192.168.78.69
 /ip/pool/add name=iot-internet-dhcp ranges=192.168.78.70-192.168.78.126
 /ip/dhcp-server/add address-pool=iot-internet-dhcp interface=IOT_INTERNET_VLAN name=iot-internet-dhcp disabled=no
 /ip/dhcp-server/network/add address=192.168.78.0/25 dns-server=192.168.78.1 gateway=192.168.78.1 comment="IOT_INTERNET_VLAN"
@@ -132,7 +132,7 @@ export-certificate file-name=remote-indigo type=pem server
 # IOT Restricted VLAN
 /interface/vlan/add interface=CORE name=IOT_RESTRICTED_VLAN vlan-id=106
 /ip/address/add interface=IOT_RESTRICTED_VLAN address=192.168.78.129/25
-/ip/pool/add name=iot-restricted-static ranges=192.168.78.130-192.168.78.199
+/ip/pool/add name=iot-restricted-static ranges=192.168.78.129-192.168.78.199
 /ip/pool/add name=iot-restricted-dhcp ranges=192.168.78.200-192.168.78.254
 /ip/dhcp-server/add address-pool=iot-restricted-dhcp interface=IOT_RESTRICTED_VLAN name=iot-restricted-dhcp disabled=no
 /ip/dhcp-server/network/add address=192.168.78.128/25 dns-server=192.168.78.128 gateway=192.168.78.128 comment="IOT_RESTRICTED_VLAN"
