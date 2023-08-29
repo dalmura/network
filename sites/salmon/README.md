@@ -1,4 +1,4 @@
-# [Indigo](https://en.wikipedia.org/wiki/Indigo) Site
+# [Salmon](https://en.wikipedia.org/wiki/Salmon_(color)) Site
 
 This site has the following attributes:
 * Hub site

@@ -1,0 +1,156 @@
+networks:
+  GENERAL:
+    description: "PCs, Phones, etc"
+    vlan_id: 100
+    cidr: "192.168.72.0/25"
+    mask: "255.255.255.128"
+    start: "192.168.72.1"
+    end: "192.168.72.126"
+    dhcp: true
+    allocations:
+      "192.168.72.1": "dal-salmon-fw-0"
+
+  GUEST:
+    description: "Internet only"
+    vlan_id: 101
+    cidr: "192.168.72.128/26"
+    mask: "255.255.255.192"
+    start: "192.168.72.129"
+    end: "192.168.72.190"
+    dhcp: true
+    allocations:
+      "192.168.72.129": "dal-salmon-fw-0"
+
+  VPN:
+    description: "VPN Users"
+    vlan_id: 102
+    cidr: "192.168.72.192/26"
+    mask: "255.255.255.192"
+    start: "192.168.72.193"
+    end: "192.168.72.254"
+    allocations:
+      "192.168.72.193": "dal-salmon-fw-0"
+
+  SERVERS:
+    description: "Kubernetes Clusters"
+    vlan_id: 103
+    cidr: "192.168.73.0/25"
+    mask: "255.255.255.128"
+    start: "192.168.73.1"
+    end: "192.168.73.126"
+    subranges:
+      static:
+        start: "192.168.73.1"
+        end: "192.168.73.63"
+        allocations:
+          "192.168.73.1": "dal-salmon-fw-0"
+        subranges:
+          dal-salmon-vips:
+            start: "192.168.73.2"
+            end: "192.168.73.19"
+            allocations:
+              "192.168.73.2": "dal-salmon-core-1-vip"
+            subranges:
+              dal-salmon-core-1-vips-metallb:
+                start: "192.168.73.10"
+                end: "192.168.73.19"
+          dal-salmon-nodes:
+            start: "192.168.73.20"
+            end: "192.168.73.49"
+            allocations: {}
+      dhcp:
+        start: "192.168.73.64"
+        end: "192.168.73.126"
+
+  SERVERS_STAGING:
+    description: "Hardware staging area"
+    vlan_id: 104
+    cidr: "192.168.73.128/25"
+    mask: "255.255.255.128"
+    start: "192.168.73.129"
+    end: "192.168.73.254"
+    subranges:
+      static:
+        start: "192.168.73.129"
+        end: "192.168.73.149"
+        allocations:
+          "192.168.73.129": "dal-salmon-fw-0"
+          "192.168.73.130": "dal-salmon-core-1-vip"
+      dhcp:
+        start: "192.168.73.150"
+        end: "192.168.73.254"
+
+  IOT_INTERNET:
+    description: "Chromecast, TV, etc"
+    vlan_id: 105
+    cidr: "192.168.74.0/25"
+    mask: "255.255.255.128"
+    start: "192.168.74.1"
+    end: "192.168.74.126"
+    subranges:
+      static:
+        start: "192.168.74.1"
+        end: "192.168.74.69"
+        allocations:
+          "192.168.74.1": "dal-salmon-fw-0"
+      dhcp:
+        start: "192.168.74.70"
+        end: "192.168.74.126"
+
+  IOT_RESTRICTED:
+    description: "Security Cameras, Printers, etc"
+    vlan_id: 106
+    cidr: "192.168.74.128/25"
+    mask: "255.255.255.128"
+    start: "192.168.74.129"
+    end: "192.168.74.254"
+    subranges:
+      static:
+        start: "192.168.74.129"
+        end: "192.168.74.199"
+        allocations:
+          "192.168.74.129": "dal-salmon-fw-0"
+      dhcp:
+        start: "192.168.74.200"
+        end: "192.168.74.254"
+
+  SPARE_2:
+    description: ""
+    vlan_id: 107
+    cidr: "192.168.75.0/25"
+    mask: "255.255.255.128"
+    start: "192.168.75.1"
+    end: "192.168.75.126"
+    allocations: []
+
+  SERVICES:
+    description: "Monitoring"
+    vlan_id: 108
+    cidr: "192.168.75.128/26"
+    mask: "255.255.255.192"
+    start: "192.168.75.129"
+    end: "192.168.75.190"
+    allocations:
+      "192.168.75.129": "dal-salmon-fw-0"
+
+  MANAGEMENT:
+    description: "Network Hardware, IPMIs, UPSs"
+    vlan_id: 109
+    cidr: "192.168.75.192/26"
+    mask: "255.255.255.192"
+    start: "192.168.75.193"
+    end: "192.168.75.254"
+    subranges:
+      static:
+        start: "192.168.75.193"
+        end: "192.168.75.249"
+        allocations:
+          "192.168.75.193": "dal-salmon-fw-0"
+          "192.168.75.194": "dal-salmon-sw-0"
+          "192.168.75.195": "dal-salmon-sw-1"
+          "192.168.75.196": "dal-salmon-wap-0"
+          "192.168.75.197": "dal-salmon-wap-1"
+          "192.168.75.220": "dal-salmon-core-1-vip"
+      dhcp:
+        start: "192.168.75.250"
+        end: "192.168.75.254"

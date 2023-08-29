@@ -1,4 +1,4 @@
-# [Indigo](https://en.wikipedia.org/wiki/Indigo) Site
+# [Cerulean](https://en.wikipedia.org/wiki/Cerulean) Site
 
 This site has the following attributes:
 * Hub site
