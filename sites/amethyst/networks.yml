@@ -1,0 +1,156 @@
+networks:
+  GENERAL:
+    description: "PCs, Phones, etc"
+    vlan_id: 100
+    cidr: "192.168.68.0/25"
+    mask: "255.255.255.128"
+    start: "192.168.68.1"
+    end: "192.168.68.126"
+    dhcp: true
+    allocations:
+      "192.168.68.1": "dal-amethyst-fw-0"
+
+  GUEST:
+    description: "Internet only"
+    vlan_id: 101
+    cidr: "192.168.68.128/26"
+    mask: "255.255.255.192"
+    start: "192.168.68.129"
+    end: "192.168.68.190"
+    dhcp: true
+    allocations:
+      "192.168.68.129": "dal-amethyst-fw-0"
+
+  VPN:
+    description: "VPN Users"
+    vlan_id: 102
+    cidr: "192.168.68.192/26"
+    mask: "255.255.255.192"
+    start: "192.168.68.193"
+    end: "192.168.68.254"
+    allocations:
+      "192.168.68.193": "dal-amethyst-fw-0"
+
+  SERVERS:
+    description: "Kubernetes Clusters"
+    vlan_id: 103
+    cidr: "192.168.69.0/25"
+    mask: "255.255.255.128"
+    start: "192.168.69.1"
+    end: "192.168.69.126"
+    subranges:
+      static:
+        start: "192.168.69.1"
+        end: "192.168.69.63"
+        allocations:
+          "192.168.69.1": "dal-amethyst-fw-0"
+        subranges:
+          dal-amethyst-vips:
+            start: "192.168.69.2"
+            end: "192.168.69.19"
+            allocations:
+              "192.168.69.2": "dal-amethyst-core-1-vip"
+            subranges:
+              dal-amethyst-core-1-vips-metallb:
+                start: "192.168.69.10"
+                end: "192.168.69.19"
+          dal-amethyst-nodes:
+            start: "192.168.69.20"
+            end: "192.168.69.49"
+            allocations: {}
+      dhcp:
+        start: "192.168.69.64"
+        end: "192.168.69.126"
+
+  SERVERS_STAGING:
+    description: "Hardware staging area"
+    vlan_id: 104
+    cidr: "192.168.69.128/25"
+    mask: "255.255.255.128"
+    start: "192.168.69.129"
+    end: "192.168.69.254"
+    subranges:
+      static:
+        start: "192.168.69.129"
+        end: "192.168.69.149"
+        allocations:
+          "192.168.69.129": "dal-amethyst-fw-0"
+          "192.168.69.130": "dal-amethyst-core-1-vip"
+      dhcp:
+        start: "192.168.69.150"
+        end: "192.168.69.254"
+
+  IOT_INTERNET:
+    description: "Chromecast, TV, etc"
+    vlan_id: 105
+    cidr: "192.168.70.0/25"
+    mask: "255.255.255.128"
+    start: "192.168.70.1"
+    end: "192.168.70.126"
+    subranges:
+      static:
+        start: "192.168.70.1"
+        end: "192.168.70.69"
+        allocations:
+          "192.168.70.1": "dal-amethyst-fw-0"
+      dhcp:
+        start: "192.168.70.70"
+        end: "192.168.70.126"
+
+  IOT_RESTRICTED:
+    description: "Security Cameras, Printers, etc"
+    vlan_id: 106
+    cidr: "192.168.70.128/25"
+    mask: "255.255.255.128"
+    start: "192.168.70.129"
+    end: "192.168.70.254"
+    subranges:
+      static:
+        start: "192.168.70.129"
+        end: "192.168.70.199"
+        allocations:
+          "192.168.70.129": "dal-amethyst-fw-0"
+      dhcp:
+        start: "192.168.70.200"
+        end: "192.168.70.254"
+
+  SPARE_2:
+    description: ""
+    vlan_id: 107
+    cidr: "192.168.71.0/25"
+    mask: "255.255.255.128"
+    start: "192.168.71.1"
+    end: "192.168.71.126"
+    allocations: []
+
+  SERVICES:
+    description: "Monitoring"
+    vlan_id: 108
+    cidr: "192.168.71.128/26"
+    mask: "255.255.255.192"
+    start: "192.168.71.129"
+    end: "192.168.71.190"
+    allocations:
+      "192.168.71.129": "dal-amethyst-fw-0"
+
+  MANAGEMENT:
+    description: "Network Hardware, IPMIs, UPSs"
+    vlan_id: 109
+    cidr: "192.168.71.192/26"
+    mask: "255.255.255.192"
+    start: "192.168.71.193"
+    end: "192.168.71.254"
+    subranges:
+      static:
+        start: "192.168.71.193"
+        end: "192.168.71.249"
+        allocations:
+          "192.168.71.193": "dal-amethyst-fw-0"
+          "192.168.71.194": "dal-amethyst-sw-0"
+          "192.168.71.195": "dal-amethyst-sw-1"
+          "192.168.71.196": "dal-amethyst-wap-0"
+          "192.168.71.197": "dal-amethyst-wap-1"
+          "192.168.71.220": "dal-amethyst-core-1-vip"
+      dhcp:
+        start: "192.168.71.250"
+        end: "192.168.71.254"
