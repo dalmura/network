@@ -76,9 +76,10 @@ sign ca=root-ca server name=server
 set root-ca trusted=yes
 set server trusted=yes
 
-# Export cert for use in remote systems
-# No private key material is exported here, just the crt
+# Export certs for use in remote systems
+# No private key material is exported here, just the public crt
 export-certificate file-name=remote-indigo type=pem server
+export-certificate file-name=remote-indigo-root-ca type=pem root-ca
 
 /ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
 /ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
@@ -302,10 +303,16 @@ add name=amethyst address=amethyst.dalmura.cloud profile=dalmura exchange-mode=i
 add name=cerulean address=cerulean.dalmura.cloud profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
 
 # This step will fail unless remote certificates have been uploaded to the device
+/certificate/import name=remote-salmon-root-ca file-name=remote-salmon-root-ca.crt
 /certificate/import name=remote-salmon file-name=remote-salmon.crt
+
+/certificate/import name=remote-amethyst-root-ca file-name=remote-amethyst-root-ca.crt
 /certificate/import name=remote-amethyst file-name=remote-amethyst.crt
+
+/certificate/import name=remote-cerulean-root-ca file-name=remote-cerulean-root-ca.crt
 /certificate/import name=remote-cerulean file-name=remote-cerulean.crt
-:delay 2
+
+:delay 4
 
 /ip/ipsec/identity
 add peer=salmon auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-salmon
@@ -318,13 +325,13 @@ add name=dalmura auth-algorithms=sha256 enc-algorithms=aes-256-cbc lifetime=08:0
 
 /ip/ipsec/policy
 add peer=salmon tunnel=yes sa-src-address=172.16.0.2 sa-dst-address=172.16.0.1 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=amethyst tunnel=yes sa-src-address=172.16.0.17 sa-dst-address=172.16.0.18 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=cerulean tunnel=yes sa-src-address=172.16.0.61 sa-dst-address=172.16.0.61 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=amethyst tunnel=yes sa-src-address=172.16.0.18 sa-dst-address=172.16.0.17 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=cerulean tunnel=yes sa-src-address=172.16.0.61 sa-dst-address=172.16.0.62 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
 
 # GRE tunnel interfaces
 /interface/gre
 add name=salmon   local-address=172.16.0.2  remote-address=172.16.0.1  allow-fast-path=no
-add name=amethyst local-address=172.16.0.17 remote-address=172.16.0.18 allow-fast-path=no
+add name=amethyst local-address=172.16.0.18 remote-address=172.16.0.17 allow-fast-path=no
 add name=cerulean local-address=172.16.0.61 remote-address=172.16.0.61 allow-fast-path=no
 
 /interface/list/member
@@ -342,5 +349,5 @@ add name=indigo-spoke as=65208 router-id=192.168.76.0 output.network=indigo-bgp-
 
 /routing/bgp/connection
 add name=salmon   template=indigo-hub local.address=172.16.0.2 local.role=ebgp remote.address=172.16.0.1/30   remote.as=65207
-add name=amethyst template=indigo-hub local.address=172.16.0.17 local.role=ebgp remote.address=172.16.0.18/30 remote.as=65210
+add name=amethyst template=indigo-hub local.address=172.16.0.18 local.role=ebgp remote.address=172.16.0.17/30 remote.as=65210
 add name=cerulean template=indigo-hub local.address=172.16.0.61 local.role=ebgp remote.address=172.16.0.61/30 remote.as=65209
