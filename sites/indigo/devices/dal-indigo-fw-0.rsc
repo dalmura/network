@@ -348,6 +348,7 @@ add interface=cerulean list=WAN_HUB
 /ip/firewall/address-list
 add list=indigo-bgp-networks address=192.168.76.0/22
 
+# Required for the network above to be advertised correctly to BGP peers
 /ip/route
 add dst-address=192.168.76.0/22 blackhole
 
