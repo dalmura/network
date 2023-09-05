@@ -31,11 +31,6 @@
 
 /interface/bridge/add name=CORE vlan-filtering=no
 
-
-#
-# Trunk Ports
-#
-
 /interface/bridge/port
 add bridge=CORE interface=ether2       comment=""
 add bridge=CORE interface=ether3       comment=""
@@ -62,31 +57,6 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 #
 # IP Addressing & Routing
 #
-
-# General router settings
-/certificate
-add name=ca days-valid=10950 common-name=fw-0.indigo.dalmura.cloud key-usage=key-cert-sign,crl-sign
-add name=server days-valid=10950 common-name=fw-0.indigo.dalmura.cloud subject-alt-name=DNS:fw-0.indigo.dalmura.cloud organization=dalmura unit=indigo
-
-sign ca name=root-ca
-:delay 2
-sign ca=root-ca server name=server
-:delay 2
-
-set root-ca trusted=yes
-set server trusted=yes
-
-# Export certs for use in remote systems
-# No private key material is exported here, just the public crt
-export-certificate file-name=remote-indigo type=pem server
-export-certificate file-name=remote-indigo-root-ca type=pem root-ca
-
-/ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
-/ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
-/ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
-
-# WAN settings
-/ip/dhcp-client/add interface=ether1 use-peer-dns=no use-peer-ntp=no add-default-route=yes dhcp-options=""
 
 # General VLAN
 /interface/vlan/add interface=CORE name=GENERAL_VLAN vlan-id=100
@@ -288,6 +258,46 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 
 /interface/bridge/set CORE vlan-filtering=yes
 
+
+#
+# WAN Setup
+#
+
+/ip/dhcp-client/add interface=ether1 use-peer-dns=no use-peer-ntp=no add-default-route=yes dhcp-options=""
+
+# General router settings
+/ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
+/ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
+
+# Wait until the system clock updates
+# Anything below here is sensitive to system time
+/log info "Waiting for system clock update"
+:do { :delay 1s } while=([:timestamp] < 2728w)
+
+
+#
+# Certificates
+#
+
+/certificate
+add name=ca days-valid=10950 common-name=fw-0.indigo.dalmura.cloud key-usage=key-cert-sign,crl-sign
+add name=server days-valid=10950 common-name=fw-0.indigo.dalmura.cloud subject-alt-name=DNS:fw-0.indigo.dalmura.cloud organization=dalmura unit=indigo
+
+sign ca name=root-ca
+:delay 2
+sign ca=root-ca server name=server
+:delay 2
+
+set root-ca trusted=yes
+set server trusted=yes
+
+# Export certs for use in remote systems
+# No private key material is exported here, just the public crt
+export-certificate file-name=remote-indigo type=pem server
+export-certificate file-name=remote-indigo-root-ca type=pem root-ca
+
+# Web UI certificate
+/ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
 
 #
 # Legacy IPSec
