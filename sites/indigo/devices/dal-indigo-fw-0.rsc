@@ -115,6 +115,7 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 # Management VLAN
 /interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
 /ip/address/add address=192.168.79.193/26 interface=MANAGEMENT_VLAN
+/ip/pool/add name=management-static ranges=192.168.79.193-192.168.79.249
 /ip/pool/add name=management-dhcp ranges=192.168.79.250-192.168.79.254
 /ip/dhcp-server/add address-pool=management-dhcp interface=MANAGEMENT_VLAN name=management-dhcp disabled=no
 /ip/dhcp-server/network/add address=192.168.79.192/26 dns-server=192.168.79.193 gateway=192.168.79.193 comment="MANAGEMENT_VLAN"
@@ -240,6 +241,7 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether5]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether6]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether7]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether8]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus1]
 
 
