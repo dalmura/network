@@ -2,9 +2,8 @@
 .DS_Store
 .terraform/
 venv/
-secrets.json
+secrets.yaml
 
-# Templates that require rendering and contain secrets
-# So ignore their rendered form
-sites/indigo/devices/dal-indigo-wap-0.rsc
-sites/indigo/devices/dal-indigo-wap-1.rsc
+# All device configs are templated
+# So ignore the rendered form
+*.rsc
