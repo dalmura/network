@@ -3,15 +3,23 @@ The Dalmura Network
 
 # Local dependencies
 ```bash
+# Agnostic
+
+# Install rustup and the rust toolchain
+# https://rustup.rs/
+# Follow the prompts, install latest stable
+
+# Ensure you're on the latest Rust version
+rustup update
+
+# Install tera
+cargo install --git https://github.com/chevdor/tera-cli
+
 # MacOS
 brew install python3 yq terraform curl
 
-# Ubuntu
+# Ubuntu & friends
 apt-get install python3 yq terraform curl
-
-python3 -m venv venv
-source venv/bin/activate
-pip3 install --upgrade jinja2-cli
 ```
 
 # Deploying
@@ -38,9 +46,16 @@ Requires both ROUTEROS_USERNAME and ROUTEROS_PASSWORD to be set beforehand.
 
 Optionally you can set MY_IP if you're not using the default local wifi interface.
 
-If a config exists with a `.j2` file extension then that means it contains secrets and must be 'rendered'. This means you will need a `secrets.json` in the root of this repo next to `deploy.sh` with the correct configuration. See `secrets.json.example` for what this could look like.
+All device configs are 'templates' (`.tmpl` extension) and must be rendered. This means the various configuration files in the repo provide a hierarchy of configs that are able to be included in any device config.
 
-We also require you be on the same network as the RouterOS device as it needs to be able to perform a HTTP GET against the client IP running this script (for the router to download it).
+Currently the config files used are:
+* secrets.yaml
+* sites/<site>/secrets.yaml
+* sites/<site>/networks.yaml
+
+The above represents a hierarchy as well, with files lower in the list taking preference.
+
+You are required to be on the same network as the RouterOS device as it needs to be able to perform a HTTP GET against the client IP running this script (for the router to download it). This is because there is currently no easy way to upload a file to a RouterOS device.
 
 ```bash
 # Required

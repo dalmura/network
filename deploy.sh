@@ -40,25 +40,52 @@ if [ ! -d "${TYPE_FOLDER}" ]; then
     exit 1
 fi
 
-echo "WARN: Deploying in 5s"
+if [ -f 'secrets.yaml' ]; then
+    ROOT_SECRETS_FILE='secrets.yaml'
+fi
+
+if [ -f "${SITE_FOLDER}/secrets.yaml" ]; then
+    SITE_SECRETS_FILE="${SITE_FOLDER}/secrets.yaml"
+fi
+
+SITE_NETWORK_FILE="${SITE_FOLDER}/networks.yaml"
+if [ ! -f "${SITE_NETWORK_FILE}" ]; then
+    echo "ERROR: ${SITE_NETWORK_FILE} is missing"
+fi
+
+echo 'WARN: Deploying in 5s'
 sleep 5
 
 if [ "${TYPE}" == 'devices' ]; then
     if [ "${DATA}" == 'global' ]; then
-        echo "ERROR: Global has no networks"
+        echo 'ERROR: Global has no networks'
         exit 1
     fi
 
     # Deploy RouterOS config
     CONFIG_FILE="${TYPE_FOLDER}/${DATA}.rsc"
-    TEMPLATE_FILE="${CONFIG_FILE}.j2"
+    TEMPLATE_FILE="${CONFIG_FILE}.tmpl"
 
-    if [ -f "${TEMPLATE_FILE}" ]; then
-        jinja2 --strict "${TEMPLATE_FILE}" secrets.json -o "${CONFIG_FILE}"
+    if [ ! -f "${TEMPLATE_FILE}" ]; then
+        echo "ERROR: Device template file missing: ${TEMPLATE_FILE}"
+        exit 1
     fi
 
+    yq \
+        --output-format json \
+        eval-all \
+        '. as $item ireduce ({}; . * $item )' \
+        ${ROOT_SECRETS_FILE} \
+        ${SITE_SECRETS_FILE} \
+        "${SITE_NETWORK_FILE}" \
+    | \
+    tera \
+        --template "${TEMPLATE_FILE}" \
+        --out "${CONFIG_FILE}" \
+        --stdin
+
     if [ ! -f "${CONFIG_FILE}" ]; then
-        echo "ERROR: Device file missing? (${CONFIG_FILE})"
+        echo "ERROR: Failed to render: ${CONFIG_FILE}"
         exit 1
     fi
 
@@ -67,11 +94,11 @@ if [ "${TYPE}" == 'devices' ]; then
         exit 0
     fi
 
-    # Find the IP of the device from networks.yml
-    DEVICE_IP=$(yq ".networks.MANAGEMENT.subranges.static.allocations | with_entries(select(.value == \"${DATA}\")) | keys | .[0]" "${SITE_FOLDER}/networks.yml")
+    # Find the IP of the device from networks.yaml
+    DEVICE_IP=$(yq ".networks.MANAGEMENT.subranges.static.allocations | with_entries(select(.value == \"${DATA}\")) | keys | .[0]" "${SITE_NETWORK_FILE}")
 
     if [ "${DEVICE_IP}" == '' ]; then
-        echo "ERROR: Couldn't extract device IP for '${DATA}' from '${SITE_FOLDER}/networks.yml'"
+        echo "ERROR: Couldn't extract device IP for '${DATA}' from '${SITE_NETWORK_FILE}'"
         exit 1
     fi
 
