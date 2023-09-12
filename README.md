@@ -53,7 +53,7 @@ Currently the config files used are:
 * `sites/<site>/secrets.yaml`
 * `sites/<site>/networks.yaml`
 
-The above represents a hierarchy as well, with files lower in the list taking preference.
+The above represents a hierarchy as well, with files lower in the list taking preference (overwriting) when a key name clashes. The `networks.yaml` file contains a single `networks` key that cannot be overwritten (as it's last in the list, so has the highest preference).
 
 You are required to be on the same network as the RouterOS device as it needs to be able to perform a HTTP GET against the client IP running this script (for the router to download it). This is because there is currently no easy way to upload a file to a RouterOS device.
 
