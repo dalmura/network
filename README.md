@@ -42,9 +42,9 @@ export AWS_PROFILE='my-aws-profile'
 
 ## RouterOS
 
-Requires both ROUTEROS_USERNAME and ROUTEROS_PASSWORD to be set beforehand.
+Requires both `ROUTEROS_USERNAME` and `ROUTEROS_PASSWORD` to be set beforehand.
 
-Optionally you can set MY_IP if you're not using the default local wifi interface.
+Optionally you can set `MY_IP` if you're not using the default local wifi interface.
 
 All device configs are 'templates' (`.tmpl` extension) and must be rendered. This means the various configuration files in the repo provide a hierarchy of configs that are able to be included in any device config.
 
