@@ -49,9 +49,9 @@ Optionally you can set MY_IP if you're not using the default local wifi interfac
 All device configs are 'templates' (`.tmpl` extension) and must be rendered. This means the various configuration files in the repo provide a hierarchy of configs that are able to be included in any device config.
 
 Currently the config files used are:
-* secrets.yaml
-* sites/<site>/secrets.yaml
-* sites/<site>/networks.yaml
+* `secrets.yaml`
+* `sites/<site>/secrets.yaml`
+* `sites/<site>/networks.yaml`
 
 The above represents a hierarchy as well, with files lower in the list taking preference.
 
