@@ -120,6 +120,13 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 /ip/dhcp-server/add address-pool=management-dhcp interface=MANAGEMENT_VLAN name=management-dhcp disabled=no
 /ip/dhcp-server/network/add address=192.168.79.192/26 dns-server=192.168.79.193 gateway=192.168.79.193 comment="MANAGEMENT_VLAN"
 
+{% if static_dhcp_leases -%}
+# Optional Static DHCP Leases
+/ip/dhcp-server/lease
+{% for lease in static_dhcp_leases -%}
+  add address={{ lease.address }} server={{ lease.server }} mac-address={{ lease.mac_address }} comment={{ lease.comment }}
+{% endfor %}
+{% endif %}
 
 #
 # Firewall & NAT
