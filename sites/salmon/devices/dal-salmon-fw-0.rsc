@@ -32,28 +32,28 @@
 /interface/bridge/add name=CORE vlan-filtering=no
 
 /interface/bridge/port
-add bridge=CORE interface=ether2       comment=""
-add bridge=CORE interface=ether3       comment=""
-add bridge=CORE interface=ether4       comment=""
-add bridge=CORE interface=ether5       comment=""
-add bridge=CORE interface=ether6       comment=""
-add bridge=CORE interface=ether7       comment=""
-add bridge=CORE interface=ether8       comment=""
-add bridge=CORE interface=ether9       comment=""
-add bridge=CORE interface=ether10      comment=""
-add bridge=CORE interface=sfp-sfpplus1 comment="dal-salmon-sw-0"
+add bridge=CORE interface=ether2  comment=""
+add bridge=CORE interface=ether3  comment=""
+add bridge=CORE interface=ether4  comment=""
+add bridge=CORE interface=ether5  comment=""
+add bridge=CORE interface=ether6  comment=""
+add bridge=CORE interface=ether7  comment=""
+add bridge=CORE interface=ether8  comment=""
+add bridge=CORE interface=ether9  comment=""
+add bridge=CORE interface=ether10 comment=""
+add bridge=CORE interface=sfp1    comment="dal-salmon-sw-0"
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp-sfpplus1 vlan-ids=100
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp-sfpplus1 vlan-ids=101
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp-sfpplus1 vlan-ids=102
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp-sfpplus1 vlan-ids=103
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp-sfpplus1 vlan-ids=104
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp-sfpplus1 vlan-ids=105
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp-sfpplus1 vlan-ids=106
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp-sfpplus1 vlan-ids=107
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp-sfpplus1 vlan-ids=108
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp-sfpplus1 vlan-ids=109
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp1 vlan-ids=100
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp1 vlan-ids=101
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp1 vlan-ids=102
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp1 vlan-ids=103
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp1 vlan-ids=104
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp1 vlan-ids=105
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp1 vlan-ids=106
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp1 vlan-ids=107
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp1 vlan-ids=108
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,sfp1 vlan-ids=109
 
 
 #
