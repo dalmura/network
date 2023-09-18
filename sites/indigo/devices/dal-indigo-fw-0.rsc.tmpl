@@ -345,18 +345,18 @@ add name=dalmura auth-algorithms=sha256 enc-algorithms=aes-256-cbc lifetime=08:0
 /ip/ipsec/policy
 add peer=salmon   tunnel=yes sa-src-address=172.16.0.2  sa-dst-address=172.16.0.1  action=encrypt level=require ipsec-protocols=esp proposal=dalmura
 add peer=amethyst tunnel=yes sa-src-address=172.16.0.18 sa-dst-address=172.16.0.17 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=cerulean tunnel=yes sa-src-address=172.16.0.61 sa-dst-address=172.16.0.62 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=cerulean tunnel=yes sa-src-address=172.16.0.62 sa-dst-address=172.16.0.61 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
 
 # GRE tunnel interfaces
 /interface/gre
 add name=salmon   local-address=172.16.0.2  remote-address=172.16.0.1  allow-fast-path=no
 add name=amethyst local-address=172.16.0.18 remote-address=172.16.0.17 allow-fast-path=no
-add name=cerulean local-address=172.16.0.61 remote-address=172.16.0.62 allow-fast-path=no
+add name=cerulean local-address=172.16.0.62 remote-address=172.16.0.61 allow-fast-path=no
 
 /ip/address
 add address=172.16.0.2/30  network=172.16.0.0  interface=salmon
 add address=172.16.0.18/30 network=172.16.0.16 interface=amethyst
-add address=172.16.0.61/30 network=172.16.0.60 interface=cerulean
+add address=172.16.0.62/30 network=172.16.0.60 interface=cerulean
 
 /interface/list/member
 add interface=salmon   list=WAN_HUB
@@ -378,4 +378,4 @@ add name=indigo-spoke as=65208 router-id=192.168.76.0 output.network=indigo-bgp-
 /routing/bgp/connection
 add name=salmon   template=indigo-hub local.address=172.16.0.2  local.role=ebgp remote.address=172.16.0.1/30  remote.as=65207
 add name=amethyst template=indigo-hub local.address=172.16.0.18 local.role=ebgp remote.address=172.16.0.17/30 remote.as=65210
-add name=cerulean template=indigo-hub local.address=172.16.0.61 local.role=ebgp remote.address=172.16.0.61/30 remote.as=65209
+add name=cerulean template=indigo-hub local.address=172.16.0.62 local.role=ebgp remote.address=172.16.0.61/30 remote.as=65209
