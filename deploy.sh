@@ -71,10 +71,19 @@ if [ "${TYPE}" == 'devices' ]; then
         exit 1
     fi
 
+    if [ "${DEVICE_UPGRADE}" != 'false' ]; then
+        DEVICE_UPGRADE='true'
+    fi
+
+    TMP_CONFIG_FILE=$(mktemp)
+
+    echo "{\"site\":\"${SITE}\", \"device\":\"${DATA}\", \"device_upgrade\": ${DEVICE_UPGRADE}}" > ${TMP_CONFIG_FILE}
+
     yq \
         --output-format json \
         eval-all \
         '. as $item ireduce ({}; . * $item )' \
+        ${TMP_CONFIG_FILE} \
         ${ROOT_SECRETS_FILE} \
         ${SITE_SECRETS_FILE} \
         "${SITE_NETWORK_FILE}" \
@@ -83,6 +92,8 @@ if [ "${TYPE}" == 'devices' ]; then
         --template "${TEMPLATE_FILE}" \
         --out "${CONFIG_FILE}" \
         --stdin
+
+    rm "${TMP_CONFIG_FILE}"
 
     if [ ! -f "${CONFIG_FILE}" ]; then
         echo "ERROR: Failed to render: ${CONFIG_FILE}"
