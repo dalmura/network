@@ -289,6 +289,18 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 #
 
 /certificate
+
+{% if device_upgrade %}
+import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=internal-indigo-root-ca.crt
+import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=internal-indigo-root-ca.key
+import name=server  passphrase="{{ cert_export_passphrase }}" file-name=internal-indigo.crt
+import name=server  passphrase="{{ cert_export_passphrase }}" file-name=internal-indigo.key
+
+delay 4
+
+set root-ca trusted=yes
+set server  trusted=yes
+{% else %}
 add name=ca days-valid=10950 common-name=fw-0.indigo.dalmura.cloud key-usage=key-cert-sign,crl-sign
 add name=server days-valid=10950 common-name=fw-0.indigo.dalmura.cloud subject-alt-name=DNS:fw-0.indigo.dalmura.cloud organization=dalmura unit=indigo
 
@@ -298,15 +310,23 @@ sign ca=root-ca server name=server
 :delay 2
 
 set root-ca trusted=yes
-set server trusted=yes
+set server  trusted=yes
 
 # Export certs for use in remote systems
 # No private key material is exported here, just the public crt
 export-certificate file-name=remote-indigo type=pem server
 export-certificate file-name=remote-indigo-root-ca type=pem root-ca
 
+{% if cert_export_passphrase %}
+# Private key material is exported here
+export-certificate file-name=internal-indigo type=pem export-passphrase="{{ cert_export_passphrase }}" server
+export-certificate file-name=internal-indigo-root-ca type=pem export-passphrase="{{ cert_export_passphrase }}" root-ca
+{% endif %}
+{% end %}
+
 # Web UI certificate
 /ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
+/ip/service/set api-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
 
 #
 # Legacy IPSec
