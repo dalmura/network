@@ -1,0 +1,150 @@
+#
+# dal-salmon-wap-0
+#
+
+#
+# Naming
+#
+
+/system/identity/set name="dal-salmon-wap-0"
+
+
+#
+# Network Overview
+#
+
+# SSID                  | VLAN
+# dal-salmon-general    | 100
+# dal-salmon-guest      | 101
+# dal-salmon-management | 109
+
+
+#
+# Wireless Interfaces & VLAN
+#
+
+/interface/wireless/security-profiles
+add name=general mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_salmon['wifi_general_password'] }}"
+add name=guest mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_salmon['wifi_guest_password'] }}"
+add name=management mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_salmon['wifi_management_password'] }}"
+
+/interface/wireless
+# General Wireless & VLAN
+set wireless-protocol=802.11 mode=ap-bridge band=2ghz-g/n channel-width="20/40mhz-XX" frequency=auto ssid="dal-salmon-general" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan1]
+set wireless-protocol=802.11 mode=ap-bridge band=5ghz-n/ac channel-width="20/40/80mhz-XXXX" frequency=auto ssid="dal-salmon-general" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan2]
+
+# Guest Wireless & VLAN
+add name=wlan1-guest master-interface=wlan1 ssid="dal-salmon-guest" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
+add name=wlan2-guest master-interface=wlan2 ssid="dal-salmon-guest" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
+
+# Management Wireless & VLAN
+add name=wlan1-management master-interface=wlan1 ssid="dal-salmon-management" security-profile=management wps-mode=disabled vlan-id=109 vlan-mode=use-tag
+add name=wlan2-management master-interface=wlan2 ssid="dal-salmon-management" security-profile=management wps-mode=disabled vlan-id=109 vlan-mode=use-tag
+
+# Turn everything on
+enable [find]
+
+
+#
+# Bridge
+#
+
+/interface/bridge/add name=CORE vlan-filtering=no
+
+
+#
+# Trunk Ports
+#
+
+/interface/bridge/port
+add bridge=CORE interface=ether1           comment="dal-salmon-fw-0"
+add bridge=CORE interface=ether2           comment=""
+add bridge=CORE interface=wlan1            comment=""
+add bridge=CORE interface=wlan2            comment=""
+add bridge=CORE interface=wlan1-guest      comment=""
+add bridge=CORE interface=wlan2-guest      comment=""
+add bridge=CORE interface=wlan1-management comment=""
+add bridge=CORE interface=wlan2-management comment=""
+
+/interface/bridge/vlan
+add bridge=CORE tagged=CORE,ether1,ether2,wlan1,wlan2 vlan-ids=100
+add bridge=CORE tagged=CORE,ether1,ether2,wlan1-guest,wlan2-guest vlan-ids=101
+add bridge=CORE tagged=CORE,ether1,ether2,wlan1-management,wlan2-management vlan-ids=109
+
+
+#
+# IP Addressing & Routing
+#
+
+# General router settings
+/certificate
+add name=ca days-valid=10950 common-name=wap-0.salmon.dalmura.cloud key-usage=key-cert-sign,crl-sign
+add name=server days-valid=10950 common-name=wap-0.salmon.dalmura.cloud subject-alt-name=DNS:wap-0.salmon.dalmura.cloud organization=dalmura unit=salmon
+
+sign ca name=root-ca
+:delay 2
+sign ca=root-ca server name=server
+:delay 2
+
+set root-ca trusted=yes
+set server trusted=yes
+
+/ip/dns/set servers="192.168.75.193"
+/ip/service/set www-ssl tls-version=only-1.2 address=192.168.75.192/26 certificate=server disabled=no
+
+# Management VLAN
+/interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
+/ip/address/add address=192.168.75.197/26 interface=MANAGEMENT_VLAN
+
+
+#
+# Firewall & NAT
+#
+
+/interface/list/add name=MANAGEMENT
+/interface/list/member/add interface=MANAGEMENT_VLAN list=MANAGEMENT
+
+/ip/firewall/filter
+
+# Input Chain
+add chain=input action=accept connection-state=established,related,untracked comment="accept established,related,untracked"
+add chain=input action=accept connection-state=invalid comment="drop invalid"
+add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loopback (for CAPsMAN)"
+
+# Add more general input related access here
+add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
+
+# Finally drop everything else
+add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
+add chain=input action=drop log=yes log-prefix=input-drop comment="drop all other input"
+
+
+#
+# VLAN Security
+#
+
+/interface/bridge/port
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether1]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-guest]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2-guest]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-management]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2-management]
+
+
+#
+# MAC Server
+#
+
+/ip/neighbor/discovery-settings/set discover-interface-list=MANAGEMENT
+/tool/mac-server/mac-winbox/set allowed-interface-list=MANAGEMENT
+/tool/mac-server/set allowed-interface-list=MANAGEMENT
+
+
+#
+# Enable VLAN Filtering
+#
+
+/interface/bridge/set CORE vlan-filtering=yes

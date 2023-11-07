@@ -146,8 +146,8 @@ networks:
         end: "192.168.75.249"
         allocations:
           "192.168.75.193": "dal-salmon-fw-0"
-          "192.168.75.194": "dal-salmon-sw-0"
-          "192.168.75.195": "dal-salmon-sw-1"
+          #"192.168.75.194": "dal-salmon-sw-0"
+          #"192.168.75.195": "dal-salmon-sw-1"
           "192.168.75.196": "dal-salmon-wap-0"
           "192.168.75.197": "dal-salmon-wap-1"
           "192.168.75.220": "dal-salmon-core-1-vip"
