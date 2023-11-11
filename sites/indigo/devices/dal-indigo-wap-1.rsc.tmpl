@@ -13,10 +13,12 @@
 # Network Overview
 #
 
-# SSID                  | VLAN
-# dal-indigo-general    | 100
-# dal-indigo-guest      | 101
-# dal-indigo-management | 109
+# SSID                      | VLAN
+# dal-indigo-general        | 100
+# dal-indigo-guest          | 101
+# dal-indigo-iot-internet   | 105
+# dal-indigo-iot-restricted | 106
+# dal-indigo-management     | 109
 
 
 #
@@ -56,6 +58,14 @@ add name=wifi2-guest master-interface=wifi2 configuration=dalmura configuration.
 add name=wifi1-management master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-management channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_management_password'] }}" datapath.vlan-id=109
 add name=wifi2-management master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-management channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_management_password'] }}" datapath.vlan-id=109
 
+# IoT Internet Wireless & VLAN
+add name=wifi1-iot-internet master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-iot-internet channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_iot_internet_password'] }}" datapath.vlan-id=105
+add name=wifi2-iot-internet master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-iot-internet channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_iot_internet_password'] }}" datapath.vlan-id=105
+
+# IoT Restricted Wireless & VLAN
+add name=wifi1-iot-restricted master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-iot-restricted channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_iot_restricted_password'] }}" datapath.vlan-id=106
+add name=wifi2-iot-restricted master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-iot-restricted channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_iot_restricted_password'] }}" datapath.vlan-id=106
+
 # Turn everything on
 enable [find]
 
@@ -65,18 +75,24 @@ enable [find]
 #
 
 /interface/bridge/port
-add bridge=CORE interface=ether1           comment="dal-indigo-sw-0"
-add bridge=CORE interface=ether2           comment=""
-add bridge=CORE interface=wifi1            comment=""
-add bridge=CORE interface=wifi2            comment=""
-add bridge=CORE interface=wifi1-guest      comment=""
-add bridge=CORE interface=wifi2-guest      comment=""
-add bridge=CORE interface=wifi1-management comment=""
-add bridge=CORE interface=wifi2-management comment=""
+add bridge=CORE interface=ether1               comment="dal-indigo-sw-0"
+add bridge=CORE interface=ether2               comment=""
+add bridge=CORE interface=wifi1                comment=""
+add bridge=CORE interface=wifi2                comment=""
+add bridge=CORE interface=wifi1-guest          comment=""
+add bridge=CORE interface=wifi2-guest          comment=""
+add bridge=CORE interface=wifi1-iot-internet   comment=""
+add bridge=CORE interface=wifi2-iot-internet   comment=""
+add bridge=CORE interface=wifi1-iot-restricted comment=""
+add bridge=CORE interface=wifi2-iot-restricted comment=""
+add bridge=CORE interface=wifi1-management     comment=""
+add bridge=CORE interface=wifi2-management     comment=""
 
 /interface/bridge/vlan
 add bridge=CORE tagged=CORE,ether1,ether2,wifi1,wifi2 vlan-ids=100
 add bridge=CORE tagged=CORE,ether1,ether2,wifi1-guest,wifi2-guest vlan-ids=101
+add bridge=CORE tagged=CORE,ether1,ether2,wifi1-iot-internet,wifi2-iot-internet vlan-ids=105
+add bridge=CORE tagged=CORE,ether1,ether2,wifi1-iot-restricted,wifi2-iot-restricted vlan-ids=106
 add bridge=CORE tagged=CORE,ether1,ether2,wifi1-management,wifi2-management vlan-ids=109
 
 
@@ -138,6 +154,10 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-guest]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-guest]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-iot-internet]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-iot-internet]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-iot-restricted]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-iot-restricted]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-management]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-management]
 
