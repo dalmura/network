@@ -106,7 +106,7 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 /ip/pool/add name=iot-restricted-static ranges=192.168.78.129-192.168.78.199
 /ip/pool/add name=iot-restricted-dhcp ranges=192.168.78.200-192.168.78.254
 /ip/dhcp-server/add address-pool=iot-restricted-dhcp interface=IOT_RESTRICTED_VLAN name=iot-restricted-dhcp disabled=no
-/ip/dhcp-server/network/add address=192.168.78.128/25 dns-server=192.168.78.128 gateway=192.168.78.128 comment="IOT_RESTRICTED_VLAN"
+/ip/dhcp-server/network/add address=192.168.78.128/25 dns-server=192.168.78.129 gateway=192.168.78.129 comment="IOT_RESTRICTED_VLAN"
 
 # Services VLAN
 /interface/vlan/add interface=CORE name=SERVICES_VLAN vlan-id=108
