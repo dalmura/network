@@ -62,11 +62,11 @@ add bridge=CORE interface=ether7                comment="D?-P?? AP"
 # trunk
 add bridge=CORE interface=ether8                comment="D9-P15 AP"
 
-# untagged - GENERAL
-add bridge=CORE interface=ether9       pvid=100 comment="D8.1-P5 Network Port"
+# untagged - IOT_INTERNET
+add bridge=CORE interface=ether9       pvid=105 comment="D8.1-P5 Network Port"
 
-# untagged - GENERAL
-add bridge=CORE interface=ether10      pvid=100 comment="D8.2-P6 Network Port"
+# untagged - IOT_INTERNET
+add bridge=CORE interface=ether10      pvid=105 comment="D8.2-P6 Network Port"
 
 # untagged - GENERAL
 add bridge=CORE interface=ether11      pvid=100 comment="D10.1-P3 Network Port"
@@ -124,12 +124,12 @@ add bridge=CORE interface=sfp-sfpplus4          comment=""
 
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=101
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=102
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,ether21,ether22,ether23,ether24,sfp-sfpplus2 untagged=ether19,sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether20,ether21,ether22,ether23,ether24 vlan-ids=104
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether5 vlan-ids=105
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether5,ether9,ether10 vlan-ids=105
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=107
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=108
