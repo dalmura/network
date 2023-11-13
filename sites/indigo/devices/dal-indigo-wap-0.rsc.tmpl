@@ -118,7 +118,7 @@ add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGE
 
 # Finally drop everything else
 add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
-add chain=input action=drop log=yes log-prefix=input-drop comment="drop all other input"
+add chain=input action=drop log=no log-prefix=input-drop comment="drop all other input"
 
 
 #
