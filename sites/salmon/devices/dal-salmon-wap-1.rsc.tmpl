@@ -13,10 +13,12 @@
 # Network Overview
 #
 
-# SSID                  | VLAN
-# dal-salmon-general    | 100
-# dal-salmon-guest      | 101
-# dal-salmon-management | 109
+# SSID                      | VLAN
+# dal-salmon-general        | 100
+# dal-salmon-guest          | 101
+# dal-salmon-iot-internet   | 105
+# dal-salmon-iot-restricted | 106
+# dal-salmon-management     | 109
 
 
 #
@@ -26,6 +28,8 @@
 /interface/wireless/security-profiles
 add name=general mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_salmon['wifi_general_password'] }}"
 add name=guest mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_salmon['wifi_guest_password'] }}"
+add name=iot-internet mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_salmon['wifi_iot_internet_password'] }}"
+add name=iot-restricted mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_salmon['wifi_iot_restricted_password'] }}"
 add name=management mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_salmon['wifi_management_password'] }}"
 
 /interface/wireless
@@ -36,6 +40,14 @@ set wireless-protocol=802.11 mode=ap-bridge band=5ghz-n/ac channel-width="20/40/
 # Guest Wireless & VLAN
 add name=wlan1-guest master-interface=wlan1 ssid="dal-salmon-guest" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
 add name=wlan2-guest master-interface=wlan2 ssid="dal-salmon-guest" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
+
+# IoT Internet Wireless & VLAN
+add name=wlan1-iot-internet master-interface=wlan1 ssid="dal-salmon-iot-internet" security-profile=iot-internet wps-mode=disabled vlan-id=105 vlan-mode=use-tag
+add name=wlan2-iot-internet master-interface=wlan2 ssid="dal-salmon-iot-internet" security-profile=iot-internet wps-mode=disabled vlan-id=105 vlan-mode=use-tag
+
+# IoT Restricted Wireless & VLAN
+add name=wlan1-iot-restricted master-interface=wlan1 ssid="dal-salmon-iot-restricted" security-profile=iot-restricted wps-mode=disabled vlan-id=106 vlan-mode=use-tag
+add name=wlan2-iot-restricted master-interface=wlan2 ssid="dal-salmon-iot-restricted" security-profile=iot-restricted wps-mode=disabled vlan-id=106 vlan-mode=use-tag
 
 # Management Wireless & VLAN
 add name=wlan1-management master-interface=wlan1 ssid="dal-salmon-management" security-profile=management wps-mode=disabled vlan-id=109 vlan-mode=use-tag
@@ -57,40 +69,30 @@ enable [find]
 #
 
 /interface/bridge/port
-add bridge=CORE interface=ether1           comment="dal-salmon-fw-0"
-add bridge=CORE interface=ether2           comment=""
-add bridge=CORE interface=wlan1            comment=""
-add bridge=CORE interface=wlan2            comment=""
-add bridge=CORE interface=wlan1-guest      comment=""
-add bridge=CORE interface=wlan2-guest      comment=""
-add bridge=CORE interface=wlan1-management comment=""
-add bridge=CORE interface=wlan2-management comment=""
+add bridge=CORE interface=ether1               comment="dal-salmon-fw-0"
+add bridge=CORE interface=ether2               comment=""
+add bridge=CORE interface=wlan1                comment=""
+add bridge=CORE interface=wlan2                comment=""
+add bridge=CORE interface=wlan1-guest          comment=""
+add bridge=CORE interface=wlan2-guest          comment=""
+add bridge=CORE interface=wlan1-iot-internet   comment=""
+add bridge=CORE interface=wlan2-iot-internet   comment=""
+add bridge=CORE interface=wlan1-iot-restricted comment=""
+add bridge=CORE interface=wlan2-iot-restricted comment=""
+add bridge=CORE interface=wlan1-management     comment=""
+add bridge=CORE interface=wlan2-management     comment=""
 
 /interface/bridge/vlan
 add bridge=CORE tagged=CORE,ether1,ether2,wlan1,wlan2 vlan-ids=100
 add bridge=CORE tagged=CORE,ether1,ether2,wlan1-guest,wlan2-guest vlan-ids=101
+add bridge=CORE tagged=CORE,ether1,ether2,wlan1-iot-internet,wlan2-iot-internet vlan-ids=105
+add bridge=CORE tagged=CORE,ether1,ether2,wlan1-iot-restricted,wlan2-iot-restricted vlan-ids=106
 add bridge=CORE tagged=CORE,ether1,ether2,wlan1-management,wlan2-management vlan-ids=109
 
 
 #
 # IP Addressing & Routing
 #
-
-# General router settings
-/certificate
-add name=ca days-valid=10950 common-name=wap-1.salmon.dalmura.cloud key-usage=key-cert-sign,crl-sign
-add name=server days-valid=10950 common-name=wap-1.salmon.dalmura.cloud subject-alt-name=DNS:wap-1.salmon.dalmura.cloud organization=dalmura unit=salmon
-
-sign ca name=root-ca
-:delay 2
-sign ca=root-ca server name=server
-:delay 2
-
-set root-ca trusted=yes
-set server trusted=yes
-
-/ip/dns/set servers="192.168.75.193"
-/ip/service/set www-ssl tls-version=only-1.2 address=192.168.75.192/26 certificate=server disabled=no
 
 # Management VLAN
 /interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
@@ -116,7 +118,7 @@ add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGE
 
 # Finally drop everything else
 add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
-add chain=input action=drop log=yes log-prefix=input-drop comment="drop all other input"
+add chain=input action=drop log=no log-prefix=input-drop comment="drop all other input"
 
 
 #
@@ -130,6 +132,10 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-guest]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2-guest]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-iot-internet]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2-iot-internet]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-iot-restricted]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2-iot-restricted]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-management]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2-management]
 
@@ -148,3 +154,39 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 #
 
 /interface/bridge/set CORE vlan-filtering=yes
+
+
+#
+# Device Configuration
+#
+
+# General router settings
+/ip/dns/set servers="192.168.75.193"
+/ip/route/add dst-address=0.0.0.0/0 gateway=192.168.75.193
+/ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
+/ip/cloud/advanced/set use-local-address=yes
+
+# Wait until the system clock updates
+# Anything below here is sensitive to system time
+/log info "Waiting for system clock update"
+:do { :delay 1s } while=([:timestamp] < 2728w)
+
+
+#
+# Certificates
+#
+
+
+/certificate
+add name=ca days-valid=10950 common-name=wap-1.salmon.dalmura.cloud key-usage=key-cert-sign,crl-sign
+add name=server days-valid=10950 common-name=wap-1.salmon.dalmura.cloud subject-alt-name=DNS:wap-1.salmon.dalmura.cloud organization=dalmura unit=salmon
+
+sign ca name=root-ca
+:delay 2
+sign ca=root-ca server name=server
+:delay 2
+
+set root-ca trusted=yes
+set server trusted=yes
+
+/ip/service/set www-ssl tls-version=only-1.2 address=192.168.75.192/26 certificate=server disabled=no
