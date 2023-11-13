@@ -13,10 +13,12 @@
 # Network Overview
 #
 
-# SSID                  | VLAN
-# dal-indigo-general    | 100
-# dal-indigo-guest      | 101
-# dal-indigo-management | 109
+# SSID                      | VLAN
+# dal-indigo-general        | 100
+# dal-indigo-guest          | 101
+# dal-indigo-iot-internet   | 105
+# dal-indigo-iot-restricted | 106
+# dal-indigo-management     | 109
 
 
 #
@@ -56,6 +58,14 @@ add name=wifi2-guest master-interface=wifi2 configuration=dalmura configuration.
 add name=wifi1-management master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-management channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_management_password'] }}" datapath.vlan-id=109
 add name=wifi2-management master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-management channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_management_password'] }}" datapath.vlan-id=109
 
+# IoT Internet Wireless & VLAN
+add name=wifi1-iot-internet master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-iot-internet channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_iot_internet_password'] }}" datapath.vlan-id=105
+add name=wifi2-iot-internet master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-iot-internet channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_iot_internet_password'] }}" datapath.vlan-id=105
+
+# IoT Restricted Wireless & VLAN
+add name=wifi1-iot-restricted master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-iot-restricted channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_iot_restricted_password'] }}" datapath.vlan-id=106
+add name=wifi2-iot-restricted master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-iot-restricted channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_iot_restricted_password'] }}" datapath.vlan-id=106
+
 # Turn everything on
 enable [find]
 
@@ -65,40 +75,30 @@ enable [find]
 #
 
 /interface/bridge/port
-add bridge=CORE interface=ether1           comment="dal-indigo-sw-0"
-add bridge=CORE interface=ether2           comment=""
-add bridge=CORE interface=wifi1            comment=""
-add bridge=CORE interface=wifi2            comment=""
-add bridge=CORE interface=wifi1-guest      comment=""
-add bridge=CORE interface=wifi2-guest      comment=""
-add bridge=CORE interface=wifi1-management comment=""
-add bridge=CORE interface=wifi2-management comment=""
+add bridge=CORE interface=ether1               comment="dal-indigo-sw-0"
+add bridge=CORE interface=ether2               comment=""
+add bridge=CORE interface=wifi1                comment=""
+add bridge=CORE interface=wifi2                comment=""
+add bridge=CORE interface=wifi1-guest          comment=""
+add bridge=CORE interface=wifi2-guest          comment=""
+add bridge=CORE interface=wifi1-iot-internet   comment=""
+add bridge=CORE interface=wifi2-iot-internet   comment=""
+add bridge=CORE interface=wifi1-iot-restricted comment=""
+add bridge=CORE interface=wifi2-iot-restricted comment=""
+add bridge=CORE interface=wifi1-management     comment=""
+add bridge=CORE interface=wifi2-management     comment=""
 
 /interface/bridge/vlan
 add bridge=CORE tagged=CORE,ether1,ether2,wifi1,wifi2 vlan-ids=100
 add bridge=CORE tagged=CORE,ether1,ether2,wifi1-guest,wifi2-guest vlan-ids=101
+add bridge=CORE tagged=CORE,ether1,ether2,wifi1-iot-internet,wifi2-iot-internet vlan-ids=105
+add bridge=CORE tagged=CORE,ether1,ether2,wifi1-iot-restricted,wifi2-iot-restricted vlan-ids=106
 add bridge=CORE tagged=CORE,ether1,ether2,wifi1-management,wifi2-management vlan-ids=109
 
 
 #
 # IP Addressing & Routing
 #
-
-# General router settings
-/certificate
-add name=ca days-valid=10950 common-name=wap-1.indigo.dalmura.cloud key-usage=key-cert-sign,crl-sign
-add name=server days-valid=10950 common-name=wap-1.indigo.dalmura.cloud subject-alt-name=DNS:wap-1.indigo.dalmura.cloud organization=dalmura unit=indigo
-
-sign ca name=root-ca
-:delay 2
-sign ca=root-ca server name=server
-:delay 2
-
-set root-ca trusted=yes
-set server trusted=yes
-
-/ip/dns/set servers="192.168.79.193"
-/ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
 
 # Management VLAN
 /interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
@@ -138,6 +138,10 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-guest]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-guest]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-iot-internet]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-iot-internet]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-iot-restricted]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-iot-restricted]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-management]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-management]
 
@@ -156,3 +160,36 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 #
 
 /interface/bridge/set CORE vlan-filtering=yes
+
+#
+# Device Configuration
+#
+
+/ip/dns/set servers="192.168.79.193"
+/ip/route/add dst-address=0.0.0.0/0 gateway=192.168.79.193
+/ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
+/ip/cloud/advanced/set use-local-address=yes
+
+# Wait until the system clock updates
+# Anything below here is sensitive to system time
+/log info "Waiting for system clock update"
+:do { :delay 1s } while=([:timestamp] < 2728w)
+
+
+#
+# Certificates
+#
+
+/certificate
+add name=ca days-valid=10950 common-name=wap-1.indigo.dalmura.cloud key-usage=key-cert-sign,crl-sign
+add name=server days-valid=10950 common-name=wap-1.indigo.dalmura.cloud subject-alt-name=DNS:wap-1.indigo.dalmura.cloud organization=dalmura unit=indigo
+
+sign ca name=root-ca
+:delay 2
+sign ca=root-ca server name=server
+:delay 2
+
+set root-ca trusted=yes
+set server trusted=yes
+
+/ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no

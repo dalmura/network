@@ -39,58 +39,58 @@
 /interface/bridge/port
 
 # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether1       pvid=106 comment="front-1 camera"
+add bridge=CORE interface=ether1       pvid=106 comment="D6-P17 Camera"
 
 # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether2       pvid=106 comment="rear-1 camera"
+add bridge=CORE interface=ether2       pvid=106 comment="D2-P16 Camera"
 
 # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether3       pvid=106 comment="rear-2 camera"
+add bridge=CORE interface=ether3       pvid=106 comment="D7-P18 Camera"
 
 # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether4       pvid=106 comment="garage-1 camera"
+add bridge=CORE interface=ether4       pvid=106 comment="D?-P?? Camera"
 
 # untagged - IOT_INTERNET
-add bridge=CORE interface=ether5       pvid=105 comment="doorbell"
+add bridge=CORE interface=ether5       pvid=105 comment="D3-P19 Doorbell"
 
 # trunk
 add bridge=CORE interface=ether6                comment="trunk port for local access"
 
 # trunk
-add bridge=CORE interface=ether7                comment="dal-indigo-wap-0 (garage)"
+add bridge=CORE interface=ether7                comment="D?-P?? AP"
 
 # trunk
-add bridge=CORE interface=ether8                comment="dal-indigo-wap-1 (upstairs)"
+add bridge=CORE interface=ether8                comment="D9-P15 AP"
 
 # untagged - GENERAL
-add bridge=CORE interface=ether9       pvid=100 comment="master-bedroom-1"
+add bridge=CORE interface=ether9       pvid=100 comment="D8.1-P5 Network Port"
 
 # untagged - GENERAL
-add bridge=CORE interface=ether10      pvid=100 comment="master-bedroom-2"
+add bridge=CORE interface=ether10      pvid=100 comment="D8.2-P6 Network Port"
 
 # untagged - GENERAL
-add bridge=CORE interface=ether11      pvid=100 comment="left-study-1"
+add bridge=CORE interface=ether11      pvid=100 comment="D10.1-P3 Network Port"
 
 # untagged - GENERAL
-add bridge=CORE interface=ether12      pvid=100 comment="left-study-2"
+add bridge=CORE interface=ether12      pvid=100 comment="D10.2-P4 Network Port"
 
 # untagged - GENERAL
-add bridge=CORE interface=ether13      pvid=100 comment="right-study-1"
+add bridge=CORE interface=ether13      pvid=100 comment="D11.1-P1 Network Port"
 
 # untagged - GENERAL
-add bridge=CORE interface=ether14      pvid=100 comment="right-study-2"
+add bridge=CORE interface=ether14      pvid=100 comment="D11.2-P2 Network Port"
+
+# trunk
+add bridge=CORE interface=ether15               comment="D4.1-P7 Network Port"
 
 # untagged - GENERAL
-add bridge=CORE interface=ether15      pvid=100 comment="living-room-1"
+add bridge=CORE interface=ether16      pvid=100 comment="D4.2-P8 Network Port"
 
 # untagged - GENERAL
-add bridge=CORE interface=ether16      pvid=100 comment="living-room-2"
+add bridge=CORE interface=ether17      pvid=100 comment="D5.1-P9 Network Port"
 
 # untagged - GENERAL
-add bridge=CORE interface=ether17      pvid=100 comment="media-room-1"
-
-# untagged - GENERAL
-add bridge=CORE interface=ether18      pvid=100 comment="media-room-2"
+add bridge=CORE interface=ether18      pvid=100 comment="D5.2-P10 Network Port"
 
 # untagged - SERVERS
 add bridge=CORE interface=ether19      pvid=103 comment="laptop-servers"
@@ -124,37 +124,21 @@ add bridge=CORE interface=sfp-sfpplus4          comment=""
 
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 vlan-ids=101
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 vlan-ids=102
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether21,ether22,ether23,ether24,sfp-sfpplus2 untagged=ether19,sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 untagged=ether20,ether21,ether22,ether23,ether24 vlan-ids=104
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 untagged=ether5 vlan-ids=105
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 vlan-ids=107
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 vlan-ids=108
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,sfp-sfpplus2 vlan-ids=109
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=101
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=102
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,ether21,ether22,ether23,ether24,sfp-sfpplus2 untagged=ether19,sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether20,ether21,ether22,ether23,ether24 vlan-ids=104
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether5 vlan-ids=105
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=107
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=108
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=109
 
 
 #
 # IP Addressing & Routing
 #
-
-# General router settings
-/certificate
-add name=ca days-valid=10950 common-name=sw-0.indigo.dalmura.cloud key-usage=key-cert-sign,crl-sign
-add name=server days-valid=10950 common-name=sw-0.indigo.dalmura.cloud subject-alt-name=DNS:sw-0.indigo.dalmura.cloud organization=dalmura unit=indigo
-
-sign ca name=root-ca
-:delay 2
-sign ca=root-ca server name=server
-:delay 2
-
-set root-ca trusted=yes
-set server trusted=yes
-
-/ip/dns/set servers="192.168.79.193"
-/ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
 
 # Management VLAN
 /interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
@@ -202,7 +186,7 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priori
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether12]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether13]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether14]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether15]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether15]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether16]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether17]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether18]
@@ -231,3 +215,37 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priori
 #
 
 /interface/bridge/set CORE vlan-filtering=yes
+
+
+#
+# Device Configuration
+#
+
+# General router settings
+/ip/dns/set servers="192.168.79.193"
+/ip/route/add dst-address=0.0.0.0/0 gateway=192.168.79.193
+/ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
+/ip/cloud/advanced/set use-local-address=yes
+
+# Wait until the system clock updates
+# Anything below here is sensitive to system time
+/log info "Waiting for system clock update"
+:do { :delay 1s } while=([:timestamp] < 2728w)
+
+#
+# Certificates
+#
+
+/certificate
+add name=ca days-valid=10950 common-name=sw-0.indigo.dalmura.cloud key-usage=key-cert-sign,crl-sign
+add name=server days-valid=10950 common-name=sw-0.indigo.dalmura.cloud subject-alt-name=DNS:sw-0.indigo.dalmura.cloud organization=dalmura unit=indigo
+
+sign ca name=root-ca
+:delay 2
+sign ca=root-ca server name=server
+:delay 2
+
+set root-ca trusted=yes
+set server trusted=yes
+
+/ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no

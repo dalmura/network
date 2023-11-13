@@ -106,7 +106,7 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 /ip/pool/add name=iot-restricted-static ranges=192.168.78.129-192.168.78.199
 /ip/pool/add name=iot-restricted-dhcp ranges=192.168.78.200-192.168.78.254
 /ip/dhcp-server/add address-pool=iot-restricted-dhcp interface=IOT_RESTRICTED_VLAN name=iot-restricted-dhcp disabled=no
-/ip/dhcp-server/network/add address=192.168.78.128/25 dns-server=192.168.78.128 gateway=192.168.78.128 comment="IOT_RESTRICTED_VLAN"
+/ip/dhcp-server/network/add address=192.168.78.128/25 dns-server=192.168.78.129 gateway=192.168.78.129 comment="IOT_RESTRICTED_VLAN"
 
 # Services VLAN
 /interface/vlan/add interface=CORE name=SERVICES_VLAN vlan-id=108
@@ -124,7 +124,7 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 # Optional Static DHCP Leases
 /ip/dhcp-server/lease
 {% for lease in static_dhcp_leases -%}
-  add address={{ lease.address }} server={{ lease.server }} mac-address={{ lease.mac_address }} comment={{ lease.comment }}
+  add address={{ lease.address }} server={{ lease.server }} mac-address={{ lease.mac_address }} comment="{{ lease.comment }}"
 {% endfor %}
 {% endif %}
 
@@ -192,7 +192,7 @@ add chain=input action=accept protocol=tcp dst-port=179 in-interface-list=WAN ip
 
 # Finally drop everything else
 add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
-add chain=input action=drop log=yes log-prefix=input-drop comment="drop all other input"
+add chain=input action=drop log=no log-prefix=input-drop comment="drop all other input"
 
 # Forward Chain
 add chain=forward action=fasttrack-connection connection-state=established comment="fasttrack"
@@ -219,7 +219,7 @@ add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=IN
 
 # Finally drop everything else
 add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall" disabled=yes
-add chain=forward action=drop log=yes log-prefix=forward-drop comment="drop all other forward"
+add chain=forward action=drop log=no log-prefix=forward-drop comment="drop all other forward"
 
 
 #
@@ -289,14 +289,13 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 #
 
 /certificate
-
-{% if device_upgrade %}
+{% if device_upgrade -%}
 import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=internal-indigo-root-ca.crt
 import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=internal-indigo-root-ca.key
 import name=server  passphrase="{{ cert_export_passphrase }}" file-name=internal-indigo.crt
 import name=server  passphrase="{{ cert_export_passphrase }}" file-name=internal-indigo.key
 
-delay 4
+:delay 4
 
 set root-ca trusted=yes
 set server  trusted=yes
@@ -322,7 +321,7 @@ export-certificate file-name=remote-indigo-root-ca type=pem root-ca
 export-certificate file-name=internal-indigo type=pem export-passphrase="{{ cert_export_passphrase }}" server
 export-certificate file-name=internal-indigo-root-ca type=pem export-passphrase="{{ cert_export_passphrase }}" root-ca
 {% endif %}
-{% end %}
+{% endif %}
 
 # Web UI certificate
 /ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
@@ -337,24 +336,26 @@ export-certificate file-name=internal-indigo-root-ca type=pem export-passphrase=
 add name=dalmura hash-algorithm=sha256 enc-algorithm=aes-256 dh-group=modp2048,modp4096,ecp521 nat-traversal=no dpd-interval=30 dpd-maximum-failures=5
 
 /ip/ipsec/peer
-add name=salmon   address=salmon.dalmura.cloud   profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
+#add name=salmon   address=salmon.dalmura.cloud   profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
 add name=amethyst address=amethyst.dalmura.cloud profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
 add name=cerulean address=cerulean.dalmura.cloud profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
 
 # This step will fail unless remote certificates have been uploaded to the device
-/certificate/import name=remote-salmon-root-ca file-name=remote-salmon-root-ca.crt
-/certificate/import name=remote-salmon         file-name=remote-salmon.crt
+/certificate
+#import name=remote-salmon-root-ca file-name=remote-salmon-root-ca.crt
+#import name=remote-salmon         file-name=remote-salmon.crt
+#:delay 2
 
-/certificate/import name=remote-amethyst-root-ca file-name=remote-amethyst-root-ca.crt
-/certificate/import name=remote-amethyst         file-name=remote-amethyst.crt
+import name=remote-amethyst-root-ca file-name=remote-amethyst-root-ca.crt
+import name=remote-amethyst         file-name=remote-amethyst.crt
+:delay 2
 
-/certificate/import name=remote-cerulean-root-ca file-name=remote-cerulean-root-ca.crt
-/certificate/import name=remote-cerulean         file-name=remote-cerulean.crt
-
-:delay 4
+import name=remote-cerulean-root-ca file-name=remote-cerulean-root-ca.crt
+import name=remote-cerulean         file-name=remote-cerulean.crt
+:delay 2
 
 /ip/ipsec/identity
-add peer=salmon   auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-salmon
+#add peer=salmon   auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-salmon
 add peer=amethyst auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-amethyst
 add peer=cerulean auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-cerulean
 
@@ -363,23 +364,23 @@ add peer=cerulean auth-method=digital-signature certificate=server match-by=cert
 add name=dalmura auth-algorithms=sha256 enc-algorithms=aes-256-cbc lifetime=08:00:00 pfs-group=modp2048
 
 /ip/ipsec/policy
-add peer=salmon   tunnel=yes sa-src-address=172.16.0.2  sa-dst-address=172.16.0.1  action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=amethyst tunnel=yes sa-src-address=172.16.0.18 sa-dst-address=172.16.0.17 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=cerulean tunnel=yes sa-src-address=172.16.0.62 sa-dst-address=172.16.0.61 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+#add peer=salmon   tunnel=yes src-address=172.16.0.2  dst-address=172.16.0.1  action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=amethyst tunnel=yes src-address=172.16.0.18 dst-address=172.16.0.17 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=cerulean tunnel=yes src-address=172.16.0.62 dst-address=172.16.0.61 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
 
 # GRE tunnel interfaces
 /interface/gre
-add name=salmon   local-address=172.16.0.2  remote-address=172.16.0.1  allow-fast-path=no
+#add name=salmon   local-address=172.16.0.2  remote-address=172.16.0.1  allow-fast-path=no
 add name=amethyst local-address=172.16.0.18 remote-address=172.16.0.17 allow-fast-path=no
 add name=cerulean local-address=172.16.0.62 remote-address=172.16.0.61 allow-fast-path=no
 
 /ip/address
-add address=172.16.0.2/30  network=172.16.0.0  interface=salmon
+#add address=172.16.0.2/30  network=172.16.0.0  interface=salmon
 add address=172.16.0.18/30 network=172.16.0.16 interface=amethyst
 add address=172.16.0.62/30 network=172.16.0.60 interface=cerulean
 
 /interface/list/member
-add interface=salmon   list=WAN_HUB
+#add interface=salmon   list=WAN_HUB
 add interface=amethyst list=WAN_HUB
 add interface=cerulean list=WAN_HUB
 
@@ -396,6 +397,6 @@ add name=indigo-hub   as=65208 router-id=192.168.76.0 output.network=indigo-bgp-
 add name=indigo-spoke as=65208 router-id=192.168.76.0 output.network=indigo-bgp-networks
 
 /routing/bgp/connection
-add name=salmon   template=indigo-hub local.address=172.16.0.2  local.role=ebgp remote.address=172.16.0.1/30  remote.as=65207
+#add name=salmon   template=indigo-hub local.address=172.16.0.2  local.role=ebgp remote.address=172.16.0.1/30  remote.as=65207
 add name=amethyst template=indigo-hub local.address=172.16.0.18 local.role=ebgp remote.address=172.16.0.17/30 remote.as=65210
 add name=cerulean template=indigo-hub local.address=172.16.0.62 local.role=ebgp remote.address=172.16.0.61/30 remote.as=65209
