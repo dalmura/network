@@ -32,13 +32,29 @@
 /interface/bridge/add name=CORE vlan-filtering=no
 
 /interface/bridge/port
+
+# trunk
 add bridge=CORE interface=ether2       comment=""
+
+# trunk
 add bridge=CORE interface=ether3       comment=""
+
+# trunk
 add bridge=CORE interface=ether4       comment=""
+
+# trunk
 add bridge=CORE interface=ether5       comment=""
+
+# trunk
 add bridge=CORE interface=ether6       comment=""
+
+# trunk
 add bridge=CORE interface=ether7       comment=""
+
+# trunk
 add bridge=CORE interface=ether8       comment=""
+
+# trunk
 add bridge=CORE interface=sfp-sfpplus1 comment="dal-indigo-sw-0"
 
 /interface/bridge/vlan

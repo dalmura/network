@@ -32,26 +32,42 @@
 /interface/bridge/add name=CORE vlan-filtering=no
 
 /interface/bridge/port
-add bridge=CORE interface=ether2       comment=""
-add bridge=CORE interface=ether3       comment=""
-add bridge=CORE interface=ether4       comment=""
-add bridge=CORE interface=ether5       comment=""
-add bridge=CORE interface=ether6       comment=""
-add bridge=CORE interface=ether7       comment=""
-add bridge=CORE interface=ether8       comment=""
+
+# untagged - GENERAL
+add bridge=CORE interface=ether2       pvid=100 comment=""
+
+# untagged - GENERAL
+add bridge=CORE interface=ether3       pvid=100 comment=""
+
+# untagged - GENERAL
+add bridge=CORE interface=ether4       pvid=100 comment=""
+
+# untagged - GENERAL
+add bridge=CORE interface=ether5       pvid=100 comment=""
+
+# untagged - GENERAL
+add bridge=CORE interface=ether6       pvid=100 comment=""
+
+# untagged - GENERAL
+add bridge=CORE interface=ether7       pvid=100 comment=""
+
+# untagged - MANAGEMENT
+add bridge=CORE interface=ether8       pvid=109 comment=""
+
+# trunk
 add bridge=CORE interface=sfp-sfpplus1 comment=""
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp1 vlan-ids=100
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp1 vlan-ids=101
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp1 vlan-ids=102
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp1 vlan-ids=103
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp1 vlan-ids=104
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp1 vlan-ids=105
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp1 vlan-ids=106
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp1 vlan-ids=107
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp1 vlan-ids=108
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp1 vlan-ids=109
+add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether2,ether3,ether4,ether5,ether6,ether7 vlan-ids=100
+add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=101
+add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=102
+add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=103
+add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=104
+add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=105
+add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=106
+add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=107
+add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=108
+add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether8 vlan-ids=109
 
 
 #
@@ -115,7 +131,7 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 # Management VLAN
 /interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
 /ip/address/add address=192.168.75.193/26 interface=MANAGEMENT_VLAN
-/ip/pool/add name=management=static ranges=192.168.75.193-192.168.75.249
+/ip/pool/add name=management-static ranges=192.168.75.193-192.168.75.249
 /ip/pool/add name=management-dhcp ranges=192.168.75.250-192.168.75.254
 /ip/dhcp-server/add address-pool=management-dhcp interface=MANAGEMENT_VLAN name=management-dhcp disabled=no
 /ip/dhcp-server/network/add address=192.168.75.192/26 dns-server=192.168.75.193 gateway=192.168.75.193 comment="MANAGEMENT_VLAN"
@@ -237,13 +253,13 @@ add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade 
 #
 
 /interface/bridge/port
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether2]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether3]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether4]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether5]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether6]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether7]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether8]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether3]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether4]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether5]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether6]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether7]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether8]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus1]
 
 
@@ -360,20 +376,20 @@ add peer=cerulean auth-method=digital-signature certificate=server match-by=cert
 add name=dalmura auth-algorithms=sha256 enc-algorithms=aes-256-cbc lifetime=08:00:00 pfs-group=modp2048
 
 /ip/ipsec/policy
-add peer=indigo   tunnel=yes src-address=TODO dst-address=TODO action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=amethyst tunnel=yes src-address=TODO dst-address=TODO action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=cerulean tunnel=yes src-address=TODO dst-address=TODO action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=indigo   tunnel=yes src-address=172.16.0.2 dst-address=172.16.0.1 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=amethyst tunnel=yes src-address=172.16.0.6 dst-address=172.16.0.5 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
+add peer=cerulean tunnel=yes src-address=172.16.0.58 dst-address=172.16.0.57 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
 
 # GRE tunnel interfaces
 /interface/gre
-add name=indigo   local-address=TODO remote-address=TODO  allow-fast-path=no
-add name=amethyst local-address=TODO remote-address=TODO allow-fast-path=no
-add name=cerulean local-address=TODO remote-address=TODO allow-fast-path=no
+add name=indigo   local-address=172.16.0.2  remote-address=172.16.0.1  allow-fast-path=no
+add name=amethyst local-address=172.16.0.6  remote-address=172.16.0.5  allow-fast-path=no
+add name=cerulean local-address=172.16.0.58 remote-address=172.16.0.57 allow-fast-path=no
 
 /ip/address
-add address=TODO network=TODO interface=indigo
-add address=TODO network=TODO interface=amethyst
-add address=TODO network=TODO interface=cerulean
+add address=172.16.0.2  network=172.16.0.0  interface=indigo
+add address=172.16.0.6  network=172.16.0.4  interface=amethyst
+add address=172.16.0.58 network=172.16.0.56 interface=cerulean
 
 /interface/list/member
 add interface=indigo   list=WAN_HUB
@@ -393,6 +409,6 @@ add name=salmon-hub   as=65207 router-id=192.168.72.0 output.network=salmon-bgp-
 add name=salmon-spoke as=65207 router-id=192.168.72.0 output.network=salmon-bgp-networks
 
 /routing/bgp/connection
-add name=indigo   template=salmon-hub local.address=TODO local.role=ebgp remote.address=TODO remote.as=65208
-add name=amethyst template=salmon-hub local.address=TODO local.role=ebgp remote.address=TODO remote.as=65210
-add name=cerulean template=salmon-hub local.address=TODO local.role=ebgp remote.address=TODO remote.as=65209
+add name=indigo   template=salmon-hub local.address=172.16.0.2  local.role=ebgp remote.address=172.16.0.1  remote.as=65208
+add name=amethyst template=salmon-hub local.address=172.16.0.6  local.role=ebgp remote.address=172.16.0.5  remote.as=65210
+add name=cerulean template=salmon-hub local.address=172.16.0.58 local.role=ebgp remote.address=172.16.0.57 remote.as=65209
