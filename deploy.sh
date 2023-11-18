@@ -35,7 +35,7 @@ if [ ! -d "${SITE_FOLDER}" ]; then
     exit 1
 fi
 
-if [ ! -d "${TYPE_FOLDER}" ]; then
+if [ "${TYPE}" != 'clean' ] && [ ! -d "${TYPE_FOLDER}" ]; then
     echo "ERROR: Type '${TYPE}' folder is missing (${TYPE_FOLDER})"
     exit 1
 fi
@@ -171,4 +171,7 @@ elif [ "${TYPE}" == 'terraform' ]; then
     rm -rf "${TYPE_FOLDER}/.terraform"
     terraform -chdir="${TYPE_FOLDER}" init -upgrade
     terraform -chdir="${TYPE_FOLDER}" apply
+elif [ "${TYPE}" == 'clean' ]; then
+    rm -rf "${SITE_FOLDER}"/devices/*.rsc
+    rm -rf "${SITE_FOLDER}"/terraform/.terraform
 fi
