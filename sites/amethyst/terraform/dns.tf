@@ -1,5 +1,5 @@
 locals {
-  networks = yamldecode(file("${path.root}/../networks.yml"))
+  networks = yamldecode(file("${path.root}/../networks.yaml"))
 
   # All devices including the gateway
   management_devices = local.networks["networks"]["MANAGEMENT"]["subranges"]["static"]["allocations"]
