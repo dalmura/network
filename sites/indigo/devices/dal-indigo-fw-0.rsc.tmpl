@@ -234,6 +234,21 @@ add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=SERVER
 ## Allow INTERNAL_PUBLIC_ACCESS => SERVERS_VLAN (Plex local traffic)
 add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PUBLIC_ACCESS => PLEX"
 
+## Allow GENERAL_VLAN => IOT_INTERNET_VLAN
+add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_INTERNET_VLAN comment="accept GENERAL_VLAN => IOT_INTERNET_VLAN" log-prefix="general2iot"
+
+## Allow GENERAL_VLAN => IOT_RESTRICTED_VLAN
+add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_RESTRICTED_VLAN comment="accept GENERAL_VLAN => IOT_RESTRICTED_VLAN" log-prefix="general2restricted"
+
+## Allow MANAGEMENT_VLAN => VLAN
+add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface-list=VLAN comment="accept MANAGEMENT_VLAN => VLAN" log-prefix="man2vlan"
+
+## Allow LAN => WAN_HUB
+add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN_HUB comment="accept LAN => WAN_HUB" log-prefix="lan2wanhub"
+
+## Allow WAN_HUB => SERVERS_VLAN
+add chain=forward action=accept in-interface-list=WAN_HUB out-interface=SERVERS_VLAN comment="accept WAN_HUB => SERVERS_VLAN" log-prefix="wanhub2servers"
+
 # Finally drop everything else
 add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall" disabled=yes
 add chain=forward action=drop log=no log-prefix=forward-drop comment="drop all other forward"
