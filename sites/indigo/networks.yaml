@@ -93,7 +93,6 @@ networks:
         end: "192.168.78.69"
         allocations:
           "192.168.78.1": "dal-indigo-fw-0"
-          "192.168.78.2": "dal-indigo-doorbell"
       dhcp:
         start: "192.168.78.70"
         end: "192.168.78.126"
