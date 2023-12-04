@@ -141,9 +141,8 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 /ip/dhcp-server/lease
 {% for lease in static_dhcp_leases -%}
   add address={{ lease.address }} server={{ lease.server }} mac-address={{ lease.mac_address }} comment="{{ lease.comment }}"
-{% endfor %}
+{% endfor -%}
 {% endif %}
-
 
 #
 # Firewall & NAT
@@ -173,7 +172,6 @@ add interface=IOT_RESTRICTED_VLAN  list=VLAN
 add interface=SERVICES_VLAN        list=VLAN
 add interface=MANAGEMENT_VLAN      list=VLAN
 add interface=GENERAL_VLAN         list=LAN
-add interface=VPN_VLAN             list=LAN
 add interface=SERVERS_VLAN         list=LAN
 add interface=SERVICES_VLAN        list=LAN
 add interface=MANAGEMENT_VLAN      list=LAN
@@ -201,6 +199,9 @@ add chain=input action=accept protocol=icmp in-interface-list=LAN comment="accep
 add chain=input action=accept protocol=udp dst-port=53 in-interface-list=VLAN comment="accept DNS from internal networks"
 add chain=input action=accept src-address=0.0.0.0 dst-address=255.255.255.255 protocol=udp src-port=68 dst-port=67 in-interface-list=VLAN comment="allow DHCP broadcasts"
 add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
+
+# Wireguard
+add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN comment="Wireguard Site Tunnels"
 
 # Legacy IPSec
 add chain=input action=accept protocol=udp src-port=4500 in-interface-list=WAN comment="Legacy IPSec"
@@ -360,6 +361,24 @@ export-certificate file-name=internal-indigo-root-ca type=pem export-passphrase=
 /ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
 /ip/service/set api-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
 
+#
+# Wireguard
+#
+
+{% if wireguard -%}
+/interface/wireguard/add listen-port=13231 name=indigo-hub private-key="{{ wireguard.private_key }}"
+/ip/address/add address={{ wireguard.interface_address }} interface=indigo-hub
+
+{% if wireguard.peers -%}
+# Wireguard Tunnel Peers
+{% for peer in wireguard.peers -%}
+# {{ peer.comment }}
+/interface/wireguard/peers/add allowed-address={{ peer.allowed_address }} endpoint-address={{ peer.endpoint_address }} endpoint-port={{ peer.endpoint_port }} interface=indigo-hub public-key="{{ peer.public_key }}" persistent-keepalive=25 preshared-key="{{ peer.preshared_key }}" comment="{{ peer.comment }}"
+/ip/route/add dst-address={{ peer.allowed_address }} gateway=indigo-hub
+
+{% endfor %}
+{% endif -%}
+{% endif -%}
 
 #
 # Legacy IPSec
