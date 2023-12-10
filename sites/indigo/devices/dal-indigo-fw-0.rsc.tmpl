@@ -182,10 +182,8 @@ add interface=IOT_RESTRICTED_VLAN  list=BLACKHOLE
 add interface=MANAGEMENT_VLAN      list=MANAGEMENT
 add interface=GENERAL_VLAN         list=INTERNAL_PUBLIC_ACCESS
 add interface=GUEST_VLAN           list=INTERNAL_PUBLIC_ACCESS
-add interface=VPN_VLAN             list=INTERNAL_PUBLIC_ACCESS
 add interface=IOT_INTERNET_VLAN    list=INTERNAL_PUBLIC_ACCESS
 add interface=GENERAL_VLAN         list=INTERNAL_PRIVATE_ACCESS
-add interface=VPN_VLAN             list=INTERNAL_PRIVATE_ACCESS
 
 /ip/firewall/filter
 
@@ -198,7 +196,7 @@ add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loo
 add chain=input action=accept protocol=icmp in-interface-list=LAN comment="accept ICMP from non-restricted"
 add chain=input action=accept protocol=udp dst-port=53 in-interface-list=VLAN comment="accept DNS from internal networks"
 add chain=input action=accept src-address=0.0.0.0 dst-address=255.255.255.255 protocol=udp src-port=68 dst-port=67 in-interface-list=VLAN comment="allow DHCP broadcasts"
-add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
+add chain=input action=accept in-interface-list=MANAGEMENT comment="allow MANAGEMENT access"
 
 # Wireguard
 add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN comment="Wireguard Site & Roadwarrior Tunnels"
@@ -225,10 +223,10 @@ add chain=forward action=drop in-interface-list=WAN connection-state=new connect
 add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN comment="accept LAN to WAN"
 add chain=forward action=accept connection-state=new in-interface-list=INTERNET_ONLY out-interface-list=WAN comment="accept INTERNET_ONLY to WAN"
 
-## Allow MANAGEMENT_VLAN => SERVERS_VLAN
-add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVERS_VLAN comment="accept MANAGEMENT_VLAN => SERVERS_VLAN"
-## Allow MANAGEMENT_VLAN => SERVERS_STAGING_VLAN
-add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT_VLAN => SERVERS_STAGING_VLAN"
+## Allow MANAGEMENT => SERVERS_VLAN
+add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_VLAN comment="accept MANAGEMENT => SERVERS_VLAN"
+## Allow MANAGEMENT => SERVERS_STAGING_VLAN
+add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT => SERVERS_STAGING_VLAN"
 
 ## Allow WAN => SERVERS_VLAN (Plex dst-nat traffic)
 add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=SERVERS_VLAN in-interface-list=WAN connection-nat-state=dstnat comment="accept DSTNAT => PLEX"
@@ -242,8 +240,8 @@ add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_INTE
 ## Allow GENERAL_VLAN => IOT_RESTRICTED_VLAN
 add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_RESTRICTED_VLAN comment="accept GENERAL_VLAN => IOT_RESTRICTED_VLAN" log-prefix="general2restricted"
 
-## Allow MANAGEMENT_VLAN => VLAN
-add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface-list=VLAN comment="accept MANAGEMENT_VLAN => VLAN" log-prefix="man2vlan"
+## Allow MANAGEMENT => VLAN
+add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=VLAN comment="accept MANAGEMENT => VLAN" log-prefix="man2vlan"
 
 ## Allow LAN => WAN_HUB
 add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN_HUB comment="accept LAN => WAN_HUB" log-prefix="lan2wanhub"
@@ -365,22 +363,22 @@ export-certificate file-name=internal-indigo-root-ca type=pem export-passphrase=
 # Wireguard
 #
 
-{% if wireguard -%}
-/interface/wireguard/add listen-port=13231 name=indigo-hub private-key="{{ wireguard.private_key }}"
-/ip/address/add address={{ wireguard.interface_address }} interface=indigo-hub
-
-{% if wireguard.peers -%}
-# Wireguard Tunnel Peers
-{% for peer in wireguard.peers -%}
-# {{ peer.comment }}
-/interface/wireguard/peers/add allowed-address={{ peer.allowed_address }}{% if not peer | get(key="roadwarrior", default=false) %} endpoint-address={{ peer.endpoint_address }} endpoint-port={{ peer.endpoint_port }}{% endif %} interface=indigo-hub public-key="{{ peer.public_key }}" persistent-keepalive=25 preshared-key="{{ peer.preshared_key }}" comment="{{ peer.comment }}"
-{% if not peer | get(key="roadwarrior", default=false) -%}
-/ip/route/add dst-address={{ peer.allowed_address }} gateway=indigo-hub
-{%- endif %}
-
+{% for key, value in wireguard %}
+{%- set interface = site ~ "-" ~ key -%}
+# {{ interface }}
+/interface/wireguard/add listen-port={{ value.listen_port | default(value=13231) }} name={{ interface }} private-key="{{ value.private_key }}"
+/ip/address/add address={{ value.interface_address }} interface={{ interface }}
+{% for item in value.interface_lists -%}
+/interface/list/member/add interface={{ interface }} list={{ item }}
+{% endfor %}
+{% if value.peers is defined -%}
+## {{ interface }} peers
+{% for peer in value.peers -%}
+/interface/wireguard/peers/add allowed-address={{ peer.allowed_address }}{% if peer.endpoint is defined %} endpoint-address={{ peer.endpoint.address }} endpoint-port={{ peer.endpoint.port }}{% endif %} interface={{ interface }} public-key="{{ peer.public_key }}" persistent-keepalive=25 preshared-key="{{ peer.preshared_key }}" comment="{{ peer.comment }}"
+/ip/route/add dst-address={{ peer.allowed_address }} gateway="{{ interface }}" comment="Wireguard - {{ peer.comment }}"
 {% endfor -%}
 {% endif -%}
-{% endif -%}
+{% endfor %}
 
 #
 # Legacy IPSec
