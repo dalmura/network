@@ -373,10 +373,12 @@ export-certificate file-name=internal-indigo-root-ca type=pem export-passphrase=
 # Wireguard Tunnel Peers
 {% for peer in wireguard.peers -%}
 # {{ peer.comment }}
-/interface/wireguard/peers/add allowed-address={{ peer.allowed_address }} endpoint-address={{ peer.endpoint_address }} endpoint-port={{ peer.endpoint_port }} interface=indigo-hub public-key="{{ peer.public_key }}" persistent-keepalive=25 preshared-key="{{ peer.preshared_key }}" comment="{{ peer.comment }}"
+/interface/wireguard/peers/add allowed-address={{ peer.allowed_address }}{% if not peer | get(key="roadwarrior", default=false) %} endpoint-address={{ peer.endpoint_address }} endpoint-port={{ peer.endpoint_port }}{% endif %} interface=indigo-hub public-key="{{ peer.public_key }}" persistent-keepalive=25 preshared-key="{{ peer.preshared_key }}" comment="{{ peer.comment }}"
+{% if not peer | get(key="roadwarrior", default=false) -%}
 /ip/route/add dst-address={{ peer.allowed_address }} gateway=indigo-hub
+{%- endif %}
 
-{% endfor %}
+{% endfor -%}
 {% endif -%}
 {% endif -%}
 
