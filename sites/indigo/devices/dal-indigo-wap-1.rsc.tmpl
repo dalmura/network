@@ -47,24 +47,24 @@ add name=dalmura mode=ap country=Australia security=dalmura datapath=dalmura
 
 /interface/wifiwave2
 # General Wireless & VLAN
-set wifi1 configuration=dalmura configuration.ssid=dal-indigo-general channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_general_password'] }}" datapath.vlan-id=100
-set wifi2 configuration=dalmura configuration.ssid=dal-indigo-general channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_general_password'] }}" datapath.vlan-id=100
+set wifi1 configuration=dalmura configuration.ssid=dal-indigo-general channel=dalmura-5ghz security.passphrase="{{ wifi['general']['password'] }}" datapath.vlan-id=100
+set wifi2 configuration=dalmura configuration.ssid=dal-indigo-general channel=dalmura-2ghz security.passphrase="{{ wifi['general']['password'] }}" datapath.vlan-id=100
 
 # Guest Wireless & VLAN
-add name=wifi1-guest master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-guest channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_guest_password'] }}" datapath.vlan-id=101 datapath.client-isolation=yes
-add name=wifi2-guest master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-guest channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_guest_password'] }}" datapath.vlan-id=101 datapath.client-isolation=yes
+add name=wifi1-guest master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-guest channel=dalmura-5ghz security.passphrase="{{ wifi['guest']['password'] }}" datapath.vlan-id=101 datapath.client-isolation=yes
+add name=wifi2-guest master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-guest channel=dalmura-2ghz security.passphrase="{{ wifi['guest']['password'] }}" datapath.vlan-id=101 datapath.client-isolation=yes
 
 # Management Wireless & VLAN
-add name=wifi1-management master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-management channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_management_password'] }}" datapath.vlan-id=109
-add name=wifi2-management master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-management channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_management_password'] }}" datapath.vlan-id=109
+add name=wifi1-management master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-management channel=dalmura-5ghz security.passphrase="{{ wifi['management']['password'] }}" datapath.vlan-id=109
+add name=wifi2-management master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-management channel=dalmura-2ghz security.passphrase="{{ wifi['management']['password'] }}" datapath.vlan-id=109
 
 # IoT Internet Wireless & VLAN
-add name=wifi1-iot-internet master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-iot-internet channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_iot_internet_password'] }}" datapath.vlan-id=105
-add name=wifi2-iot-internet master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-iot-internet channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_iot_internet_password'] }}" datapath.vlan-id=105
+add name=wifi1-iot-internet master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-iot-internet channel=dalmura-5ghz security.passphrase="{{ wifi['iot_internet']['password'] }}" datapath.vlan-id=105
+add name=wifi2-iot-internet master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-iot-internet channel=dalmura-2ghz security.passphrase="{{ wifi['iot_internet']['password'] }}" datapath.vlan-id=105
 
 # IoT Restricted Wireless & VLAN
-add name=wifi1-iot-restricted master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-iot-restricted channel=dalmura-5ghz security.passphrase="{{ dal_indigo['wifi_iot_restricted_password'] }}" datapath.vlan-id=106
-add name=wifi2-iot-restricted master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-iot-restricted channel=dalmura-2ghz security.passphrase="{{ dal_indigo['wifi_iot_restricted_password'] }}" datapath.vlan-id=106
+add name=wifi1-iot-restricted master-interface=wifi1 configuration=dalmura configuration.ssid=dal-indigo-iot-restricted channel=dalmura-5ghz security.passphrase="{{ wifi['iot_restricted']['password'] }}" datapath.vlan-id=106
+add name=wifi2-iot-restricted master-interface=wifi2 configuration=dalmura configuration.ssid=dal-indigo-iot-restricted channel=dalmura-2ghz security.passphrase="{{ wifi['iot_restricted']['password'] }}" datapath.vlan-id=106
 
 # Turn everything on
 enable [find]

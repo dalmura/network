@@ -26,11 +26,11 @@
 #
 
 /interface/wireless/security-profiles
-add name=general mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_indigo['wifi_general_password'] }}"
-add name=guest mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_indigo['wifi_guest_password'] }}"
-add name=iot-internet mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_indigo['wifi_iot_internet_password'] }}"
-add name=iot-restricted mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_indigo['wifi_iot_restricted_password'] }}"
-add name=management mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ dal_indigo['wifi_management_password'] }}"
+add name=general mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ wifi['general']['password'] }}"
+add name=guest mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ wifi['guest']['password'] }}"
+add name=iot-internet mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ wifi['iot_internet']['password'] }}"
+add name=iot-restricted mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ wifi['iot_restricted']['password'] }}"
+add name=management mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ wifi['management']['password'] }}"
 
 /interface/wireless
 # General Wireless & VLAN
