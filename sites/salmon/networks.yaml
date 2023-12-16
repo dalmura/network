@@ -30,6 +30,8 @@ networks:
     end: "192.168.72.254"
     allocations:
       "192.168.72.193": "dal-salmon-fw-0"
+      "192.168.76.194": "dal-salmon-wg-roadwarriors"
+      "192.168.76.195": "dal-salmon-wg-hubs"
 
   SERVERS:
     description: "Kubernetes Clusters"

@@ -30,7 +30,8 @@ networks:
     end: "192.168.76.254"
     allocations:
       "192.168.76.193": "dal-indigo-fw-0"
-      "192.168.76.194": "dal-indigo-wg"
+      "192.168.76.194": "dal-indigo-wg-roadwarriors"
+      "192.168.76.195": "dal-indigo-wg-hubs"
 
   SERVERS:
     description: "Kubernetes Clusters"
