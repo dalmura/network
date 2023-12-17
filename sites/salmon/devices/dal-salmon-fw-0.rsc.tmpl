@@ -33,8 +33,8 @@
 
 /interface/bridge/port
 
-# untagged - GENERAL
-add bridge=CORE interface=ether2       pvid=100 comment=""
+# trunk
+add bridge=CORE interface=ether2                comment=""
 
 # trunk
 add bridge=CORE interface=ether3                comment=""
@@ -58,16 +58,16 @@ add bridge=CORE interface=ether8       pvid=109 comment=""
 add bridge=CORE interface=sfp-sfpplus1 comment=""
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 untagged=ether2,ether4,ether5,ether6,ether7 vlan-ids=100
-add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 vlan-ids=101
-add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 vlan-ids=102
-add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 vlan-ids=103
-add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 vlan-ids=104
-add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 vlan-ids=105
-add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 vlan-ids=106
-add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 vlan-ids=107
-add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 vlan-ids=108
-add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 untagged=ether8 vlan-ids=109
+add bridge=CORE tagged=CORE,ether2,ether3,sfp-sfpplus1 untagged=ether4,ether5,ether6,ether7 vlan-ids=100
+add bridge=CORE tagged=CORE,ether2,ether3,sfp-sfpplus1 vlan-ids=101
+add bridge=CORE tagged=CORE,ether2,ether3,sfp-sfpplus1 vlan-ids=102
+add bridge=CORE tagged=CORE,ether2,ether3,sfp-sfpplus1 vlan-ids=103
+add bridge=CORE tagged=CORE,ether2,ether3,sfp-sfpplus1 vlan-ids=104
+add bridge=CORE tagged=CORE,ether2,ether3,sfp-sfpplus1 vlan-ids=105
+add bridge=CORE tagged=CORE,ether2,ether3,sfp-sfpplus1 vlan-ids=106
+add bridge=CORE tagged=CORE,ether2,ether3,sfp-sfpplus1 vlan-ids=107
+add bridge=CORE tagged=CORE,ether2,ether3,sfp-sfpplus1 vlan-ids=108
+add bridge=CORE tagged=CORE,ether2,ether3,sfp-sfpplus1 untagged=ether8 vlan-ids=109
 
 
 #
@@ -141,7 +141,7 @@ add bridge=CORE tagged=CORE,ether3,sfp-sfpplus1 untagged=ether8 vlan-ids=109
 /ip/dhcp-server/lease
 {% for lease in static_dhcp_leases -%}
   add address={{ lease.address }} server={{ lease.server }} mac-address={{ lease.mac_address }} comment="{{ lease.comment }}"
-{% endfor %}
+{% endfor -%}
 {% endif %}
 
 
@@ -173,7 +173,6 @@ add interface=IOT_RESTRICTED_VLAN  list=VLAN
 add interface=SERVICES_VLAN        list=VLAN
 add interface=MANAGEMENT_VLAN      list=VLAN
 add interface=GENERAL_VLAN         list=LAN
-add interface=VPN_VLAN             list=LAN
 add interface=SERVERS_VLAN         list=LAN
 add interface=SERVICES_VLAN        list=LAN
 add interface=MANAGEMENT_VLAN      list=LAN
@@ -184,9 +183,8 @@ add interface=IOT_RESTRICTED_VLAN  list=BLACKHOLE
 add interface=MANAGEMENT_VLAN      list=MANAGEMENT
 add interface=GENERAL_VLAN         list=INTERNAL_PUBLIC_ACCESS
 add interface=GUEST_VLAN           list=INTERNAL_PUBLIC_ACCESS
-add interface=VPN_VLAN             list=INTERNAL_PUBLIC_ACCESS
+add interface=IOT_INTERNET_VLAN    list=INTERNAL_PUBLIC_ACCESS
 add interface=GENERAL_VLAN         list=INTERNAL_PRIVATE_ACCESS
-add interface=VPN_VLAN             list=INTERNAL_PRIVATE_ACCESS
 
 /ip/firewall/filter
 
@@ -200,6 +198,9 @@ add chain=input action=accept protocol=icmp in-interface-list=LAN comment="accep
 add chain=input action=accept protocol=udp dst-port=53 in-interface-list=VLAN comment="accept DNS from internal networks"
 add chain=input action=accept src-address=0.0.0.0 dst-address=255.255.255.255 protocol=udp src-port=68 dst-port=67 in-interface-list=VLAN comment="allow DHCP broadcasts"
 add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
+
+# Wireguard
+add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN comment="Wireguard Site & Roadwarrior Tunnels"
 
 # Legacy IPSec
 add chain=input action=accept protocol=udp src-port=4500 in-interface-list=WAN comment="Legacy IPSec"
@@ -268,7 +269,7 @@ add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade 
 #
 
 /interface/bridge/port
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether3]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether4]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether5]
@@ -335,7 +336,7 @@ sign ca=root-ca server name=server
 :delay 2
 
 set root-ca trusted=yes
-set server trusted=yes
+set server  trusted=yes
 
 # Export certs for use in remote systems
 # No private key material is exported here, just the public crt
@@ -353,6 +354,27 @@ export-certificate file-name=internal-salmon-root-ca type=pem export-passphrase=
 /ip/service/set www-ssl tls-version=only-1.2 address=192.168.75.192/26 certificate=server disabled=no
 /ip/service/set api-ssl tls-version=only-1.2 address=192.168.75.192/26 certificate=server disabled=no
 
+
+#
+# Wireguard
+#
+
+{% for key, value in wireguard %}
+{%- set interface = site ~ "-" ~ key -%}
+# {{ interface }}
+/interface/wireguard/add listen-port={{ value.listen_port | default(value=13231) }} name={{ interface }} private-key="{{ value.private_key }}"
+/ip/address/add address={{ value.interface_address }} interface={{ interface }}
+{% for item in value.interface_lists -%}
+/interface/list/member/add interface={{ interface }} list={{ item }}
+{% endfor %}
+{% if value.peers is defined -%}
+## {{ interface }} peers
+{% for peer in value.peers -%}
+/interface/wireguard/peers/add allowed-address={{ peer.allowed_address }}{% if peer.endpoint is defined %} endpoint-address={{ peer.endpoint.address }} endpoint-port={{ peer.endpoint.port }}{% endif %} interface={{ interface }} public-key="{{ peer.public_key }}" persistent-keepalive=25 preshared-key="{{ peer.preshared_key }}" comment="{{ peer.comment }}"
+/ip/route/add dst-address={{ peer.allowed_address }} gateway="{{ interface }}" comment="Wireguard - {{ peer.comment }}"
+{% endfor -%}
+{% endif -%}
+{% endfor %}
 
 #
 # Legacy IPSec
