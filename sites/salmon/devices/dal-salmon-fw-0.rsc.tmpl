@@ -197,7 +197,7 @@ add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loo
 add chain=input action=accept protocol=icmp in-interface-list=LAN comment="accept ICMP from non-restricted"
 add chain=input action=accept protocol=udp dst-port=53 in-interface-list=VLAN comment="accept DNS from internal networks"
 add chain=input action=accept src-address=0.0.0.0 dst-address=255.255.255.255 protocol=udp src-port=68 dst-port=67 in-interface-list=VLAN comment="allow DHCP broadcasts"
-add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
+add chain=input action=accept in-interface-list=MANAGEMENT comment="allow MANAGEMENT access"
 
 # Wireguard
 add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN comment="Wireguard Roadwarrior Tunnels"
@@ -225,10 +225,10 @@ add chain=forward action=drop in-interface-list=WAN connection-state=new connect
 add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN comment="accept LAN to WAN"
 add chain=forward action=accept connection-state=new in-interface-list=INTERNET_ONLY out-interface-list=WAN comment="accept INTERNET_ONLY to WAN"
 
-## Allow MANAGEMENT_VLAN => SERVERS_VLAN
-add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVERS_VLAN comment="accept MANAGEMENT_VLAN => SERVERS_VLAN"
-## Allow MANAGEMENT_VLAN => SERVERS_STAGING_VLAN
-add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT_VLAN => SERVERS_STAGING_VLAN"
+## Allow MANAGEMENT => SERVERS_VLAN
+add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_VLAN comment="accept MANAGEMENT => SERVERS_VLAN"
+## Allow MANAGEMENT => SERVERS_STAGING_VLAN
+add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT => SERVERS_STAGING_VLAN"
 
 ## Allow INTERNAL_PUBLIC_ACCESS => SERVERS_VLAN (Plex local traffic)
 add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PUBLIC_ACCESS => PLEX"
@@ -239,8 +239,8 @@ add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_INTE
 ## Allow GENERAL_VLAN => IOT_RESTRICTED_VLAN
 add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_RESTRICTED_VLAN comment="accept GENERAL_VLAN => IOT_RESTRICTED_VLAN" log-prefix="general2restricted"
 
-## Allow MANAGEMENT_VLAN => VLAN
-add chain=forward action=accept in-interface=MANAGEMENT_VLAN out-interface-list=VLAN comment="accept MANAGEMENT_VLAN => VLAN" log-prefix="man2vlan"
+## Allow MANAGEMENT => VLAN
+add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=VLAN comment="accept MANAGEMENT => VLAN" log-prefix="man2vlan"
 
 ## Allow LAN => WAN_HUB
 add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN_HUB comment="accept LAN => WAN_HUB" log-prefix="lan2wanhub"
