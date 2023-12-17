@@ -228,6 +228,8 @@ add chain=forward action=accept connection-state=new in-interface-list=INTERNET_
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_VLAN comment="accept MANAGEMENT => SERVERS_VLAN"
 ## Allow MANAGEMENT => SERVERS_STAGING_VLAN
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT => SERVERS_STAGING_VLAN"
+## Allow MANAGEMENT => WAN_HUB
+add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=WAN_HUB comment="accept MANAGEMENT => WAN_HUB"
 
 ## Allow WAN => SERVERS_VLAN (Plex dst-nat traffic)
 add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=SERVERS_VLAN in-interface-list=WAN connection-nat-state=dstnat comment="accept DSTNAT => PLEX"
