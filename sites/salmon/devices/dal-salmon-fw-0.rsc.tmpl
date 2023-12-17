@@ -203,12 +203,6 @@ add chain=input action=accept in-interface-list=MANAGEMENT comment="allow MANAGE
 add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN comment="Wireguard Roadwarrior Tunnels"
 add chain=input action=accept protocol=udp dst-port=13232 in-interface-list=WAN comment="Wireguard Site Tunnels"
 
-# Legacy IPSec
-add chain=input action=accept protocol=udp src-port=4500 in-interface-list=WAN comment="Legacy IPSec"
-add chain=input action=accept protocol=ipsec-esp in-interface-list=WAN comment="Legacy IPSec"
-add chain=input action=accept protocol=gre in-interface-list=WAN ipsec-policy=in,ipsec comment="Legacy IPSec - GRE"
-add chain=input action=accept protocol=tcp dst-port=179 in-interface-list=WAN ipsec-policy=in,ipsec comment="Legacy IPSec - BGP"
-
 # Finally drop everything else
 add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
 add chain=input action=drop log=no log-prefix=input-drop comment="drop all other input"
@@ -376,77 +370,3 @@ export-certificate file-name=internal-salmon-root-ca type=pem export-passphrase=
 {% endfor -%}
 {% endif -%}
 {% endfor %}
-
-#
-# Legacy IPSec
-#
-
-# IKE Phase 1
-/ip/ipsec/profile
-add name=dalmura hash-algorithm=sha256 enc-algorithm=aes-256 dh-group=modp2048,modp4096,ecp521 nat-traversal=no dpd-interval=30 dpd-maximum-failures=5
-
-/ip/ipsec/peer
-add name=indigo   address=indigo.dalmura.cloud   profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
-add name=amethyst address=amethyst.dalmura.cloud profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
-add name=cerulean address=cerulean.dalmura.cloud profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
-
-# This step will fail unless remote certificates have been uploaded to the device
-/certificate
-import name=remote-indigo-root-ca file-name=remote-indigo-root-ca.crt
-import name=remote-indigo         file-name=remote-indigo.crt
-:delay 2
-
-import name=remote-amethyst-root-ca file-name=remote-amethyst-root-ca.crt
-import name=remote-amethyst         file-name=remote-amethyst.crt
-:delay 2
-
-import name=remote-cerulean-root-ca file-name=remote-cerulean-root-ca.crt
-import name=remote-cerulean         file-name=remote-cerulean.crt
-:delay 2
-
-/ip/ipsec/identity
-add peer=indigo   auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-indigo
-add peer=amethyst auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-amethyst
-add peer=cerulean auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-cerulean
-
-# IKE Phase 2
-/ip/ipsec/proposal
-add name=dalmura auth-algorithms=sha256 enc-algorithms=aes-256-cbc lifetime=08:00:00 pfs-group=modp2048
-
-/ip/ipsec/policy
-add peer=indigo   tunnel=yes src-address=172.16.0.2 dst-address=172.16.0.1 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=amethyst tunnel=yes src-address=172.16.0.6 dst-address=172.16.0.5 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=cerulean tunnel=yes src-address=172.16.0.58 dst-address=172.16.0.57 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-
-# GRE tunnel interfaces
-/interface/gre
-add name=indigo   local-address=172.16.0.2  remote-address=172.16.0.1  allow-fast-path=no
-add name=amethyst local-address=172.16.0.6  remote-address=172.16.0.5  allow-fast-path=no
-add name=cerulean local-address=172.16.0.58 remote-address=172.16.0.57 allow-fast-path=no
-
-/ip/address
-add address=172.16.0.2  network=172.16.0.0  interface=indigo
-add address=172.16.0.6  network=172.16.0.4  interface=amethyst
-add address=172.16.0.58 network=172.16.0.56 interface=cerulean
-
-/interface/list/member
-add interface=indigo   list=WAN_HUB
-add interface=amethyst list=WAN_HUB
-add interface=cerulean list=WAN_HUB
-
-# BGP
-/ip/firewall/address-list
-add list=salmon-bgp-networks address=192.168.72.0/22
-
-# Required for the network above to be advertised correctly to BGP peers
-/ip/route
-add dst-address=192.168.72.0/22 blackhole
-
-/routing/bgp/template
-add name=salmon-hub   as=65207 router-id=192.168.72.0 output.network=salmon-bgp-networks
-add name=salmon-spoke as=65207 router-id=192.168.72.0 output.network=salmon-bgp-networks
-
-/routing/bgp/connection
-add name=indigo   template=salmon-hub local.address=172.16.0.2  local.role=ebgp remote.address=172.16.0.1  remote.as=65208
-add name=amethyst template=salmon-hub local.address=172.16.0.6  local.role=ebgp remote.address=172.16.0.5  remote.as=65210
-add name=cerulean template=salmon-hub local.address=172.16.0.58 local.role=ebgp remote.address=172.16.0.57 remote.as=65209
