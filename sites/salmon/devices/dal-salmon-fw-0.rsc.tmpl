@@ -200,7 +200,8 @@ add chain=input action=accept src-address=0.0.0.0 dst-address=255.255.255.255 pr
 add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
 
 # Wireguard
-add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN comment="Wireguard Site & Roadwarrior Tunnels"
+add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN comment="Wireguard Roadwarrior Tunnels"
+add chain=input action=accept protocol=udp dst-port=13232 in-interface-list=WAN comment="Wireguard Site Tunnels"
 
 # Legacy IPSec
 add chain=input action=accept protocol=udp src-port=4500 in-interface-list=WAN comment="Legacy IPSec"
