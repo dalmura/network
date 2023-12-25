@@ -1,0 +1,116 @@
+networks:
+  GENERAL:
+    description: "PCs, Phones, etc"
+    vlan_id: 100
+    cidr: "192.168.50.0/26"
+    mask: "255.255.255.192"
+    start: "192.168.50.1"
+    end: "192.168.50.62"
+    dhcp: true
+    allocations:
+      "192.168.50.1": "dal-viridian-fw-0"
+
+  GUEST:
+    description: "Internet only"
+    vlan_id: 101
+    cidr: "192.168.50.64/27"
+    mask: "255.255.255.224"
+    start: "192.168.50.65"
+    end: "192.168.50.94"
+    dhcp: true
+    allocations:
+      "192.168.50.65": "dal-viridian-fw-0"
+
+  VPN:
+    description: "VPN Users"
+    vlan_id: 102
+    cidr: "192.168.50.96/27"
+    mask: "255.255.255.224"
+    start: "192.168.50.97"
+    end: "192.168.50.126"
+    allocations:
+      "192.168.50.97": "dal-viridian-fw-0"
+      "192.168.50.98": "dal-viridian-wg-roadwarriors"
+      "192.168.50.99": "dal-viridian-wg-hubs"
+
+  SERVERS:
+    description: "Kubernetes Clusters"
+    vlan_id: 103
+    cidr: "192.168.50.128/27"
+    mask: "255.255.255.224"
+    start: "192.168.50.129"
+    end: "192.168.50.158"
+    subranges:
+      static:
+        start: "192.168.50.129"
+        end: "192.168.50.150"
+        allocations:
+          "192.168.50.129": "dal-viridian-fw-0"
+        subranges:
+          dal-viridian-vips:
+            start: "192.168.50.130"
+            end: "192.168.50.142"
+            allocations:
+              "192.168.50.130": "dal-viridian-core-1-vip"
+            subranges:
+              dal-viridian-core-1-vips-metallb:
+                start: "192.168.50.134"
+                end: "192.168.50.142"
+          dal-viridian-nodes:
+            start: "192.168.50.143"
+            end: "192.168.50.150"
+            allocations: {}
+      dhcp:
+        start: "192.168.50.151"
+        end: "192.168.50.158"
+
+  IOT_INTERNET:
+    description: "Chromecast, TV, etc"
+    vlan_id: 105
+    cidr: "192.168.50.160/27"
+    mask: "255.255.255.224"
+    start: "192.168.50.161"
+    end: "192.168.50.190"
+    subranges:
+      static:
+        start: "192.168.50.161"
+        end: "192.168.50.175"
+        allocations:
+          "192.168.50.161": "dal-viridian-fw-0"
+      dhcp:
+        start: "192.168.50.176"
+        end: "192.168.50.190"
+
+  IOT_RESTRICTED:
+    description: "Security Cameras, Printers, etc"
+    vlan_id: 106
+    cidr: "192.168.50.192/27"
+    mask: "255.255.255.224"
+    start: "192.168.50.193"
+    end: "192.168.50.222"
+    subranges:
+      static:
+        start: "192.168.50.193"
+        end: "192.168.50.208"
+        allocations:
+          "192.168.50.193": "dal-viridian-fw-0"
+      dhcp:
+        start: "192.168.50.209"
+        end: "192.168.50.222"
+
+  MANAGEMENT:
+    description: "Network Hardware, IPMIs, UPSs"
+    vlan_id: 109
+    cidr: "192.168.50.224/27"
+    mask: "255.255.255.224"
+    start: "192.168.50.225"
+    end: "192.168.50.254"
+    subranges:
+      static:
+        start: "192.168.50.225"
+        end: "192.168.50.240"
+        allocations:
+          "192.168.50.225": "dal-viridian-fw-0"
+      dhcp:
+        start: "192.168.50.241"
+        end: "192.168.50.254"
