@@ -42,27 +42,27 @@ networks:
     end: "192.168.68.126"
     subranges:
       static:
-        start: "192.168.68.1"
-        end: "192.168.68.63"
-        allocations:
-          "192.168.68.1": "dal-amethyst-fw-0"
-        subranges:
-          dal-amethyst-vips:
-            start: "192.168.68.2"
-            end: "192.168.68.19"
-            allocations:
-              "192.168.68.2": "dal-amethyst-core-1-vip"
-            subranges:
-              dal-amethyst-core-1-vips-metallb:
-                start: "192.168.68.10"
-                end: "192.168.68.19"
-          dal-amethyst-nodes:
-            start: "192.168.68.20"
-            end: "192.168.68.49"
-            allocations: {}
-      dhcp:
         start: "192.168.68.64"
         end: "192.168.68.126"
+        allocations:
+          "192.168.68.64": "dal-amethyst-fw-0"
+        subranges:
+          dal-amethyst-vips:
+            start: "192.168.68.65"
+            end: "192.168.68.82"
+            allocations:
+              "192.168.68.65": "dal-amethyst-core-1-vip"
+            subranges:
+              dal-amethyst-core-1-vips-metallb:
+                start: "192.168.68.73"
+                end: "192.168.68.82"
+          dal-amethyst-nodes:
+            start: "192.168.68.83"
+            end: "192.168.68.126"
+            allocations: {}
+      dhcp:
+        start: "192.168.68.1"
+        end: "192.168.68.63"
 
   SERVERS_STAGING:
     description: "Hardware staging area"

@@ -24,6 +24,47 @@
 # 108 = SERVICES        = 192.168.71.128/26  =  62
 # 109 = MANAGEMENT      = 192.168.71.192/26  =  62
 
+# SSID                        | VLAN
+# Hammond                     | 100
+# dal-amethyst-guest          | 101
+# dal-amethyst-iot-internet   | 105
+# dal-amethyst-iot-restricted | 106
+# dal-amethyst-management     | 109
+
+#
+# Wireless
+#
+
+/interface/wireless/security-profiles
+add name=general mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ wifi['general']['password'] }}"
+add name=guest mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ wifi['guest']['password'] }}"
+add name=iot-internet mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ wifi['iot_internet']['password'] }}"
+add name=iot-restricted mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ wifi['iot_restricted']['password'] }}"
+add name=management mode=dynamic-keys authentication-types=wpa2-psk unicast-ciphers=aes-ccm group-ciphers=aes-ccm wpa2-pre-shared-key="{{ wifi['management']['password'] }}"
+
+/interface/wireless
+# General Wireless & VLAN
+set wireless-protocol=802.11 mode=ap-bridge band=2ghz-b/g/n channel-width="20/40mhz-XX" frequency=2412 ssid="{{ wifi['general']['ssid_2ghz'] | default(value='dal-amethyst-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan1]
+set wireless-protocol=802.11 mode=ap-bridge band=5ghz-n/ac channel-width="20/40/80mhz-XXXX" frequency=5660 ssid="{{ wifi['general']['ssid_5ghz'] | default(value='dal-amethyst-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan2]
+
+# Guest Wireless & VLAN
+add name=wlan1-guest master-interface=wlan1 ssid="{{ wifi['guest']['ssid_2ghz'] | default(value='dal-amethyst-guest') }}" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
+add name=wlan2-guest master-interface=wlan2 ssid="{{ wifi['guest']['ssid_5ghz'] | default(value='dal-amethyst-guest') }}" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
+
+# IoT Internet Wireless & VLAN
+add name=wlan1-iot-internet master-interface=wlan1 ssid="{{ wifi['iot_internet']['ssid_2ghz'] | default(value='dal-amethyst-iot-internet') }}" security-profile=iot-internet wps-mode=disabled vlan-id=105 vlan-mode=use-tag
+add name=wlan2-iot-internet master-interface=wlan2 ssid="{{ wifi['iot_internet']['ssid_5ghz'] | default(value='dal-amethyst-iot-internet') }}" security-profile=iot-internet wps-mode=disabled vlan-id=105 vlan-mode=use-tag
+
+# IoT Restricted Wireless & VLAN
+add name=wlan1-iot-restricted master-interface=wlan1 ssid="{{ wifi['iot_restricted']['ssid_2ghz'] | default(value='dal-amethyst-iot-restricted') }}" security-profile=iot-restricted wps-mode=disabled vlan-id=106 vlan-mode=use-tag
+add name=wlan2-iot-restricted master-interface=wlan2 ssid="{{ wifi['iot_restricted']['ssid_5ghz'] | default(value='dal-amethyst-iot-restricted') }}" security-profile=iot-restricted wps-mode=disabled vlan-id=106 vlan-mode=use-tag
+
+# Management Wireless & VLAN
+add name=wlan1-management master-interface=wlan1 ssid="{{ wifi['management']['ssid_2ghz'] | default(value='dal-amethyst-management') }}" security-profile=management wps-mode=disabled vlan-id=109 vlan-mode=use-tag
+add name=wlan2-management master-interface=wlan2 ssid="{{ wifi['management']['ssid_5ghz'] | default(value='dal-amethyst-management') }}" security-profile=management wps-mode=disabled vlan-id=109 vlan-mode=use-tag
+
+# Turn everything on
+enable [find]
 
 #
 # Bridge
@@ -33,28 +74,40 @@
 
 /interface/bridge/port
 
+# trunk
+add bridge=CORE interface=wlan1
+add bridge=CORE interface=wlan2
+add bridge=CORE interface=wlan1-guest
+add bridge=CORE interface=wlan2-guest
+add bridge=CORE interface=wlan1-iot-internet
+add bridge=CORE interface=wlan2-iot-internet
+add bridge=CORE interface=wlan1-iot-restricted
+add bridge=CORE interface=wlan2-iot-restricted
+add bridge=CORE interface=wlan1-management
+add bridge=CORE interface=wlan2-management
+
 # untagged - GENERAL
 add bridge=CORE interface=ether4       pvid=100 comment="Local dumb switch"
 add bridge=CORE interface=ether5       pvid=100 comment="dal-amethyst-wap-0"
 add bridge=CORE interface=sfp1         pvid=100 comment=""
 
-# untagged - SERVERS
+# hybrid - SERVERS
 add bridge=CORE interface=ether2       pvid=103 comment="Server"
 
 # untagged - MANAGEMENT
 add bridge=CORE interface=ether3       pvid=109 comment="Management Port"
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE untagged=ether4,ether5,sfp1 vlan-ids=100
-add bridge=CORE tagged=CORE vlan-ids=101
+add bridge=CORE tagged=CORE,wlan1,wlan2,ether2 untagged=ether4,ether5,sfp1 vlan-ids=100
+add bridge=CORE tagged=CORE,wlan1-guest,wlan2-guest vlan-ids=101
 add bridge=CORE tagged=CORE vlan-ids=102
 add bridge=CORE tagged=CORE untagged=ether2 vlan-ids=103
 add bridge=CORE tagged=CORE vlan-ids=104
-add bridge=CORE tagged=CORE vlan-ids=105
-add bridge=CORE tagged=CORE vlan-ids=106
+add bridge=CORE tagged=CORE,wlan1-iot-internet,wlan2-iot-internet,ether2 vlan-ids=105
+add bridge=CORE tagged=CORE,wlan1-iot-restricted,wlan2-iot-restricted,ether2 vlan-ids=106
 add bridge=CORE tagged=CORE vlan-ids=107
 add bridge=CORE tagged=CORE vlan-ids=108
-add bridge=CORE tagged=CORE untagged=ether3 vlan-ids=109
+add bridge=CORE tagged=CORE,wlan1-management,wlan2-management untagged=ether3 vlan-ids=109
 
 
 #
@@ -82,8 +135,8 @@ add bridge=CORE tagged=CORE untagged=ether3 vlan-ids=109
 # Servers VLAN
 /interface/vlan/add interface=CORE name=SERVERS_VLAN vlan-id=103
 /ip/address/add interface=SERVERS_VLAN address=192.168.68.1/25
-/ip/pool/add name=servers-static ranges=192.168.68.2-192.168.68.63
-/ip/pool/add name=servers-dhcp ranges=192.168.68.64-192.168.68.126
+/ip/pool/add name=servers-dhcp ranges=192.168.68.2-192.168.68.63
+/ip/pool/add name=servers-static ranges=192.168.68.64-192.168.68.126
 /ip/dhcp-server/add address-pool=servers-dhcp interface=SERVERS_VLAN name=servers-dhcp disabled=no
 /ip/dhcp-server/network/add address=192.168.68.0/25 dns-server=192.168.68.1 gateway=192.168.68.1 comment="SERVERS_VLAN"
 
@@ -122,6 +175,7 @@ add bridge=CORE tagged=CORE untagged=ether3 vlan-ids=109
 /ip/pool/add name=management-dhcp ranges=192.168.71.250-192.168.71.254
 /ip/dhcp-server/add address-pool=management-dhcp interface=MANAGEMENT_VLAN name=management-dhcp disabled=no
 /ip/dhcp-server/network/add address=192.168.71.192/26 dns-server=192.168.71.193 gateway=192.168.71.193 comment="MANAGEMENT_VLAN"
+
 
 {% if static_dhcp_leases -%}
 # Optional Static DHCP Leases
@@ -263,6 +317,16 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priori
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether4]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether5]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp1]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-guest]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2-guest]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-iot-internet]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2-iot-internet]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-iot-restricted]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2-iot-restricted]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-management]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2-management]
 
 
 #
