@@ -159,6 +159,7 @@ if [ "${TYPE}" == 'devices' ]; then
         --header 'content-type: application/json' \
         --data "{\"keep-users\":\"yes\",\"no-defaults\":\"yes\",\"run-after-reset\":\"${DATA}.rsc\"}" \
         "https://${DEVICE_IP}/rest/system/reset-configuration"
+    echo ''
 
     echo 'INFO: Successfully reset, wait for the reboot and double check'
 
