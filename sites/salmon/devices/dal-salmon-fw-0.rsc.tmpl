@@ -34,25 +34,17 @@
 /interface/bridge/port
 
 # trunk
-add bridge=CORE interface=ether2                comment=""
-
-# trunk
-add bridge=CORE interface=ether3                comment=""
+add bridge=CORE interface=ether2
+add bridge=CORE interface=ether3
 
 # untagged - GENERAL
-add bridge=CORE interface=ether4       pvid=100 comment=""
-
-# untagged - GENERAL
-add bridge=CORE interface=ether5       pvid=100 comment=""
-
-# untagged - GENERAL
-add bridge=CORE interface=ether6       pvid=100 comment=""
-
-# untagged - GENERAL
-add bridge=CORE interface=ether7       pvid=100 comment=""
+add bridge=CORE interface=ether4 pvid=100 comment=""
+add bridge=CORE interface=ether5 pvid=100 comment=""
+add bridge=CORE interface=ether6 pvid=100 comment=""
+add bridge=CORE interface=ether7 pvid=100 comment=""
 
 # untagged - MANAGEMENT
-add bridge=CORE interface=ether8       pvid=109 comment=""
+add bridge=CORE interface=ether8 pvid=109 comment=""
 
 # trunk
 add bridge=CORE interface=sfp-sfpplus1 comment=""
