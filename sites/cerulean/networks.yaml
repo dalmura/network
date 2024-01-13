@@ -30,6 +30,8 @@ networks:
     end: "192.168.64.254"
     allocations:
       "192.168.64.193": "dal-cerulean-fw-0"
+      "192.168.64.194": "dal-cerulean-wg-roadwarriors"
+      "192.168.64.195": "dal-cerulean-wg-hubs"
 
   SERVERS:
     description: "Kubernetes Clusters"
@@ -146,11 +148,6 @@ networks:
         end: "192.168.67.249"
         allocations:
           "192.168.67.193": "dal-cerulean-fw-0"
-          "192.168.67.194": "dal-cerulean-sw-0"
-          "192.168.67.195": "dal-cerulean-sw-1"
-          "192.168.67.196": "dal-cerulean-wap-0"
-          "192.168.67.197": "dal-cerulean-wap-1"
-          "192.168.67.220": "dal-cerulean-core-1-vip"
       dhcp:
         start: "192.168.67.250"
         end: "192.168.67.254"
