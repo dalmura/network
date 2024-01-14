@@ -367,10 +367,10 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 
 /certificate
 {% if device_upgrade -%}
-import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=internal-amethyst-root-ca.crt
-import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=internal-amethyst-root-ca.key
-import name=server  passphrase="{{ cert_export_passphrase }}" file-name=internal-amethyst.crt
-import name=server  passphrase="{{ cert_export_passphrase }}" file-name=internal-amethyst.key
+import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=flash/internal-amethyst-root-ca.crt
+import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=flash/internal-amethyst-root-ca.key
+import name=server  passphrase="{{ cert_export_passphrase }}" file-name=flash/internal-amethyst.crt
+import name=server  passphrase="{{ cert_export_passphrase }}" file-name=flash/internal-amethyst.key
 
 :delay 4
 
@@ -390,13 +390,13 @@ set server  trusted=yes
 
 # Export certs for use in remote systems
 # No private key material is exported here, just the public crt
-export-certificate file-name=remote-amethyst type=pem server
-export-certificate file-name=remote-amethyst-root-ca type=pem root-ca
+export-certificate file-name=flash/remote-amethyst type=pem server
+export-certificate file-name=flash/remote-amethyst-root-ca type=pem root-ca
 
 {% if cert_export_passphrase %}
 # Private key material is exported here
-export-certificate file-name=internal-amethyst type=pem export-passphrase="{{ cert_export_passphrase }}" server
-export-certificate file-name=internal-amethyst-root-ca type=pem export-passphrase="{{ cert_export_passphrase }}" root-ca
+export-certificate file-name=flash/internal-amethyst type=pem export-passphrase="{{ cert_export_passphrase }}" server
+export-certificate file-name=flash/internal-amethyst-root-ca type=pem export-passphrase="{{ cert_export_passphrase }}" root-ca
 {% endif %}
 {% endif %}
 
