@@ -358,8 +358,7 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 # Wait until the system clock updates
 # Anything below here is sensitive to system time
 /log info "Waiting for system clock update"
-:do { :delay 1s } while=([:timestamp] < 2728w)
-
+:do { :delay 1s } while=([:timestamp] < 2728w) on-error={:delay 1}
 
 #
 # Certificates
