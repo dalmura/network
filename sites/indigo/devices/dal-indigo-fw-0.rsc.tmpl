@@ -202,12 +202,6 @@ add chain=input action=accept in-interface-list=MANAGEMENT comment="allow MANAGE
 add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN comment="Wireguard Roadwarrior Tunnels"
 add chain=input action=accept protocol=udp dst-port=13232 in-interface-list=WAN comment="Wireguard Site Tunnels"
 
-# Legacy IPSec
-add chain=input action=accept protocol=udp src-port=4500 in-interface-list=WAN comment="Legacy IPSec"
-add chain=input action=accept protocol=ipsec-esp in-interface-list=WAN comment="Legacy IPSec"
-add chain=input action=accept protocol=gre in-interface-list=WAN ipsec-policy=in,ipsec comment="Legacy IPSec - GRE"
-add chain=input action=accept protocol=tcp dst-port=179 in-interface-list=WAN ipsec-policy=in,ipsec comment="Legacy IPSec - BGP"
-
 # Finally drop everything else
 add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
 add chain=input action=drop log=no log-prefix=input-drop comment="drop all other input"
@@ -383,65 +377,3 @@ export-certificate file-name=internal-indigo-root-ca type=pem export-passphrase=
 {% endfor -%}
 {% endif -%}
 {% endfor %}
-
-#
-# Legacy IPSec
-#
-
-# IKE Phase 1
-/ip/ipsec/profile
-add name=dalmura hash-algorithm=sha256 enc-algorithm=aes-256 dh-group=modp2048,modp4096,ecp521 nat-traversal=no dpd-interval=30 dpd-maximum-failures=5
-
-/ip/ipsec/peer
-add name=amethyst address=amethyst.dalmura.cloud profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
-add name=cerulean address=cerulean.dalmura.cloud profile=dalmura exchange-mode=ike2 passive=no send-initial-contact=yes
-
-# This step will fail unless remote certificates have been uploaded to the device
-import name=remote-amethyst-root-ca file-name=remote-amethyst-root-ca.crt
-import name=remote-amethyst         file-name=remote-amethyst.crt
-:delay 2
-
-import name=remote-cerulean-root-ca file-name=remote-cerulean-root-ca.crt
-import name=remote-cerulean         file-name=remote-cerulean.crt
-:delay 2
-
-/ip/ipsec/identity
-add peer=amethyst auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-amethyst
-add peer=cerulean auth-method=digital-signature certificate=server match-by=certificate remote-certificate=remote-cerulean
-
-# IKE Phase 2
-/ip/ipsec/proposal
-add name=dalmura auth-algorithms=sha256 enc-algorithms=aes-256-cbc lifetime=08:00:00 pfs-group=modp2048
-
-/ip/ipsec/policy
-add peer=amethyst tunnel=yes src-address=172.16.0.18 dst-address=172.16.0.17 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-add peer=cerulean tunnel=yes src-address=172.16.0.62 dst-address=172.16.0.61 action=encrypt level=require ipsec-protocols=esp proposal=dalmura
-
-# GRE tunnel interfaces
-/interface/gre
-add name=amethyst local-address=172.16.0.18 remote-address=172.16.0.17 allow-fast-path=no
-add name=cerulean local-address=172.16.0.62 remote-address=172.16.0.61 allow-fast-path=no
-
-/ip/address
-add address=172.16.0.18/30 network=172.16.0.16 interface=amethyst
-add address=172.16.0.62/30 network=172.16.0.60 interface=cerulean
-
-/interface/list/member
-add interface=amethyst list=WAN_HUB
-add interface=cerulean list=WAN_HUB
-
-# BGP
-/ip/firewall/address-list
-add list=indigo-bgp-networks address=192.168.76.0/22
-
-# Required for the network above to be advertised correctly to BGP peers
-/ip/route
-add dst-address=192.168.76.0/22 blackhole
-
-/routing/bgp/template
-add name=indigo-hub   as=65208 router-id=192.168.76.0 output.network=indigo-bgp-networks
-add name=indigo-spoke as=65208 router-id=192.168.76.0 output.network=indigo-bgp-networks
-
-/routing/bgp/connection
-add name=amethyst template=indigo-hub local.address=172.16.0.18 local.role=ebgp remote.address=172.16.0.17/30 remote.as=65210
-add name=cerulean template=indigo-hub local.address=172.16.0.62 local.role=ebgp remote.address=172.16.0.61/30 remote.as=65209
