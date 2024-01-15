@@ -293,8 +293,14 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 
 # Wait until the system clock updates
 # Anything below here is sensitive to system time
-/log info "Waiting for system clock update"
-:do { :delay 1s } while=([:timestamp] < 2728w)
+/log info "Waiting for system clock update (1/4)"
+:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
+/log info "Waiting for system clock update (2/4)"
+:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
+/log info "Waiting for system clock update (3/4)"
+:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
+/log info "Waiting for system clock update (4/4)"
+:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
 
 
 #
@@ -303,10 +309,10 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 
 /certificate
 {% if device_upgrade -%}
-import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=internal-cerulean-root-ca.crt
-import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=internal-cerulean-root-ca.key
-import name=server  passphrase="{{ cert_export_passphrase }}" file-name=internal-cerulean.crt
-import name=server  passphrase="{{ cert_export_passphrase }}" file-name=internal-cerulean.key
+import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=flash/internal-cerulean-root-ca.crt
+import name=root-ca passphrase="{{ cert_export_passphrase }}" file-name=flash/internal-cerulean-root-ca.key
+import name=server  passphrase="{{ cert_export_passphrase }}" file-name=flash/internal-cerulean.crt
+import name=server  passphrase="{{ cert_export_passphrase }}" file-name=flash/internal-cerulean.key
 
 :delay 4
 
@@ -326,13 +332,13 @@ set server  trusted=yes
 
 # Export certs for use in remote systems
 # No private key material is exported here, just the public crt
-export-certificate file-name=remote-cerulean type=pem server
-export-certificate file-name=remote-cerulean-root-ca type=pem root-ca
+export-certificate file-name=flash/remote-cerulean type=pem server
+export-certificate file-name=flash/remote-cerulean-root-ca type=pem root-ca
 
 {% if cert_export_passphrase %}
 # Private key material is exported here
-export-certificate file-name=internal-cerulean type=pem export-passphrase="{{ cert_export_passphrase }}" server
-export-certificate file-name=internal-cerulean-root-ca type=pem export-passphrase="{{ cert_export_passphrase }}" root-ca
+export-certificate file-name=flash/internal-cerulean type=pem export-passphrase="{{ cert_export_passphrase }}" server
+export-certificate file-name=flash/internal-cerulean-root-ca type=pem export-passphrase="{{ cert_export_passphrase }}" root-ca
 {% endif %}
 {% endif %}
 
