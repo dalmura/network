@@ -316,7 +316,7 @@ add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade 
 # Add more general NAT access here
 
 ## dst-nat Plex => Server
-add chain=dstnat action=dst-nat to-address=192.168.69.10 to-ports=32400 protocol=tcp in-interface-list=WAN dst-port=32405 ipsec-policy=in,none
+add chain=dstnat action=dst-nat to-address=192.168.68.10 to-ports=32400 protocol=tcp in-interface-list=WAN dst-port=32405 ipsec-policy=in,none
 
 
 #
