@@ -2,83 +2,85 @@ networks:
   GENERAL:
     description: "PCs, Phones, etc"
     vlan_id: 100
-    cidr: "192.168.68.0/25"
-    mask: "255.255.255.128"
-    start: "192.168.68.1"
-    end: "192.168.68.126"
-    dhcp: true
-    allocations:
-      "192.168.68.1": "dal-amethyst-fw-0"
-
-  GUEST:
-    description: "Internet only"
-    vlan_id: 101
-    cidr: "192.168.68.128/26"
-    mask: "255.255.255.192"
-    start: "192.168.68.129"
-    end: "192.168.68.190"
-    dhcp: true
-    allocations:
-      "192.168.68.129": "dal-amethyst-fw-0"
-
-  VPN:
-    description: "VPN Users"
-    vlan_id: 102
-    cidr: "192.168.68.192/26"
-    mask: "255.255.255.192"
-    start: "192.168.68.193"
-    end: "192.168.68.254"
-    allocations:
-      "192.168.68.193": "dal-amethyst-fw-0"
-
-  SERVERS:
-    description: "Kubernetes Clusters"
-    vlan_id: 103
     cidr: "192.168.69.0/25"
     mask: "255.255.255.128"
     start: "192.168.69.1"
     end: "192.168.69.126"
+    dhcp: true
+    allocations:
+      "192.168.69.1": "dal-amethyst-fw-0"
+
+  GUEST:
+    description: "Internet only"
+    vlan_id: 101
+    cidr: "192.168.69.128/26"
+    mask: "255.255.255.192"
+    start: "192.168.69.129"
+    end: "192.168.69.190"
+    dhcp: true
+    allocations:
+      "192.168.69.129": "dal-amethyst-fw-0"
+
+  VPN:
+    description: "VPN Users"
+    vlan_id: 102
+    cidr: "192.168.69.192/26"
+    mask: "255.255.255.192"
+    start: "192.168.69.193"
+    end: "192.168.69.254"
+    allocations:
+      "192.168.69.193": "dal-amethyst-fw-0"
+      "192.168.69.194": "dal-amethyst-wg-roadwarriors"
+      "192.168.69.195": "dal-amethyst-wg-hubs"
+
+  SERVERS:
+    description: "Kubernetes Clusters"
+    vlan_id: 103
+    cidr: "192.168.68.0/25"
+    mask: "255.255.255.128"
+    start: "192.168.68.1"
+    end: "192.168.68.126"
     subranges:
       static:
-        start: "192.168.69.1"
-        end: "192.168.69.63"
+        start: "192.168.68.64"
+        end: "192.168.68.126"
         allocations:
-          "192.168.69.1": "dal-amethyst-fw-0"
+          "192.168.68.64": "dal-amethyst-fw-0"
         subranges:
           dal-amethyst-vips:
-            start: "192.168.69.2"
-            end: "192.168.69.19"
+            start: "192.168.68.65"
+            end: "192.168.68.82"
             allocations:
-              "192.168.69.2": "dal-amethyst-core-1-vip"
+              "192.168.68.65": "dal-amethyst-core-1-vip"
             subranges:
               dal-amethyst-core-1-vips-metallb:
-                start: "192.168.69.10"
-                end: "192.168.69.19"
+                start: "192.168.68.73"
+                end: "192.168.68.82"
           dal-amethyst-nodes:
-            start: "192.168.69.20"
-            end: "192.168.69.49"
+            start: "192.168.68.83"
+            end: "192.168.68.126"
             allocations: {}
       dhcp:
-        start: "192.168.69.64"
-        end: "192.168.69.126"
+        start: "192.168.68.1"
+        end: "192.168.68.63"
 
   SERVERS_STAGING:
     description: "Hardware staging area"
     vlan_id: 104
-    cidr: "192.168.69.128/25"
+    cidr: "192.168.68.128/25"
     mask: "255.255.255.128"
-    start: "192.168.69.129"
-    end: "192.168.69.254"
+    start: "192.168.68.129"
+    end: "192.168.68.254"
     subranges:
       static:
-        start: "192.168.69.129"
-        end: "192.168.69.149"
+        start: "192.168.68.129"
+        end: "192.168.68.149"
         allocations:
-          "192.168.69.129": "dal-amethyst-fw-0"
-          "192.168.69.130": "dal-amethyst-core-1-vip"
+          "192.168.68.129": "dal-amethyst-fw-0"
+          "192.168.68.130": "dal-amethyst-core-1-vip"
       dhcp:
-        start: "192.168.69.150"
-        end: "192.168.69.254"
+        start: "192.168.68.150"
+        end: "192.168.68.254"
 
   IOT_INTERNET:
     description: "Chromecast, TV, etc"
@@ -146,11 +148,9 @@ networks:
         end: "192.168.71.249"
         allocations:
           "192.168.71.193": "dal-amethyst-fw-0"
-          "192.168.71.194": "dal-amethyst-sw-0"
-          "192.168.71.195": "dal-amethyst-sw-1"
-          "192.168.71.196": "dal-amethyst-wap-0"
-          "192.168.71.197": "dal-amethyst-wap-1"
-          "192.168.71.220": "dal-amethyst-core-1-vip"
+          # "192.168.71.194": "dal-amethyst-sw-0"
+          "192.168.71.195": "dal-amethyst-wap-0"
+          # "192.168.71.196": "dal-amethyst-wap-1"
       dhcp:
         start: "192.168.71.250"
         end: "192.168.71.254"
