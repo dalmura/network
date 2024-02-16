@@ -92,11 +92,11 @@ add bridge=CORE interface=ether17      pvid=100 comment="D5.1-P9 Network Port"
 # untagged - GENERAL
 add bridge=CORE interface=ether18      pvid=100 comment="D5.2-P10 Network Port"
 
-# untagged - SERVERS
-add bridge=CORE interface=ether19      pvid=103 comment="laptop-servers"
+# untagged - IOT_INTERNET
+add bridge=CORE interface=ether19      pvid=105 comment="D12.1-P13 Network Port"
 
-# untagged - SERVERS_STAGING
-add bridge=CORE interface=ether20      pvid=104 comment="laptop-servers-staging"
+# untagged - IOT_INTERNET
+add bridge=CORE interface=ether20      pvid=105 comment="D12.2-P12 Network Port"
 
 # hybrid   - SERVERS_STAGING
 add bridge=CORE interface=ether21      pvid=104 comment="rpi-hybrid"
@@ -127,9 +127,9 @@ add bridge=CORE interface=sfp-sfpplus4          comment=""
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=101
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=102
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,ether21,ether22,ether23,ether24,sfp-sfpplus2 untagged=ether19,sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether20,ether21,ether22,ether23,ether24 vlan-ids=104
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether5,ether9,ether10,ether16 vlan-ids=105
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,ether21,ether22,ether23,ether24,sfp-sfpplus2 untagged=sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether21,ether22,ether23,ether24 vlan-ids=104
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether5,ether9,ether10,ether16,ether19,ether20 vlan-ids=105
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=107
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=108
