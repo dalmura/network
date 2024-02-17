@@ -98,14 +98,14 @@ add bridge=CORE interface=ether19      pvid=105 comment="D12.1-P13 Network Port"
 # untagged - IOT_INTERNET
 add bridge=CORE interface=ether20      pvid=105 comment="D12.2-P12 Network Port"
 
-# hybrid   - SERVERS_STAGING
-add bridge=CORE interface=ether21      pvid=104 comment="rpi-hybrid"
+# untagged - GUEST
+add bridge=CORE interface=ether21      pvid=104 comment=""
 
-# hybrid   - SERVERS_STAGING
-add bridge=CORE interface=ether22      pvid=104 comment="rpi-hybrid"
+# untagged - GUEST
+add bridge=CORE interface=ether22      pvid=104 comment=""
 
-# hybrid   - SERVERS_STAGING
-add bridge=CORE interface=ether23      pvid=104 comment="rpi-hybrid"
+# untagged - GUEST
+add bridge=CORE interface=ether23      pvid=104 comment=""
 
 # untagged - IOT_INTERNET
 add bridge=CORE interface=ether24      pvid=105 comment="D13.1-P24 Network Port"
@@ -119,21 +119,21 @@ add bridge=CORE interface=sfp-sfpplus2          comment="dal-indigo-fw-0"
 # untagged - SERVERS
 add bridge=CORE interface=sfp-sfpplus3 pvid=103 comment="dal-indigo-vulcan"
 
-# N/A
-add bridge=CORE interface=sfp-sfpplus4          comment=""
+# trunk
+add bridge=CORE interface=sfp-sfpplus4          comment="dal-indigo-sw-1"
 
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=101
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=102
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,ether21,ether22,ether23,sfp-sfpplus2 untagged=sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether21,ether22,ether23 vlan-ids=104
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether5,ether9,ether10,ether16,ether19,ether20,ether24 vlan-ids=105
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=107
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=108
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=109
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether21,ether22,ether23 vlan-ids=101
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=102
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,ether22,ether23,sfp-sfpplus2,sfp-sfpplus4 untagged=sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether22,ether23 vlan-ids=104
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether5,ether9,ether10,ether16,ether19,ether20,ether24 vlan-ids=105
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=107
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=108
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=109
 
 
 #
@@ -160,7 +160,7 @@ add chain=input action=accept connection-state=invalid comment="drop invalid"
 add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loopback (for CAPsMAN)"
 
 # Add more general input related access here
-add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
+add chain=input action=accept in-interface-list=MANAGEMENT comment="allow MANAGEMENT access"
 
 # Remove the catchall once comfortable
 add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
@@ -192,13 +192,14 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priori
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether18]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether19]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether20]
-set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether21]
-set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether22]
-set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether23]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether21]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether22]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether23]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether24]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp-sfpplus1]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp-sfpplus3]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus4]
 
 
 #
@@ -229,8 +230,14 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priori
 
 # Wait until the system clock updates
 # Anything below here is sensitive to system time
-/log info "Waiting for system clock update"
-:do { :delay 1s } while=([:timestamp] < 2728w)
+/log info "Waiting for system clock update (1/4)"
+:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
+/log info "Waiting for system clock update (2/4)"
+:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
+/log info "Waiting for system clock update (3/4)"
+:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
+/log info "Waiting for system clock update (4/4)"
+:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
 
 #
 # Certificates
