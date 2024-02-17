@@ -107,8 +107,8 @@ add bridge=CORE interface=ether22      pvid=104 comment="rpi-hybrid"
 # hybrid   - SERVERS_STAGING
 add bridge=CORE interface=ether23      pvid=104 comment="rpi-hybrid"
 
-# hybrid   - SERVERS_STAGING
-add bridge=CORE interface=ether24      pvid=104 comment="rpi-hybrid"
+# untagged - IOT_INTERNET
+add bridge=CORE interface=ether24      pvid=105 comment="D13.1-P24 Network Port"
 
 # untagged - SERVERS
 add bridge=CORE interface=sfp-sfpplus1 pvid=103 comment="dal-indigo-atlas"
@@ -127,9 +127,9 @@ add bridge=CORE interface=sfp-sfpplus4          comment=""
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=101
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=102
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,ether21,ether22,ether23,ether24,sfp-sfpplus2 untagged=sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether21,ether22,ether23,ether24 vlan-ids=104
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether5,ether9,ether10,ether16,ether19,ether20 vlan-ids=105
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,ether21,ether22,ether23,sfp-sfpplus2 untagged=sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether21,ether22,ether23 vlan-ids=104
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether5,ether9,ether10,ether16,ether19,ether20,ether24 vlan-ids=105
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=107
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2 vlan-ids=108
@@ -195,7 +195,7 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priori
 set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether21]
 set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether22]
 set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether23]
-set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether24]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether24]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp-sfpplus1]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp-sfpplus3]
