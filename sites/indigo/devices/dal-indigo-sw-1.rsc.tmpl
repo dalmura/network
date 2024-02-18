@@ -107,8 +107,8 @@ add bridge=CORE interface=ether22      pvid=103 comment=""
 # untagged - SERVERS
 add bridge=CORE interface=ether23      pvid=103 comment=""
 
-# untagged - SERVERS
-add bridge=CORE interface=ether24      pvid=103 comment=""
+# untagged - MANAGEMENT
+add bridge=CORE interface=ether24      pvid=109 comment=""
 
 # trunk - ALL VLANS
 add bridge=CORE interface=sfp-sfpplus1          comment="dal-indigo-sw-0"
@@ -127,13 +127,13 @@ add bridge=CORE interface=sfp-sfpplus4 pvid=103 comment=""
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=100
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=101
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=102
-add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1 untagged=ether17,ether18,ether19,ether20,ether21,ether22,ether23,ether24,sfp-sfpplus2,sfp-sfpplus3,sfp-sfpplus4 vlan-ids=103
+add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1 untagged=ether17,ether18,ether19,ether20,ether21,ether22,ether23,sfp-sfpplus2,sfp-sfpplus3,sfp-sfpplus4 vlan-ids=103
 add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8 vlan-ids=104
 add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1 vlan-ids=105
 add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1 vlan-ids=106
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=107
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=108
-add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=109
+add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether24 vlan-ids=109
 
 
 #
