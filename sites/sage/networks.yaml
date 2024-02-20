@@ -1,0 +1,116 @@
+networks:
+  GENERAL:
+    description: "PCs, Phones, etc"
+    vlan_id: 100
+    cidr: "192.168.52.0/26"
+    mask: "255.255.255.192"
+    start: "192.168.52.1"
+    end: "192.168.52.62"
+    dhcp: true
+    allocations:
+      "192.168.52.1": "dal-sage-fw-0"
+
+  GUEST:
+    description: "Internet only"
+    vlan_id: 101
+    cidr: "192.168.52.64/27"
+    mask: "255.255.255.224"
+    start: "192.168.52.65"
+    end: "192.168.52.94"
+    dhcp: true
+    allocations:
+      "192.168.52.65": "dal-sage-fw-0"
+
+  VPN:
+    description: "VPN Users"
+    vlan_id: 102
+    cidr: "192.168.52.96/27"
+    mask: "255.255.255.224"
+    start: "192.168.52.97"
+    end: "192.168.52.126"
+    allocations:
+      "192.168.52.97": "dal-sage-fw-0"
+      "192.168.52.98": "dal-sage-wg-roadwarriors"
+      "192.168.52.99": "dal-sage-wg-hubs"
+
+  SERVERS:
+    description: "Kubernetes Clusters"
+    vlan_id: 103
+    cidr: "192.168.52.128/27"
+    mask: "255.255.255.224"
+    start: "192.168.52.129"
+    end: "192.168.52.158"
+    subranges:
+      static:
+        start: "192.168.52.129"
+        end: "192.168.52.150"
+        allocations:
+          "192.168.52.129": "dal-sage-fw-0"
+        subranges:
+          dal-sage-vips:
+            start: "192.168.52.130"
+            end: "192.168.52.142"
+            allocations:
+              "192.168.52.130": "dal-sage-core-1-vip"
+            subranges:
+              dal-sage-core-1-vips-metallb:
+                start: "192.168.52.134"
+                end: "192.168.52.142"
+          dal-sage-nodes:
+            start: "192.168.52.143"
+            end: "192.168.52.150"
+            allocations: {}
+      dhcp:
+        start: "192.168.52.151"
+        end: "192.168.52.158"
+
+  IOT_INTERNET:
+    description: "Chromecast, TV, etc"
+    vlan_id: 105
+    cidr: "192.168.52.160/27"
+    mask: "255.255.255.224"
+    start: "192.168.52.161"
+    end: "192.168.52.190"
+    subranges:
+      static:
+        start: "192.168.52.161"
+        end: "192.168.52.175"
+        allocations:
+          "192.168.52.161": "dal-sage-fw-0"
+      dhcp:
+        start: "192.168.52.176"
+        end: "192.168.52.190"
+
+  IOT_RESTRICTED:
+    description: "Security Cameras, Printers, etc"
+    vlan_id: 106
+    cidr: "192.168.52.192/27"
+    mask: "255.255.255.224"
+    start: "192.168.52.193"
+    end: "192.168.52.222"
+    subranges:
+      static:
+        start: "192.168.52.193"
+        end: "192.168.52.208"
+        allocations:
+          "192.168.52.193": "dal-sage-fw-0"
+      dhcp:
+        start: "192.168.52.209"
+        end: "192.168.52.222"
+
+  MANAGEMENT:
+    description: "Network Hardware, IPMIs, UPSs"
+    vlan_id: 109
+    cidr: "192.168.52.224/27"
+    mask: "255.255.255.224"
+    start: "192.168.52.225"
+    end: "192.168.52.254"
+    subranges:
+      static:
+        start: "192.168.52.225"
+        end: "192.168.52.240"
+        allocations:
+          "192.168.52.225": "dal-sage-fw-0"
+      dhcp:
+        start: "192.168.52.241"
+        end: "192.168.52.254"
