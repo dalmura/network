@@ -231,6 +231,9 @@ add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=SERVER
 ## Allow INTERNAL_PUBLIC_ACCESS => SERVERS_VLAN (Plex local traffic)
 add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PUBLIC_ACCESS => PLEX"
 
+## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Websites)
+add chain=forward action=accept protocol=tcp dst-port=443 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Private Websites"
+
 ## Allow GENERAL_VLAN => IOT_INTERNET_VLAN
 add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_INTERNET_VLAN comment="accept GENERAL_VLAN => IOT_INTERNET_VLAN" log-prefix="general2iot"
 
