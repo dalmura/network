@@ -38,8 +38,8 @@
 
 /interface/bridge/port
 
-# hybrid - SERVERS_STAGING/SERVERS,IOT_INTERNET,IOT_RESTRICTED
-add bridge=CORE interface=ether1       pvid=104 comment=""
+# hybrid - GENERAL/SERVERS,IOT_INTERNET,IOT_RESTRICTED
+add bridge=CORE interface=ether1       pvid=100 comment=""
 
 # hybrid - SERVERS_STAGING/SERVERS,IOT_INTERNET,IOT_RESTRICTED
 add bridge=CORE interface=ether2       pvid=104 comment=""
@@ -124,11 +124,11 @@ add bridge=CORE interface=sfp-sfpplus4 pvid=103 comment=""
 
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=100
+add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether1 vlan-ids=100
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=101
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=102
 add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1 untagged=ether17,ether18,ether19,ether20,ether21,ether22,ether23,sfp-sfpplus2,sfp-sfpplus3,sfp-sfpplus4 vlan-ids=103
-add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8 vlan-ids=104
+add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether2,ether3,ether4,ether5,ether6,ether7,ether8 vlan-ids=104
 add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1 vlan-ids=105
 add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1 vlan-ids=106
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=107
