@@ -47,18 +47,18 @@ networks:
         allocations:
           "192.168.77.1": "dal-indigo-fw-0"
         subranges:
-          dal-indigo-vips:
+          vips:
             start: "192.168.77.2"
             end: "192.168.77.19"
             allocations:
               "192.168.77.2": "dal-indigo-core-1-vip"
             subranges:
-              dal-indigo-core-1-vips-metallb:
+              vips-metallb:
                 start: "192.168.77.10"
                 end: "192.168.77.19"
-          dal-indigo-nodes:
+          nodes:
             start: "192.168.77.20"
-            end: "192.168.77.49"
+            end: "192.168.77.63"
             allocations: {}
       dhcp:
         start: "192.168.77.64"
@@ -74,12 +74,21 @@ networks:
     subranges:
       static:
         start: "192.168.77.129"
-        end: "192.168.77.149"
+        end: "192.168.77.191"
         allocations:
           "192.168.77.129": "dal-indigo-fw-0"
-          "192.168.77.130": "dal-indigo-core-1-vip"
+        subranges:
+          vips:
+            start: "192.168.77.130"
+            end: "192.168.77.150"
+            allocations:
+              "192.168.77.130": "dal-indigo-core-1-vip"
+          nodes:
+            start: "192.168.77.151"
+            end: "192.168.77.191"
+            allocations: {}
       dhcp:
-        start: "192.168.77.150"
+        start: "192.168.77.192"
         end: "192.168.77.254"
 
   IOT_INTERNET:

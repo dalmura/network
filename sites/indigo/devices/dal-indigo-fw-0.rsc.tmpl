@@ -103,8 +103,8 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 # Servers Staging VLAN
 /interface/vlan/add interface=CORE name=SERVERS_STAGING_VLAN vlan-id=104
 /ip/address/add interface=SERVERS_STAGING_VLAN address=192.168.77.129/25
-/ip/pool/add name=servers-staging-static ranges=192.168.77.129-192.168.77.149
-/ip/pool/add name=servers-staging-dhcp ranges=192.168.77.150-192.168.77.254
+/ip/pool/add name=servers-staging-static ranges=192.168.77.129-192.168.77.191
+/ip/pool/add name=servers-staging-dhcp ranges=192.168.77.192-192.168.77.254
 /ip/dhcp-server/add address-pool=servers-staging-dhcp interface=SERVERS_STAGING_VLAN name=servers-staging-dhcp disabled=no
 /ip/dhcp-server/network/add address=192.168.77.128/25 dns-server=192.168.77.129 gateway=192.168.77.129 comment="SERVERS_STAGING_VLAN"
 
