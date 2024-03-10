@@ -80,11 +80,11 @@ networks:
         subranges:
           vips:
             start: "192.168.77.130"
-            end: "192.168.77.150"
+            end: "192.168.77.149"
             allocations:
               "192.168.77.130": "dal-indigo-core-1-vip"
           nodes:
-            start: "192.168.77.151"
+            start: "192.168.77.150"
             end: "192.168.77.191"
             allocations: {}
       dhcp:
