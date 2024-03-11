@@ -50,7 +50,7 @@ fi
 
 SITE_NETWORK_FILE="${SITE_FOLDER}/networks.yaml"
 if [ ! -f "${SITE_NETWORK_FILE}" ]; then
-    echo "ERROR: ${SITE_NETWORK_FILE} is missing"
+    echo "WARN: ${SITE_NETWORK_FILE} is missing"
 fi
 
 echo 'WARN: Deploying in 5s'
