@@ -45,7 +45,7 @@ add name=management mode=dynamic-keys authentication-types=wpa2-psk unicast-ciph
 /interface/wireless
 # General Wireless & VLAN
 set wireless-protocol=802.11 mode=ap-bridge band=2ghz-b/g/n channel-width="20/40mhz-XX" frequency=2412 ssid="{{ wifi['general']['ssid_2ghz'] | default(value='dal-amethyst-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan1]
-set wireless-protocol=802.11 mode=ap-bridge band=5ghz-n/ac channel-width="20/40/80mhz-XXXX" frequency=5660 ssid="{{ wifi['general']['ssid_5ghz'] | default(value='dal-amethyst-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan2]
+set wireless-protocol=802.11 mode=ap-bridge band=5ghz-n/ac channel-width="20/40mhz-XX" frequency=auto ssid="{{ wifi['general']['ssid_5ghz'] | default(value='dal-amethyst-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan2]
 
 # Guest Wireless & VLAN
 add name=wlan1-guest master-interface=wlan1 ssid="{{ wifi['guest']['ssid_2ghz'] | default(value='dal-amethyst-guest') }}" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
@@ -85,10 +85,10 @@ add bridge=CORE interface=wlan1-iot-restricted
 add bridge=CORE interface=wlan2-iot-restricted
 add bridge=CORE interface=wlan1-management
 add bridge=CORE interface=wlan2-management
+add bridge=CORE interface=ether5       comment="dal-amethyst-wap-0"
 
 # untagged - GENERAL
 add bridge=CORE interface=ether4       pvid=100 comment="Local dumb switch"
-add bridge=CORE interface=ether5       pvid=100 comment="dal-amethyst-wap-0"
 add bridge=CORE interface=sfp1         pvid=100 comment=""
 
 # hybrid - SERVERS
@@ -98,16 +98,16 @@ add bridge=CORE interface=ether2       pvid=103 comment="Server"
 add bridge=CORE interface=ether3       pvid=109 comment="Management Port"
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,wlan1,wlan2,ether2 untagged=ether4,ether5,sfp1 vlan-ids=100
-add bridge=CORE tagged=CORE,wlan1-guest,wlan2-guest vlan-ids=101
+add bridge=CORE tagged=CORE,ether5,wlan1,wlan2,ether2 untagged=ether4,sfp1 vlan-ids=100
+add bridge=CORE tagged=CORE,ether5,wlan1-guest,wlan2-guest vlan-ids=101
 add bridge=CORE tagged=CORE vlan-ids=102
 add bridge=CORE tagged=CORE untagged=ether2 vlan-ids=103
 add bridge=CORE tagged=CORE vlan-ids=104
-add bridge=CORE tagged=CORE,wlan1-iot-internet,wlan2-iot-internet,ether2 vlan-ids=105
-add bridge=CORE tagged=CORE,wlan1-iot-restricted,wlan2-iot-restricted,ether2 vlan-ids=106
+add bridge=CORE tagged=CORE,ether5,wlan1-iot-internet,wlan2-iot-internet,ether2 vlan-ids=105
+add bridge=CORE tagged=CORE,ether5,wlan1-iot-restricted,wlan2-iot-restricted,ether2 vlan-ids=106
 add bridge=CORE tagged=CORE vlan-ids=107
 add bridge=CORE tagged=CORE vlan-ids=108
-add bridge=CORE tagged=CORE,wlan1-management,wlan2-management untagged=ether3 vlan-ids=109
+add bridge=CORE tagged=CORE,ether5,wlan1-management,wlan2-management untagged=ether3 vlan-ids=109
 
 
 #
@@ -327,7 +327,7 @@ add chain=dstnat action=dst-nat to-address=192.168.68.10 to-ports=32400 protocol
 set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether3]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether4]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether5]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether5]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp1]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2]
