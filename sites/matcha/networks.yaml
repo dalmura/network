@@ -1,0 +1,118 @@
+networks:
+  GENERAL:
+    description: "PCs, Phones, etc"
+    vlan_id: 100
+    cidr: "192.168.62.0/26"
+    mask: "255.255.255.192"
+    start: "192.168.62.1"
+    end: "192.168.62.62"
+    dhcp: true
+    allocations:
+      "192.168.62.1": "dal-matcha-fw-0"
+
+  GUEST:
+    description: "Internet only"
+    vlan_id: 101
+    cidr: "192.168.62.64/27"
+    mask: "255.255.255.224"
+    start: "192.168.62.65"
+    end: "192.168.62.94"
+    dhcp: true
+    allocations:
+      "192.168.62.65": "dal-matcha-fw-0"
+
+  VPN:
+    description: "VPN Users"
+    vlan_id: 102
+    cidr: "192.168.62.96/27"
+    mask: "255.255.255.224"
+    start: "192.168.62.97"
+    end: "192.168.62.126"
+    allocations:
+      "192.168.62.97": "dal-matcha-fw-0"
+      "192.168.62.98": "dal-matcha-wg-roadwarriors"
+      "192.168.62.99": "dal-matcha-wg-hubs"
+
+  SERVERS:
+    description: "Kubernetes Clusters"
+    vlan_id: 103
+    cidr: "192.168.62.128/27"
+    mask: "255.255.255.224"
+    start: "192.168.62.129"
+    end: "192.168.62.158"
+    subranges:
+      static:
+        start: "192.168.62.129"
+        end: "192.168.62.150"
+        allocations:
+          "192.168.62.129": "dal-matcha-fw-0"
+        subranges:
+          dal-matcha-vips:
+            start: "192.168.62.130"
+            end: "192.168.62.142"
+            allocations:
+              "192.168.62.130": "dal-matcha-core-1-vip"
+            subranges:
+              dal-matcha-core-1-vips-metallb:
+                start: "192.168.62.134"
+                end: "192.168.62.142"
+          dal-matcha-nodes:
+            start: "192.168.62.143"
+            end: "192.168.62.150"
+            allocations: {}
+      dhcp:
+        start: "192.168.62.151"
+        end: "192.168.62.158"
+
+  IOT_INTERNET:
+    description: "Chromecast, TV, etc"
+    vlan_id: 105
+    cidr: "192.168.62.160/27"
+    mask: "255.255.255.224"
+    start: "192.168.62.161"
+    end: "192.168.62.190"
+    subranges:
+      static:
+        start: "192.168.62.161"
+        end: "192.168.62.175"
+        allocations:
+          "192.168.62.161": "dal-matcha-fw-0"
+      dhcp:
+        start: "192.168.62.176"
+        end: "192.168.62.190"
+
+  IOT_RESTRICTED:
+    description: "Security Cameras, Printers, etc"
+    vlan_id: 106
+    cidr: "192.168.62.192/27"
+    mask: "255.255.255.224"
+    start: "192.168.62.193"
+    end: "192.168.62.222"
+    subranges:
+      static:
+        start: "192.168.62.193"
+        end: "192.168.62.208"
+        allocations:
+          "192.168.62.193": "dal-matcha-fw-0"
+      dhcp:
+        start: "192.168.62.209"
+        end: "192.168.62.222"
+
+  MANAGEMENT:
+    description: "Network Hardware, IPMIs, UPSs"
+    vlan_id: 109
+    cidr: "192.168.62.224/27"
+    mask: "255.255.255.224"
+    start: "192.168.62.225"
+    end: "192.168.62.254"
+    subranges:
+      static:
+        start: "192.168.62.225"
+        end: "192.168.62.240"
+        allocations:
+          "192.168.62.225": "dal-matcha-fw-0"
+          "192.168.62.226": "dal-matcha-sw-0"
+          "192.168.62.227": "dal-matcha-wap-0"
+      dhcp:
+        start: "192.168.62.241"
+        end: "192.168.62.254"
