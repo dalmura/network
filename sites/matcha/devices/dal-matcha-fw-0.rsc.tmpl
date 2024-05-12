@@ -49,8 +49,8 @@ add name=wlan1-guest master-interface=wlan1 ssid="{{ wifi['guest']['ssid_5ghz'] 
 add name=wlan2-guest master-interface=wlan2 ssid="{{ wifi['guest']['ssid_2ghz'] | default(value='dal-matcha-guest') }}" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
 
 # IoT Internet Wireless & VLAN
-add name=wlan1-iot-internet master-interface=wlan1 ssid="{{ wifi['iot_internet']['ssid_2ghz'] | default(value='dal-matcha-iot-internet') }}" security-profile=iot-internet wps-mode=disabled vlan-id=105 vlan-mode=use-tag
-add name=wlan2-iot-internet master-interface=wlan2 ssid="{{ wifi['iot_internet']['ssid_5ghz'] | default(value='dal-matcha-iot-internet') }}" security-profile=iot-internet wps-mode=disabled vlan-id=105 vlan-mode=use-tag
+add name=wlan1-iot-internet master-interface=wlan1 ssid="{{ wifi['iot_internet']['ssid_5ghz'] | default(value='dal-matcha-iot-internet') }}" security-profile=iot-internet wps-mode=disabled vlan-id=105 vlan-mode=use-tag
+add name=wlan2-iot-internet master-interface=wlan2 ssid="{{ wifi['iot_internet']['ssid_2ghz'] | default(value='dal-matcha-iot-internet') }}" security-profile=iot-internet wps-mode=disabled vlan-id=105 vlan-mode=use-tag
 
 # IoT Restricted Wireless & VLAN
 add name=wlan1-iot-restricted master-interface=wlan1 ssid="{{ wifi['iot_restricted']['ssid_5ghz'] | default(value='dal-matcha-iot-restricted') }}" security-profile=iot-restricted wps-mode=disabled vlan-id=106 vlan-mode=use-tag
