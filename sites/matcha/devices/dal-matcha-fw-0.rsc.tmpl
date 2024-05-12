@@ -41,24 +41,24 @@ add name=management mode=dynamic-keys authentication-types=wpa2-psk unicast-ciph
 
 /interface/wireless
 # General Wireless & VLAN
-set wireless-protocol=802.11 mode=ap-bridge band=2ghz-g/n channel-width="20/40mhz-XX" frequency=auto ssid="{{ wifi['general']['ssid_2ghz'] | default(value='dal-matcha-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan1]
-set wireless-protocol=802.11 mode=ap-bridge band=5ghz-n/ac channel-width="20/40/80mhz-XXXX" frequency=auto ssid="{{ wifi['general']['ssid_5ghz'] | default(value='dal-matcha-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan2]
+set wireless-protocol=802.11 mode=ap-bridge band=5ghz-n/ac channel-width="20/40/80mhz-XXXX" frequency=auto ssid="{{ wifi['general']['ssid_5ghz'] | default(value='dal-matcha-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan1]
+set wireless-protocol=802.11 mode=ap-bridge band=2ghz-g/n channel-width="20/40mhz-XX" frequency=auto ssid="{{ wifi['general']['ssid_2ghz'] | default(value='dal-matcha-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan2]
 
 # Guest Wireless & VLAN
-add name=wlan1-guest master-interface=wlan1 ssid="{{ wifi['guest']['ssid_2ghz'] | default(value='dal-matcha-guest') }}" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
-add name=wlan2-guest master-interface=wlan2 ssid="{{ wifi['guest']['ssid_5ghz'] | default(value='dal-matcha-guest') }}" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
+add name=wlan1-guest master-interface=wlan1 ssid="{{ wifi['guest']['ssid_5ghz'] | default(value='dal-matcha-guest') }}" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
+add name=wlan2-guest master-interface=wlan2 ssid="{{ wifi['guest']['ssid_2ghz'] | default(value='dal-matcha-guest') }}" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
 
 # IoT Internet Wireless & VLAN
 add name=wlan1-iot-internet master-interface=wlan1 ssid="{{ wifi['iot_internet']['ssid_2ghz'] | default(value='dal-matcha-iot-internet') }}" security-profile=iot-internet wps-mode=disabled vlan-id=105 vlan-mode=use-tag
 add name=wlan2-iot-internet master-interface=wlan2 ssid="{{ wifi['iot_internet']['ssid_5ghz'] | default(value='dal-matcha-iot-internet') }}" security-profile=iot-internet wps-mode=disabled vlan-id=105 vlan-mode=use-tag
 
 # IoT Restricted Wireless & VLAN
-add name=wlan1-iot-restricted master-interface=wlan1 ssid="{{ wifi['iot_restricted']['ssid_2ghz'] | default(value='dal-matcha-iot-restricted') }}" security-profile=iot-restricted wps-mode=disabled vlan-id=106 vlan-mode=use-tag
-add name=wlan2-iot-restricted master-interface=wlan2 ssid="{{ wifi['iot_restricted']['ssid_5ghz'] | default(value='dal-matcha-iot-restricted') }}" security-profile=iot-restricted wps-mode=disabled vlan-id=106 vlan-mode=use-tag
+add name=wlan1-iot-restricted master-interface=wlan1 ssid="{{ wifi['iot_restricted']['ssid_5ghz'] | default(value='dal-matcha-iot-restricted') }}" security-profile=iot-restricted wps-mode=disabled vlan-id=106 vlan-mode=use-tag
+add name=wlan2-iot-restricted master-interface=wlan2 ssid="{{ wifi['iot_restricted']['ssid_2ghz'] | default(value='dal-matcha-iot-restricted') }}" security-profile=iot-restricted wps-mode=disabled vlan-id=106 vlan-mode=use-tag
 
 # Management Wireless & VLAN
-add name=wlan1-management master-interface=wlan1 ssid="{{ wifi['management']['ssid_2ghz'] | default(value='dal-matcha-management') }}" security-profile=management wps-mode=disabled vlan-id=109 vlan-mode=use-tag
-add name=wlan2-management master-interface=wlan2 ssid="{{ wifi['management']['ssid_5ghz'] | default(value='dal-matcha-management') }}" security-profile=management wps-mode=disabled vlan-id=109 vlan-mode=use-tag
+add name=wlan1-management master-interface=wlan1 ssid="{{ wifi['management']['ssid_5ghz'] | default(value='dal-matcha-management') }}" security-profile=management wps-mode=disabled vlan-id=109 vlan-mode=use-tag
+add name=wlan2-management master-interface=wlan2 ssid="{{ wifi['management']['ssid_2ghz'] | default(value='dal-matcha-management') }}" security-profile=management wps-mode=disabled vlan-id=109 vlan-mode=use-tag
 
 # Turn everything on
 enable [find]

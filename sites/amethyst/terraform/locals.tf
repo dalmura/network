@@ -1,4 +1,4 @@
 locals {
   site_name          = "amethyst"
-  site_dydns         = "676405570da9.sn.mynetname.net"
+  site_dydns         = "hf8097vmj72.sn.mynetname.net"
 }
