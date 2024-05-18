@@ -86,8 +86,8 @@ add bridge=CORE interface=ether16      pvid=100 comment="Living Room"
 # N/A
 add bridge=CORE interface=ether17               comment=""
 
-# hybrid - GENERAL
-add bridge=CORE interface=ether18      pvid=100 comment="Local HA"
+# hybrid - SERVERS
+add bridge=CORE interface=ether18      pvid=103 comment="Local HA"
 
 # N/A
 add bridge=CORE interface=ether19               comment=""
@@ -121,10 +121,10 @@ add bridge=CORE interface=sfp-sfpplus4          comment=""
 
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether14,sfp-sfpplus1 untagged=ether9,ether10,ether16,ether18 vlan-ids=100
+add bridge=CORE tagged=CORE,ether14,ether18,sfp-sfpplus1 untagged=ether9,ether10,ether16 vlan-ids=100
 add bridge=CORE tagged=CORE,ether14,sfp-sfpplus1 vlan-ids=101
 add bridge=CORE tagged=CORE,ether14,sfp-sfpplus1 vlan-ids=102
-add bridge=CORE tagged=CORE,ether14,sfp-sfpplus1 vlan-ids=103
+add bridge=CORE tagged=CORE,ether14,sfp-sfpplus1 untagged=ether18 vlan-ids=103
 add bridge=CORE tagged=CORE,ether14,ether18,sfp-sfpplus1 vlan-ids=105
 add bridge=CORE tagged=CORE,ether14,ether18,sfp-sfpplus1 untagged=ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8 vlan-ids=106
 add bridge=CORE tagged=CORE,ether14,sfp-sfpplus1 untagged=ether24 vlan-ids=109
