@@ -29,23 +29,20 @@
 
 
 #
-# Wireless (wifiwave2) Interfaces & VLAN
+# Wireless (wifi-qcom) Interfaces & VLAN
 #
 
-/interface/wifiwave2/security
+/interface/wifi/security
 add name=dalmura authentication-types=wpa2-psk,wpa3-psk wps=disable
 
-/interface/wifiwave2/channel
-add name=dalmura-2ghz band=2ghz-ax width=20/40mhz
-add name=dalmura-5ghz band=5ghz-ax width=20/40/80mhz
+/interface/wifi/channel
+add name=dalmura-2ghz band=2ghz-ax width=20/40mhz reselect-interval=1h..2h
+add name=dalmura-5ghz band=5ghz-ax width=20/40/80mhz reselect-interval=1h..2h
 
-/interface/wifiwave2/datapath
-add name=dalmura bridge=CORE
+/interface/wifi/configuration
+add name=dalmura mode=ap country=Australia security=dalmura
 
-/interface/wifiwave2/configuration
-add name=dalmura mode=ap country=Australia security=dalmura datapath=dalmura
-
-/interface/wifiwave2
+/interface/wifi
 # General Wireless & VLAN
 set wifi1 configuration=dalmura configuration.ssid="{{ wifi['general']['ssid_5ghz'] | default(value='dal-matcha-general') }}" channel=dalmura-5ghz security.passphrase="{{ wifi['general']['password'] }}" datapath.vlan-id=100
 set wifi2 configuration=dalmura configuration.ssid="{{ wifi['general']['ssid_2ghz'] | default(value='dal-matcha-general') }}" channel=dalmura-2ghz security.passphrase="{{ wifi['general']['password'] }}" datapath.vlan-id=100
@@ -187,8 +184,8 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 #
 
 /certificate
-add name=ca days-valid=10950 common-name=wap-1.matcha.dalmura.cloud key-usage=key-cert-sign,crl-sign
-add name=server days-valid=10950 common-name=wap-1.matcha.dalmura.cloud subject-alt-name=DNS:wap-1.matcha.dalmura.cloud organization=dalmura unit=matcha
+add name=ca days-valid=10950 common-name=wap-0.matcha.dalmura.cloud key-usage=key-cert-sign,crl-sign
+add name=server days-valid=10950 common-name=wap-0.matcha.dalmura.cloud subject-alt-name=DNS:wap-0.matcha.dalmura.cloud organization=dalmura unit=matcha
 
 sign ca name=root-ca
 :delay 4
