@@ -29,23 +29,20 @@
 
 
 #
-# Wireless (wifiwave2) Interfaces & VLAN
+# Wireless (wifi-qcom) Interfaces & VLAN
 #
 
-/interface/wifiwave2/security
+/interface/wifi/security
 add name=dalmura authentication-types=wpa2-psk,wpa3-psk wps=disable
 
-/interface/wifiwave2/channel
-add name=dalmura-2ghz band=2ghz-ax width=20/40mhz
-add name=dalmura-5ghz band=5ghz-ax width=20/40/80mhz
+/interface/wifi/channel
+add name=dalmura-2ghz band=2ghz-ax width=20/40mhz reselect-interval=1h..2h
+add name=dalmura-5ghz band=5ghz-ax width=20/40/80mhz reselect-interval=1h..2h
 
-/interface/wifiwave2/datapath
-add name=dalmura bridge=CORE
+/interface/wifi/configuration
+add name=dalmura mode=ap country=Australia security=dalmura
 
-/interface/wifiwave2/configuration
-add name=dalmura mode=ap country=Australia security=dalmura datapath=dalmura
-
-/interface/wifiwave2
+/interface/wifi
 # General Wireless & VLAN
 set wifi1 configuration=dalmura configuration.ssid=dal-indigo-general channel=dalmura-5ghz security.passphrase="{{ wifi['general']['password'] }}" datapath.vlan-id=100
 set wifi2 configuration=dalmura configuration.ssid=dal-indigo-general channel=dalmura-2ghz security.passphrase="{{ wifi['general']['password'] }}" datapath.vlan-id=100
