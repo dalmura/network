@@ -97,6 +97,7 @@ add bridge=CORE interface=ether3       pvid=109 comment="Management Port"
 /interface/bridge/vlan
 add bridge=CORE tagged=CORE,ether1,wlan1,wlan2 untagged=ether2 vlan-ids=100
 add bridge=CORE tagged=CORE,ether1,wlan1-guest,wlan2-guest vlan-ids=101
+add bridge=CORE tagged=CORE,ether1 vlan-ids=103
 add bridge=CORE tagged=CORE,ether1,wlan1-iot-internet,wlan2-iot-internet vlan-ids=105
 add bridge=CORE tagged=CORE,ether1,wlan1-iot-restricted,wlan2-iot-restricted vlan-ids=106
 add bridge=CORE tagged=CORE,ether1,ether2,wlan1-management,wlan2-management untagged=ether3 vlan-ids=109
