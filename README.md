@@ -16,15 +16,15 @@ rustup update
 cargo install --git https://github.com/chevdor/tera-cli
 
 # MacOS
-brew install python3 yq terraform curl
+brew install python3 yq opentofu curl
 
 # Ubuntu & friends
-apt-get install python3 yq terraform curl
+apt-get install python3 yq opentofu curl
 ```
 
 # Deploying
 
-## Terraform
+## OpenTofu (Terraform)
 
 Pretty simple, ensure you're setting/exporting the AWS_PROFILE env var to control which account you're deploying into.
 
@@ -33,11 +33,11 @@ The script is opinionated in that it expects AWS_PROFILE to be set.
 ```bash
 export AWS_PROFILE='my-aws-profile'
 
-./deploy.sh [SITE] terraform
+./deploy.sh [SITE] infra
 
 # Examples
-./deploy.sh global terraform
-./deploy.sh indigo terraform
+./deploy.sh global infra
+./deploy.sh indigo infra
 ```
 
 ## RouterOS
