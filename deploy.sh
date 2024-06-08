@@ -6,10 +6,11 @@ TYPE="${2}"
 DATA="${3}"
 
 if [ "${SITE}" == '' ] || [ "${SITE}" == '-h' ] || [ "${SITE}" == '--help' ]; then
-    echo "USAGE: ${0} SITE (devices|render|terraform) [EXTRA_DATA]"
-    echo "Eg #1: ${0} global terraform"
+    echo "USAGE: ${0} SITE (devices|render|infra|clean) [EXTRA_DATA]"
+    echo "Eg #1: ${0} global infra"
     echo "Eg #2: ${0} indigo devices dal-indigo-fw-0"
     echo "Eg #3: ${0} indigo render dal-indigo-wap-0"
+    echo "Eg #4: ${0} indigo clean"
     exit 0
 fi
 
@@ -163,15 +164,15 @@ if [ "${TYPE}" == 'devices' ]; then
 
     echo 'INFO: Successfully reset, wait for the reboot and double check'
 
-elif [ "${TYPE}" == 'terraform' ]; then
+elif [ "${TYPE}" == 'infra' ]; then
     if [ "${AWS_PROFILE}" == '' ]; then
         echo 'ERROR: Missing AWS_PROFILE env var'
         exit 1
     fi
 
     rm -rf "${TYPE_FOLDER}/.terraform"
-    terraform -chdir="${TYPE_FOLDER}" init -upgrade
-    terraform -chdir="${TYPE_FOLDER}" apply
+    tofu -chdir="${TYPE_FOLDER}" init -upgrade
+    tofu -chdir="${TYPE_FOLDER}" apply
 elif [ "${TYPE}" == 'clean' ]; then
     rm -rf "${SITE_FOLDER}"/devices/*.rsc
     rm -rf "${SITE_FOLDER}"/terraform/.terraform
