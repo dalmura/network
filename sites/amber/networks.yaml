@@ -1,0 +1,116 @@
+networks:
+  GENERAL:
+    description: "PCs, Phones, etc"
+    vlan_id: 100
+    cidr: "192.168.56.0/26"
+    mask: "255.255.255.192"
+    start: "192.168.56.1"
+    end: "192.168.56.62"
+    dhcp: true
+    allocations:
+      "192.168.56.1": "dal-amber-fw-0"
+
+  GUEST:
+    description: "Internet only"
+    vlan_id: 101
+    cidr: "192.168.56.64/27"
+    mask: "255.255.255.224"
+    start: "192.168.56.65"
+    end: "192.168.56.94"
+    dhcp: true
+    allocations:
+      "192.168.56.65": "dal-amber-fw-0"
+
+  VPN:
+    description: "VPN Users"
+    vlan_id: 102
+    cidr: "192.168.56.96/27"
+    mask: "255.255.255.224"
+    start: "192.168.56.97"
+    end: "192.168.56.126"
+    allocations:
+      "192.168.56.97": "dal-amber-fw-0"
+      "192.168.56.98": "dal-amber-wg-roadwarriors"
+      "192.168.56.99": "dal-amber-wg-hubs"
+
+  SERVERS:
+    description: "Kubernetes Clusters"
+    vlan_id: 103
+    cidr: "192.168.56.128/27"
+    mask: "255.255.255.224"
+    start: "192.168.56.129"
+    end: "192.168.56.158"
+    subranges:
+      static:
+        start: "192.168.56.129"
+        end: "192.168.56.150"
+        allocations:
+          "192.168.56.129": "dal-amber-fw-0"
+        subranges:
+          dal-amber-vips:
+            start: "192.168.56.130"
+            end: "192.168.56.142"
+            allocations:
+              "192.168.56.130": "dal-amber-core-1-vip"
+            subranges:
+              dal-amber-core-1-vips-metallb:
+                start: "192.168.56.134"
+                end: "192.168.56.142"
+          dal-amber-nodes:
+            start: "192.168.56.143"
+            end: "192.168.56.150"
+            allocations: {}
+      dhcp:
+        start: "192.168.56.151"
+        end: "192.168.56.158"
+
+  IOT_INTERNET:
+    description: "Chromecast, TV, etc"
+    vlan_id: 105
+    cidr: "192.168.56.160/27"
+    mask: "255.255.255.224"
+    start: "192.168.56.161"
+    end: "192.168.56.190"
+    subranges:
+      static:
+        start: "192.168.56.161"
+        end: "192.168.56.175"
+        allocations:
+          "192.168.56.161": "dal-amber-fw-0"
+      dhcp:
+        start: "192.168.56.176"
+        end: "192.168.56.190"
+
+  IOT_RESTRICTED:
+    description: "Security Cameras, Printers, etc"
+    vlan_id: 106
+    cidr: "192.168.56.192/27"
+    mask: "255.255.255.224"
+    start: "192.168.56.193"
+    end: "192.168.56.222"
+    subranges:
+      static:
+        start: "192.168.56.193"
+        end: "192.168.56.208"
+        allocations:
+          "192.168.56.193": "dal-amber-fw-0"
+      dhcp:
+        start: "192.168.56.209"
+        end: "192.168.56.222"
+
+  MANAGEMENT:
+    description: "Network Hardware, IPMIs, UPSs"
+    vlan_id: 109
+    cidr: "192.168.56.224/27"
+    mask: "255.255.255.224"
+    start: "192.168.56.225"
+    end: "192.168.56.254"
+    subranges:
+      static:
+        start: "192.168.56.225"
+        end: "192.168.56.240"
+        allocations:
+          "192.168.56.225": "dal-amber-fw-0"
+      dhcp:
+        start: "192.168.56.241"
+        end: "192.168.56.254"
