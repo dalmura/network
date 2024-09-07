@@ -1,12 +1,12 @@
 #
-# dal-amethyst-wap-0
+# dal-amethyst-wap-2
 #
 
 #
 # Naming
 #
 
-/system/identity/set name="dal-amethyst-wap-0"
+/system/identity/set name="dal-amethyst-wap-2"
 
 
 #
@@ -44,8 +44,8 @@ add name=management mode=dynamic-keys authentication-types=wpa2-psk unicast-ciph
 
 /interface/wireless
 # General Wireless & VLAN
-set wireless-protocol=802.11 mode=ap-bridge band=2ghz-g/n channel-width="20/40mhz-XX" frequency=2452 ssid="{{ wifi['general']['ssid_2ghz'] | default(value='dal-amethyst-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan1]
-set wireless-protocol=802.11 mode=ap-bridge band=5ghz-n/ac channel-width="20mhz" frequency=auto ssid="{{ wifi['general']['ssid_5ghz'] | default(value='dal-amethyst-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan2]
+set wireless-protocol=802.11 mode=ap-bridge band=2ghz-g/n channel-width="20/40mhz-XX" frequency=auto ssid="{{ wifi['general']['ssid_2ghz'] | default(value='dal-amethyst-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan1]
+set wireless-protocol=802.11 mode=ap-bridge band=5ghz-n/ac channel-width="20/40/80mhz-XXXX" frequency=auto ssid="{{ wifi['general']['ssid_5ghz'] | default(value='dal-amethyst-general') }}" security-profile=general wps-mode=disabled frequency-mode=regulatory-domain country=australia installation=indoor vlan-id=100 vlan-mode=use-tag [find name=wlan2]
 
 # Guest Wireless & VLAN
 add name=wlan1-guest master-interface=wlan1 ssid="{{ wifi['guest']['ssid_2ghz'] | default(value='dal-amethyst-guest') }}" security-profile=guest wps-mode=disabled vlan-id=101 vlan-mode=use-tag
@@ -75,9 +75,7 @@ enable [find]
 /interface/bridge/port
 
 # trunk
-add bridge=CORE interface=ether1        comment="dal-amethyst-fw-0"
-add bridge=CORE interface=ether2        comment="dal-amethyst-wap-1"
-add bridge=CORE interface=ether5        comment="dal-amethyst-wap-2"
+add bridge=CORE interface=ether1        comment="dal-amethyst-wap-0"
 add bridge=CORE interface=wlan1
 add bridge=CORE interface=wlan2
 add bridge=CORE interface=wlan1-guest
@@ -91,18 +89,18 @@ add bridge=CORE interface=wlan2-management
 
 
 # hybrid - GENERAL
-# None in hallway
+# None on Bedroom AP
 
 # untagged - MANAGEMENT
 add bridge=CORE interface=ether3       pvid=109 comment="Management Port"
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether1,ether2,ether5,wlan1,wlan2 vlan-ids=100
-add bridge=CORE tagged=CORE,ether1,ether2,ether5,wlan1-guest,wlan2-guest vlan-ids=101
-add bridge=CORE tagged=CORE,ether1,ether2,ether5 vlan-ids=103
-add bridge=CORE tagged=CORE,ether1,ether2,ether5,wlan1-iot-internet,wlan2-iot-internet vlan-ids=105
-add bridge=CORE tagged=CORE,ether1,ether2,ether5,wlan1-iot-restricted,wlan2-iot-restricted vlan-ids=106
-add bridge=CORE tagged=CORE,ether1,ether2,ether5,wlan1-management,wlan2-management untagged=ether3 vlan-ids=109
+add bridge=CORE tagged=CORE,ether1,wlan1,wlan2 untagged=ether2 vlan-ids=100
+add bridge=CORE tagged=CORE,ether1,wlan1-guest,wlan2-guest vlan-ids=101
+add bridge=CORE tagged=CORE,ether1 vlan-ids=103
+add bridge=CORE tagged=CORE,ether1,wlan1-iot-internet,wlan2-iot-internet vlan-ids=105
+add bridge=CORE tagged=CORE,ether1,wlan1-iot-restricted,wlan2-iot-restricted vlan-ids=106
+add bridge=CORE tagged=CORE,ether1,wlan1-management,wlan2-management untagged=ether3 vlan-ids=109
 
 #
 # IP Addressing & Routing
@@ -110,7 +108,7 @@ add bridge=CORE tagged=CORE,ether1,ether2,ether5,wlan1-management,wlan2-manageme
 
 # Management VLAN
 /interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
-/ip/address/add address=192.168.71.195/26 interface=MANAGEMENT_VLAN
+/ip/address/add address=192.168.71.197/26 interface=MANAGEMENT_VLAN
 
 
 #
@@ -141,9 +139,7 @@ add chain=input action=drop log=no log-prefix=input-drop comment="drop all other
 
 /interface/bridge/port
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether1]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether3]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether5]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wlan1-guest]
@@ -197,8 +193,8 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 #
 
 /certificate
-add name=ca days-valid=10950 common-name=wap-0.amethyst.dalmura.cloud key-usage=key-cert-sign,crl-sign
-add name=server days-valid=10950 common-name=wap-0.amethyst.dalmura.cloud subject-alt-name=DNS:wap-0.amethyst.dalmura.cloud organization=dalmura unit=amethyst
+add name=ca days-valid=10950 common-name=wap-2.amethyst.dalmura.cloud key-usage=key-cert-sign,crl-sign
+add name=server days-valid=10950 common-name=wap-2.amethyst.dalmura.cloud subject-alt-name=DNS:wap-2.amethyst.dalmura.cloud organization=dalmura unit=amethyst
 
 sign ca name=root-ca
 :delay 2
@@ -209,3 +205,5 @@ set root-ca trusted=yes
 set server trusted=yes
 
 /ip/service/set www-ssl tls-version=only-1.2 address=192.168.71.192/26 certificate=server disabled=no
+
+
