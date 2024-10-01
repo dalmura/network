@@ -72,8 +72,10 @@ enable [find]
 
 /interface/bridge/port
 
-# trunk
+# untagged - IOT_INTERNET
 add bridge=CORE interface=ether2  pvid=105 comment=""
+
+# trunk
 add bridge=CORE interface=ether3           comment=""
 add bridge=CORE interface=ether4           comment=""
 add bridge=CORE interface=ether5           comment=""
