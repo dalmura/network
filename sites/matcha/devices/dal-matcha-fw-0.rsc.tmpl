@@ -73,7 +73,7 @@ enable [find]
 /interface/bridge/port
 
 # trunk
-add bridge=CORE interface=ether2           comment=""
+add bridge=CORE interface=ether2  pvid=105 comment=""
 add bridge=CORE interface=ether3           comment=""
 add bridge=CORE interface=ether4           comment=""
 add bridge=CORE interface=ether5           comment=""
@@ -99,13 +99,13 @@ add bridge=CORE interface=wlan1-management
 add bridge=CORE interface=wlan2-management
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1,wlan1,wlan2 vlan-ids=100
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1,wlan1-guest,wlan2-guest vlan-ids=101
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1 vlan-ids=102
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1 vlan-ids=103
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1,wlan1-iot-internet,wlan2-iot-internet vlan-ids=105
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1,wlan1-iot-restricted,wlan2-iot-restricted vlan-ids=106
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1,wlan1-management,wlan2-management untagged=ether10 vlan-ids=109
+add bridge=CORE tagged=CORE,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1,wlan1,wlan2 vlan-ids=100
+add bridge=CORE tagged=CORE,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1,wlan1-guest,wlan2-guest vlan-ids=101
+add bridge=CORE tagged=CORE,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1 vlan-ids=102
+add bridge=CORE tagged=CORE,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1 vlan-ids=103
+add bridge=CORE tagged=CORE,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1,wlan1-iot-internet,wlan2-iot-internet untagged=ether2 vlan-ids=105
+add bridge=CORE tagged=CORE,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1,wlan1-iot-restricted,wlan2-iot-restricted vlan-ids=106
+add bridge=CORE tagged=CORE,ether3,ether4,ether5,ether6,ether7,ether8,ether9,sfp-sfpplus1,wlan1-management,wlan2-management untagged=ether10 vlan-ids=109
 
 
 #
@@ -282,7 +282,7 @@ add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade 
 #
 
 /interface/bridge/port
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether3]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether4]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether5]
