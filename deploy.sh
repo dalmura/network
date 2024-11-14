@@ -204,7 +204,7 @@ if [ "${TYPE}" == 'devices' ]; then
             --data "{\"keep-users\":\"yes\",\"no-defaults\":\"yes\",\"run-after-reset\":\"${RUN_PATH}${DATA}.rsc\"}" \
             "${SCHEME}://${DEVICE_IP}/rest/system/reset-configuration"
         echo ''
-        echo 'INFO: Successfully reset, wait for the reboot and double check'
+        echo 'INFO: Reset, wait for the reboot and double check'
     else
         echo "INFO: Further Config - Applying directly"
 
@@ -216,7 +216,7 @@ if [ "${TYPE}" == 'devices' ]; then
             --data "{\"file-name\":\"${RUN_PATH}${DATA}.rsc\"}" \
             "${SCHEME}://${DEVICE_IP}/rest/import"
         echo ''
-        echo 'INFO: Successfully applied, please check'
+        echo 'INFO: Applied, please check'
     fi
 
 elif [ "${TYPE}" == 'infra' ]; then
