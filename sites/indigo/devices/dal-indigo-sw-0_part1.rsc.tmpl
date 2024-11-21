@@ -39,19 +39,19 @@
 /interface/bridge/port
 
 # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether1       pvid=106 comment="D6-P17 Camera"
+add bridge=CORE interface=ether1       pvid=106 comment="D?-P?? Camera"
 
 # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether2       pvid=106 comment="D2-P16 Camera"
+add bridge=CORE interface=ether2       pvid=106 comment="D?-P?? Camera"
 
 # untagged - IOT_RESTRICTED
-add bridge=CORE interface=ether3       pvid=106 comment="D7-P18 Camera"
+add bridge=CORE interface=ether3       pvid=106 comment="D?-P?? Camera"
 
 # untagged - IOT_RESTRICTED
 add bridge=CORE interface=ether4       pvid=106 comment="D?-P?? Camera"
 
-# untagged - IOT_INTERNET
-add bridge=CORE interface=ether5       pvid=105 comment="D3-P19 Doorbell"
+# untagged - IOT_RESTRICTED
+add bridge=CORE interface=ether5       pvid=106 comment="D?-P?? Camera"
 
 # trunk
 add bridge=CORE interface=ether6                comment="trunk port for local access"
@@ -129,8 +129,8 @@ add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplu
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=102
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,ether22,ether23,sfp-sfpplus2,sfp-sfpplus4 untagged=sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether22,ether23 vlan-ids=104
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether5,ether9,ether10,ether16,ether19,ether20,ether24 vlan-ids=105
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether1,ether2,ether3,ether4 vlan-ids=106
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether9,ether10,ether16,ether19,ether20,ether24 vlan-ids=105
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether1,ether2,ether3,ether4,ether5 vlan-ids=106
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=107
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=108
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=109
