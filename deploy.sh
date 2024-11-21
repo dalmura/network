@@ -63,9 +63,25 @@ if [ "${TYPE}" == 'devices' ]; then
         exit 1
     fi
 
+    # Ensure the rendered folder exists
+    mkdir -p "${TYPE_FOLDER}/rendered"
+
+    # Figure out if the device config is in parts
+    DEVICE_ARRAY=(${DATA//_/ })
+    DEVICE_NAME="${DEVICE_ARRAY[0]}"
+    DEVICE_PART="${DEVICE_ARRAY[1]}"
+
+    if [ "${DEVICE_PART}" == '' ] || [ "${DEVICE_PART}" == 'part1' ]; then
+        INITIAL_CONFIG='y'
+        echo 'INFO: Detected initial config'
+    else
+        INITIAL_CONFIG='n'
+        echo 'INFO: Detected additional config'
+    fi
+
     # Deploy RouterOS config
-    CONFIG_FILE="${TYPE_FOLDER}/${DATA}.rsc"
-    TEMPLATE_FILE="${CONFIG_FILE}.tmpl"
+    CONFIG_FILE="${TYPE_FOLDER}/rendered/${DATA}.rsc"
+    TEMPLATE_FILE="${TYPE_FOLDER}/${DATA}.rsc.tmpl"
 
     if [ ! -f "${TEMPLATE_FILE}" ]; then
         echo "ERROR: Device template file missing: ${TEMPLATE_FILE}"
@@ -74,6 +90,14 @@ if [ "${TYPE}" == 'devices' ]; then
 
     if [ "${DEVICE_UPGRADE}" != 'false' ]; then
         DEVICE_UPGRADE='true'
+    fi
+
+    if [ "${REQUIRES_FLASH}" != 'true' ]; then
+        REQUIRES_FLASH='false'
+    fi
+
+    if [ "${USE_HTTP}" != 'true' ]; then
+        USE_HTTP='false'
     fi
 
     TMP_CONFIG_FILE=$(mktemp)
@@ -107,7 +131,7 @@ if [ "${TYPE}" == 'devices' ]; then
     fi
 
     # Find the IP of the device from networks.yaml
-    DEVICE_IP=$(yq ".networks.MANAGEMENT.subranges.static.allocations | with_entries(select(.value == \"${DATA}\")) | keys | .[0]" "${SITE_NETWORK_FILE}")
+    DEVICE_IP=$(yq ".networks.MANAGEMENT.subranges.static.allocations | with_entries(select(.value == \"${DEVICE_NAME}\")) | keys | .[0]" "${SITE_NETWORK_FILE}")
 
     if [ "${DEVICE_IP}" == '' ]; then
         echo "ERROR: Couldn't extract device IP for '${DATA}' from '${SITE_NETWORK_FILE}'"
@@ -142,27 +166,58 @@ if [ "${TYPE}" == 'devices' ]; then
 
     sleep 2
 
+    if [ "${REQUIRES_FLASH}" == 'true' ]; then
+        DST_PATH=',"dst-path":"flash/"'
+        RUN_PATH='flash/'
+    else
+        DST_PATH=''
+        RUN_PATH=''
+    fi
+
+    if [ "${USE_HTTP}" == 'true' ]; then
+        SCHEME='http'
+    else
+        SCHEME='https'
+    fi
+
+    echo "INFO: Downloading 'rendered/${DATA}.rsc' onto device (via ${SCHEME})"
+
     curl \
         --insecure \
         --user "${ROUTEROS_USERNAME}:${ROUTEROS_PASSWORD}" \
         -X POST \
         --header 'content-type: application/json' \
-        --data "{\"mode\":\"http\",\"url\":\"http://${MY_IP}:8000/${DATA}.rsc\"}" \
-        "https://${DEVICE_IP}/rest/tool/fetch"
+        --data "{\"mode\":\"http\",\"url\":\"http://${MY_IP}:8000/rendered/${DATA}.rsc\"${DST_PATH}}" \
+        "${SCHEME}://${DEVICE_IP}/rest/tool/fetch"
+    echo ''
 
     kill "${PYTHON_PID}"
 
-    # Reset the router with the uploaded file
-    curl \
-        --insecure \
-        --user "${ROUTEROS_USERNAME}:${ROUTEROS_PASSWORD}" \
-        -X POST \
-        --header 'content-type: application/json' \
-        --data "{\"keep-users\":\"yes\",\"no-defaults\":\"yes\",\"run-after-reset\":\"${DATA}.rsc\"}" \
-        "https://${DEVICE_IP}/rest/system/reset-configuration"
-    echo ''
+    if [ "${INITIAL_CONFIG}" == 'y' ]; then
+        echo "INFO: First Config - Resetting Device"
 
-    echo 'INFO: Successfully reset, wait for the reboot and double check'
+        curl \
+            --insecure \
+            --user "${ROUTEROS_USERNAME}:${ROUTEROS_PASSWORD}" \
+            -X POST \
+            --header 'content-type: application/json' \
+            --data "{\"keep-users\":\"yes\",\"no-defaults\":\"yes\",\"run-after-reset\":\"${RUN_PATH}${DATA}.rsc\"}" \
+            "${SCHEME}://${DEVICE_IP}/rest/system/reset-configuration"
+        echo ''
+        echo 'INFO: Reset, wait for the reboot and double check'
+    else
+        echo "INFO: Further Config - Applying directly"
+
+        curl \
+            --insecure \
+            --user "${ROUTEROS_USERNAME}:${ROUTEROS_PASSWORD}" \
+            -X POST \
+            --header 'content-type: application/json' \
+            --data "{\"file-name\":\"${RUN_PATH}${DATA}.rsc\"}" \
+            "${SCHEME}://${DEVICE_IP}/rest/import"
+        echo ''
+        echo 'INFO: Applied, please check'
+    fi
 
 elif [ "${TYPE}" == 'infra' ]; then
     if [ "${AWS_PROFILE}" == '' ]; then

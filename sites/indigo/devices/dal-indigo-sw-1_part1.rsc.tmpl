@@ -227,32 +227,3 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priori
 /ip/route/add dst-address=0.0.0.0/0 gateway=192.168.79.193
 /ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
 /ip/cloud/advanced/set use-local-address=yes
-
-# Wait until the system clock updates
-# Anything below here is sensitive to system time
-/log info "Waiting for system clock update (1/4)"
-:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
-/log info "Waiting for system clock update (2/4)"
-:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
-/log info "Waiting for system clock update (3/4)"
-:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
-/log info "Waiting for system clock update (4/4)"
-:do {:delay 5s} while=([:timestamp] < 2728w) on-error={:delay 1}
-
-#
-# Certificates
-#
-
-/certificate
-add name=ca days-valid=10950 common-name=sw-1.indigo.dalmura.cloud key-usage=key-cert-sign,crl-sign
-add name=server days-valid=10950 common-name=sw-1.indigo.dalmura.cloud subject-alt-name=DNS:sw-1.indigo.dalmura.cloud organization=dalmura unit=indigo
-
-sign ca name=root-ca
-:delay 2
-sign ca=root-ca server name=server
-:delay 2
-
-set root-ca trusted=yes
-set server trusted=yes
-
-/ip/service/set www-ssl tls-version=only-1.2 address=192.168.79.192/26 certificate=server disabled=no
