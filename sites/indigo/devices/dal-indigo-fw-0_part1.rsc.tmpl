@@ -232,6 +232,12 @@ add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=SERVER
 ## Allow INTERNAL_PUBLIC_ACCESS => SERVERS_VLAN (Plex local traffic)
 add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PUBLIC_ACCESS => PLEX"
 
+## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Home Assistant)
+add chain=forward action=accept protocol=tcp dst-port=8123 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Home Assistant"
+
+## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Frigate)
+add chain=forward action=accept protocol=tcp dst-port=8971 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Frigate"
+
 ## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Websites)
 add chain=forward action=accept protocol=tcp dst-port=443 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Private Websites"
 
