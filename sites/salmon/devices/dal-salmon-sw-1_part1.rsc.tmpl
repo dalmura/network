@@ -92,8 +92,8 @@ add bridge=CORE interface=ether17               comment="dal-salmon-fw-0"
 # trunk - ALL VLANS
 add bridge=CORE interface=ether18               comment=""
 
-# untagged - SERVERS
-add bridge=CORE interface=ether19      pvid=103 comment=""
+# hybrid - GENERAL/SERVERS,IOT_INTERNET,IOT_RESTRICTED
+add bridge=CORE interface=ether19      pvid=100 comment=""
 
 # untagged - SERVERS
 add bridge=CORE interface=ether20      pvid=103 comment=""
@@ -124,13 +124,13 @@ add bridge=CORE interface=sfp-sfpplus4 pvid=103 comment=""
 
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 vlan-ids=100
+add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 untagged=ether19 vlan-ids=100
 add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 vlan-ids=101
 add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 vlan-ids=102
-add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 untagged=ether19,ether20,ether21,ether22,sfp-sfpplus2,sfp-sfpplus3,sfp-sfpplus4 vlan-ids=103
+add bridge=CORE tagged=CORE,ether17,ether18,ether19,sfp-sfpplus1 untagged=ether20,ether21,ether22,sfp-sfpplus2,sfp-sfpplus3,sfp-sfpplus4 vlan-ids=103
 add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 vlan-ids=104
-add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 untagged=ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8 vlan-ids=105
-add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16 vlan-ids=106
+add bridge=CORE tagged=CORE,ether17,ether18,ether19,sfp-sfpplus1 untagged=ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8 vlan-ids=105
+add bridge=CORE tagged=CORE,ether17,ether18,ether19,sfp-sfpplus1 untagged=ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16 vlan-ids=106
 add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 vlan-ids=107
 add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 vlan-ids=108
 add bridge=CORE tagged=CORE,ether17,ether18,sfp-sfpplus1 untagged=ether23,ether24 vlan-ids=109
@@ -190,7 +190,7 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priori
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether16]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether17]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether18]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether19]
+set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=ether19]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether20]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether21]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether22]
