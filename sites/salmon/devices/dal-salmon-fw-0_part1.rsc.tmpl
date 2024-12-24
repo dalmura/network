@@ -293,3 +293,17 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 # General router settings
 /ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
 /ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
+
+# mDNS Forwarding
+/interface/list
+add name=INTERNAL_MDNS_ACCESS
+
+/interface/list/member
+add interface=GENERAL_VLAN        list=INTERNAL_MDNS_ACCESS
+add interface=IOT_INTERNET_VLAN   list=INTERNAL_MDNS_ACCESS
+add interface=IOT_RESTRICTED_VLAN list=INTERNAL_MDNS_ACCESS
+
+/ip/firewall/filter
+add chain=input action=accept protocol=udp src-port=5353 dst-port=5353 dst-address=224.0.0.251 in-interface-list=INTERNAL_MDNS_ACCESS log-prefix=mDNS comment="Allow mDNS comms between networks" place-before=([find chain=input comment="drop all other input"])
+
+/ip/dns set mdns-repeat-ifaces=GENERAL_VLAN,IOT_INTERNET_VLAN,IOT_RESTRICTED_VLAN
