@@ -86,8 +86,8 @@ add bridge=CORE interface=ether15               comment="D4.1-P7 Network Port"
 # untagged - IOT_INTERNET
 add bridge=CORE interface=ether16      pvid=105 comment="D4.2-P8 Network Port"
 
-# untagged - GENERAL
-add bridge=CORE interface=ether17      pvid=100 comment="D5.1-P9 Network Port"
+# untagged - IOT_INTERNET
+add bridge=CORE interface=ether17      pvid=105 comment="D5.1-P9 Network Port"
 
 # untagged - GENERAL
 add bridge=CORE interface=ether18      pvid=100 comment="D5.2-P10 Network Port"
@@ -124,12 +124,12 @@ add bridge=CORE interface=sfp-sfpplus4          comment="dal-indigo-sw-1"
 
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether11,ether12,ether13,ether14,ether17,ether18 vlan-ids=100
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether11,ether12,ether13,ether14,ether18 vlan-ids=100
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether21,ether22,ether23 vlan-ids=101
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=102
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,ether22,ether23,sfp-sfpplus2,sfp-sfpplus4 untagged=sfp-sfpplus1,sfp-sfpplus3 vlan-ids=103
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether22,ether23 vlan-ids=104
-add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether9,ether10,ether16,ether19,ether20,ether24 vlan-ids=105
+add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether9,ether10,ether16,ether17,ether19,ether20,ether24 vlan-ids=105
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 untagged=ether1,ether2,ether3,ether4,ether5 vlan-ids=106
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=107
 add bridge=CORE tagged=CORE,ether6,ether7,ether8,ether15,sfp-sfpplus2,sfp-sfpplus4 vlan-ids=108
