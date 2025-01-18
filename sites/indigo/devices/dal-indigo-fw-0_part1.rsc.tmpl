@@ -204,7 +204,7 @@ add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN 
 add chain=input action=accept protocol=udp dst-port=13232 in-interface-list=WAN comment="Wireguard Site Tunnels"
 
 # Finally drop everything else
-add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
+add chain=input action=accept log=yes log-prefix=input-catch comment="catchall input" disabled=yes
 add chain=input action=drop log=no log-prefix=input-drop comment="drop all other input"
 
 # Forward Chain
@@ -328,5 +328,6 @@ add interface=IOT_RESTRICTED_VLAN list=INTERNAL_MDNS_ACCESS
 
 /ip/firewall/filter
 add chain=input action=accept protocol=udp src-port=5353 dst-port=5353 dst-address=224.0.0.251 in-interface-list=INTERNAL_MDNS_ACCESS log-prefix=mDNS comment="Allow mDNS comms between networks"
+move ([/ip firewall filter get [find comment="Allow mDNS comms between networks"]]->".id") ([/ip firewall filter get [find comment="drop all other input"]]->".id")
 
 /ip/dns set mdns-repeat-ifaces=GENERAL_VLAN,IOT_INTERNET_VLAN,IOT_RESTRICTED_VLAN
