@@ -188,6 +188,7 @@ add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loo
 # Add more general input related access here
 add chain=input action=accept protocol=icmp in-interface-list=LAN comment="accept ICMP from non-restricted"
 add chain=input action=accept protocol=udp dst-port=53 in-interface-list=VLAN comment="accept DNS from internal networks"
+add chain=input action=accept protocol=udp dst-port=123 comment="accept NTP from internal networks"
 add chain=input action=accept src-address=0.0.0.0 dst-address=255.255.255.255 protocol=udp src-port=68 dst-port=67 in-interface-list=VLAN comment="allow DHCP broadcasts"
 add chain=input action=accept in-interface-list=MANAGEMENT comment="allow MANAGEMENT access"
 
@@ -220,6 +221,18 @@ add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=
 
 ## Allow INTERNAL_PUBLIC_ACCESS => SERVERS_VLAN (Plex local traffic)
 add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PUBLIC_ACCESS => PLEX"
+
+## Allow INTERNAL_PUBLIC_ACCESS => SERVERS_VLAN (Plex local traffic)
+add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PUBLIC_ACCESS => PLEX"
+
+## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Home Assistant)
+add chain=forward action=accept protocol=tcp dst-port=8123 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Home Assistant"
+
+## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Frigate)
+add chain=forward action=accept protocol=tcp dst-port=8971 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Frigate"
+
+## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Websites)
+add chain=forward action=accept protocol=tcp dst-port=443 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Private Websites"
 
 ## Allow GENERAL_VLAN => IOT_INTERNET_VLAN
 add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_INTERNET_VLAN comment="accept GENERAL_VLAN => IOT_INTERNET_VLAN" log-prefix="general2iot"
@@ -304,6 +317,7 @@ add interface=IOT_INTERNET_VLAN   list=INTERNAL_MDNS_ACCESS
 add interface=IOT_RESTRICTED_VLAN list=INTERNAL_MDNS_ACCESS
 
 /ip/firewall/filter
-add chain=input action=accept protocol=udp src-port=5353 dst-port=5353 dst-address=224.0.0.251 in-interface-list=INTERNAL_MDNS_ACCESS log-prefix=mDNS comment="Allow mDNS comms between networks" place-before=([find chain=input comment="drop all other input"])
+add chain=input action=accept protocol=udp src-port=5353 dst-port=5353 dst-address=224.0.0.251 in-interface-list=INTERNAL_MDNS_ACCESS log-prefix=mDNS comment="Allow mDNS comms between networks"
+move ([/ip firewall filter get [find comment="Allow mDNS comms between networks"]]->".id") ([/ip firewall filter get [find comment="drop all other input"]]->".id")
 
 /ip/dns set mdns-repeat-ifaces=GENERAL_VLAN,IOT_INTERNET_VLAN,IOT_RESTRICTED_VLAN
