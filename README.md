@@ -40,6 +40,14 @@ export AWS_PROFILE='my-aws-profile'
 ./deploy.sh indigo infra
 ```
 
+In order to obtain statefile values like IAM User credentials you'll need to manually run:
+```
+export AWS_PROFILE='my-aws-profile'
+
+tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.backup_user.aws_iam_access_key.k8s_backups_key'
+tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.dns_update_user.aws_iam_access_key.k8s_dns_updater_key'
+```
+
 ## RouterOS
 
 Requires both `ROUTEROS_USERNAME` and `ROUTEROS_PASSWORD` to be set beforehand.
