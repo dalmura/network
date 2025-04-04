@@ -1,5 +1,4 @@
-# [Indigo](https://en.wikipedia.org/wiki/Indigo) Site
+# [Navy](https://en.wikipedia.org/wiki/Navy_blue) Site
 
 This site has the following attributes:
-* Hub site
-* Hosts services
+* Spoke site
