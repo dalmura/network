@@ -1,0 +1,30 @@
+#
+# dal-navy-fw-0
+#
+
+#
+# NTP Server
+#
+
+/system/ntp/server/set enabled=yes
+
+#
+# Wireguard
+#
+
+{% for key, value in wireguard %}
+{%- set interface = site ~ "-" ~ key -%}
+# {{ interface }}
+/interface/wireguard/add listen-port={{ value.listen_port | default(value=13231) }} name={{ interface }} private-key="{{ value.private_key }}"
+/ip/address/add address={{ value.interface_address }} interface={{ interface }}
+{% for item in value.interface_lists -%}
+/interface/list/member/add interface={{ interface }} list={{ item }}
+{% endfor %}
+{% if value.peers is defined -%}
+## {{ interface }} peers
+{% for peer in value.peers -%}
+/interface/wireguard/peers/add allowed-address={{ peer.allowed_address }}{% if peer.endpoint is defined %} endpoint-address={{ peer.endpoint.address }} endpoint-port={{ peer.endpoint.port }}{% endif %} interface={{ interface }} public-key="{{ peer.public_key }}" persistent-keepalive=25 preshared-key="{{ peer.preshared_key }}" comment="{{ peer.comment }}"
+/ip/route/add dst-address={{ peer.allowed_address }} gateway="{{ interface }}" comment="Wireguard - {{ peer.comment }}"
+{% endfor -%}
+{% endif -%}
+{% endfor %}

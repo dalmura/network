@@ -1,0 +1,11 @@
+networks:
+  GENERAL:
+    description: "PCs, Phones, etc"
+    vlan_id: 100
+    cidr: "192.168.70.0/24"
+    mask: "255.255.255.0"
+    start: "192.168.70.1"
+    end: "192.168.70.254"
+    dhcp: true
+    allocations:
+      "192.168.70.1": "dal-navy-fw-0"

@@ -1,0 +1,196 @@
+#
+# dal-navy-fw-0
+#
+
+#
+# Naming
+#
+
+/system/identity/set name="dal-navy-fw-0"
+
+
+#
+# Network Overview
+#
+
+# 100 = GENERAL = 192.168.70.0/24 = 254
+
+
+#
+# Bridge
+#
+
+/interface/bridge/add name=CORE vlan-filtering=no
+
+/interface/bridge/port
+
+# trunk
+add bridge=CORE interface=ether2       comment=""
+
+# trunk
+add bridge=CORE interface=ether3       comment=""
+
+# trunk
+add bridge=CORE interface=ether4       comment=""
+
+# trunk
+add bridge=CORE interface=ether5       comment=""
+
+# trunk
+add bridge=CORE interface=ether6       comment=""
+
+# trunk
+add bridge=CORE interface=ether7       comment=""
+
+# trunk
+add bridge=CORE interface=ether8       comment=""
+
+# trunk
+add bridge=CORE interface=sfp-sfpplus1 comment="dal-navy-sw-0"
+
+/interface/bridge/vlan
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=100
+
+
+#
+# IP Addressing & Routing
+#
+
+# General VLAN
+/interface/vlan/add interface=CORE name=GENERAL_VLAN vlan-id=100
+/ip/address/add interface=GENERAL_VLAN address=192.168.70.1/25
+/ip/pool/add name=general-dhcp ranges=192.168.70.10-192.168.70.254
+/ip/dhcp-server/add address-pool=general-dhcp interface=GENERAL_VLAN name=general-dhcp disabled=no
+/ip/dhcp-server/network/add address=192.168.70.0/24 dns-server=192.168.70.1 gateway=192.168.70.1 comment="GENERAL_VLAN"
+
+{% if static_dhcp_leases -%}
+# Optional Static DHCP Leases
+/ip/dhcp-server/lease
+{% for lease in static_dhcp_leases -%}
+  add address={{ lease.address }} server={{ lease.server }} mac-address={{ lease.mac_address }} comment="{{ lease.comment }}"
+{% endfor -%}
+{% endif %}
+
+#
+# Firewall & NAT
+#
+
+/interface/list
+add name=WAN
+add name=WAN_HUB
+add name=WAN_SPOKE
+add name=VLAN
+add name=LAN
+add name=INTERNET_ONLY
+add name=BLACKHOLE
+add name=MANAGEMENT
+add name=INTERNAL_PUBLIC_ACCESS
+add name=INTERNAL_PRIVATE_ACCESS
+
+/interface/list/member
+add interface=ether1               list=WAN
+add interface=GENERAL_VLAN         list=VLAN
+add interface=GENERAL_VLAN         list=LAN
+add interface=GENERAL_VLAN         list=INTERNAL_PUBLIC_ACCESS
+add interface=GENERAL_VLAN         list=INTERNAL_PRIVATE_ACCESS
+
+/ip/firewall/filter
+
+# Input Chain
+add chain=input action=accept connection-state=established,related,untracked comment="accept established,related,untracked"
+add chain=input action=drop connection-state=invalid comment="drop invalid"
+add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loopback (for CAPsMAN)"
+
+# Add more general input related access here
+add chain=input action=accept protocol=icmp in-interface-list=LAN comment="accept ICMP from non-restricted"
+add chain=input action=accept protocol=udp dst-port=53 in-interface-list=VLAN comment="accept DNS from internal networks"
+add chain=input action=accept protocol=udp dst-port=123 comment="accept NTP from internal networks"
+add chain=input action=accept src-address=0.0.0.0 dst-address=255.255.255.255 protocol=udp src-port=68 dst-port=67 in-interface-list=VLAN comment="allow DHCP broadcasts"
+add chain=input action=accept in-interface-list=GENERAL comment="allow GENERAL access"
+
+# Wireguard
+add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN comment="Wireguard Roadwarrior Tunnels"
+add chain=input action=accept protocol=udp dst-port=13232 in-interface-list=WAN comment="Wireguard Site Tunnels"
+
+# Finally drop everything else
+add chain=input action=accept log=yes log-prefix=input-catch comment="catchall input" disabled=yes
+add chain=input action=drop log=no log-prefix=input-drop comment="drop all other input"
+
+# Forward Chain
+add chain=forward action=fasttrack-connection connection-state=established comment="fasttrack"
+add chain=forward action=accept connection-state=established,related,untracked comment="accept established,related,untracked"
+add chain=forward action=drop connection-state=invalid comment="drop invalid"
+add chain=forward action=drop in-interface-list=WAN connection-state=new connection-nat-state=!dstnat comment="drop all from WAN not DSTNATed"
+
+# Add more general forward related access here
+
+## Allow internet access
+add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN comment="accept LAN to WAN"
+add chain=forward action=accept connection-state=new in-interface-list=INTERNET_ONLY out-interface-list=WAN comment="accept INTERNET_ONLY to WAN"
+
+## Allow WAN => GENERAL_VLAN (Plex dst-nat traffic)
+add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=GENERAL_VLAN in-interface-list=WAN connection-nat-state=dstnat comment="accept DSTNAT => PLEX"
+
+## Allow LAN => WAN_HUB
+add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN_HUB comment="accept LAN => WAN_HUB" log-prefix="lan2wanhub"
+
+# Finally drop everything else
+add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall" disabled=yes
+add chain=forward action=drop log=no log-prefix=forward-drop comment="drop all other forward"
+
+
+#
+# NAT
+#
+
+/ip/firewall/nat
+
+# Masquerade outgoing packets as WAN IP
+add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade comment="Default masquerade"
+
+# Add more general NAT access here
+
+## dst-nat Plex => ???
+#add chain=dstnat action=dst-nat to-address=192.168.70.64 to-ports=32400 protocol=tcp in-interface-list=WAN dst-port=32405 ipsec-policy=in,none
+
+
+#
+# VLAN Security
+#
+
+/interface/bridge/port
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether3]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether4]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether5]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether6]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether7]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether8]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus1]
+
+
+#
+# MAC Server
+#
+
+/ip/neighbor/discovery-settings/set discover-interface-list=GENERAL
+/tool/mac-server/mac-winbox/set allowed-interface-list=GENERAL
+/tool/mac-server/set allowed-interface-list=GENERAL
+
+
+#
+# Enable VLAN Filtering
+#
+
+/interface/bridge/set CORE vlan-filtering=yes
+
+
+#
+# WAN Setup
+#
+
+/ip/dhcp-client/add interface=ether1 use-peer-dns=no use-peer-ntp=no add-default-route=yes dhcp-options=""
+
+# General router settings
+/ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
+/ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
