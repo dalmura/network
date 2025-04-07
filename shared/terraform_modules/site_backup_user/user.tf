@@ -10,14 +10,15 @@ data "aws_iam_policy_document" "k8s_backups_permissions" {
 
     actions = [
       "s3:PutObject",
+      "s3:PutObjectTagging",
       "s3:GetObject",
       "s3:ListBucket",
-      "s3:DeleteObject"
+      "s3:DeleteObject",
     ]
 
     resources = [
       "arn:aws:s3:::${data.aws_s3_bucket.global_backups.id}",
-      "arn:aws:s3:::${data.aws_s3_bucket.global_backups.id}/${var.site_name}/*"
+      "arn:aws:s3:::${data.aws_s3_bucket.global_backups.id}/${var.site_name}/*",
     ]
   }
 }
