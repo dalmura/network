@@ -46,6 +46,7 @@ export AWS_PROFILE='my-aws-profile'
 
 tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.backup_user.aws_iam_access_key.k8s_backups_key'
 tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.dns_update_user.aws_iam_access_key.k8s_dns_updater_key'
+tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.email_sender_user.aws_iam_access_key.k8s_email_sender_key'
 ```
 
 ## RouterOS
