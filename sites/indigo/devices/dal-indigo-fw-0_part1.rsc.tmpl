@@ -195,7 +195,7 @@ add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loo
 # Add more general input related access here
 add chain=input action=accept protocol=icmp in-interface-list=LAN comment="accept ICMP from non-restricted"
 add chain=input action=accept protocol=udp dst-port=53 in-interface-list=VLAN comment="accept DNS from internal networks"
-add chain=input action=accept protocol=udp dst-port=123 comment="accept NTP from internal networks"
+add chain=input action=accept protocol=udp dst-port=123 in-interface-list=VLAN comment="accept NTP from internal networks"
 add chain=input action=accept src-address=0.0.0.0 dst-address=255.255.255.255 protocol=udp src-port=68 dst-port=67 in-interface-list=VLAN comment="allow DHCP broadcasts"
 add chain=input action=accept in-interface-list=MANAGEMENT comment="allow MANAGEMENT access"
 
@@ -219,27 +219,21 @@ add chain=forward action=drop in-interface-list=WAN connection-state=new connect
 add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN comment="accept LAN to WAN"
 add chain=forward action=accept connection-state=new in-interface-list=INTERNET_ONLY out-interface-list=WAN comment="accept INTERNET_ONLY to WAN"
 
-## Allow MANAGEMENT => SERVERS_VLAN
+## Allow management to various network segments
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_VLAN comment="accept MANAGEMENT => SERVERS_VLAN"
-## Allow MANAGEMENT => SERVERS_STAGING_VLAN
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT => SERVERS_STAGING_VLAN"
-## Allow MANAGEMENT => WAN_HUB
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=WAN_HUB comment="accept MANAGEMENT => WAN_HUB"
 
 ## Allow WAN => SERVERS_VLAN (Plex dst-nat traffic)
 add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=SERVERS_VLAN in-interface-list=WAN connection-nat-state=dstnat comment="accept DSTNAT => PLEX"
+add chain=forward action=accept protocol=tcp dst-address=192.168.77.10 dst-port=443 connection-nat-state=dstnat comment="accept DSTNAT => PLEX CLOUD"
 
-## Allow INTERNAL_PUBLIC_ACCESS => SERVERS_VLAN (Plex local traffic)
+## Allow various internal app access
 add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PUBLIC_ACCESS => PLEX"
-
-## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Home Assistant)
-add chain=forward action=accept protocol=tcp dst-port=8123 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Home Assistant"
-
-## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Frigate)
-add chain=forward action=accept protocol=tcp dst-port=8971 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Frigate"
-
-## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Websites)
 add chain=forward action=accept protocol=tcp dst-port=443 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Private Websites"
+add chain=forward action=accept protocol=tcp dst-port=8123 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Home Assistant"
+add chain=forward action=accept protocol=tcp dst-port=8971 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Frigate"
+add chain=forward action=accept protocol=tcp dst-port=8000 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => stignore-manager (atlas)"
 
 ## Allow GENERAL_VLAN => IOT_INTERNET_VLAN
 add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_INTERNET_VLAN comment="accept GENERAL_VLAN => IOT_INTERNET_VLAN" log-prefix="general2iot"
@@ -255,6 +249,9 @@ add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN_HUB
 
 ## Allow WAN_HUB => SERVERS_VLAN
 add chain=forward action=accept in-interface-list=WAN_HUB out-interface=SERVERS_VLAN comment="accept WAN_HUB => SERVERS_VLAN" log-prefix="wanhub2servers"
+
+## Allow SERVERS_VLAN => IOT_RESTRICTED_VLAN
+add chain=forward action=accept protocol=tcp in-interface=SERVERS_VLAN out-interface=IOT_RESTRICTED_VLAN comment="accept SERVERS_VLAN => IOT_RESTRICTED_VLAN" log-prefix="servers2restrict"
 
 # Finally drop everything else
 add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall" disabled=yes
@@ -272,8 +269,10 @@ add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade 
 
 # Add more general NAT access here
 
-## dst-nat Plex => Vulcan
-add chain=dstnat action=dst-nat to-address=192.168.77.64 to-ports=32400 protocol=tcp in-interface-list=WAN dst-port=32405 ipsec-policy=in,none
+## dst-nat Plex => servers
+add chain=dstnat action=dst-nat to-address=192.168.77.65 to-ports=32400 protocol=tcp in-interface-list=WAN dst-port=32405 ipsec-policy=in,none comment="plex atlas"
+add chain=dstnat action=dst-nat to-address=192.168.77.10 to-ports=443 protocol=tcp in-interface-list=WAN dst-port=32406 ipsec-policy=in,none comment="plex cloud"
+add chain=dstnat action=dst-nat to-address=192.168.77.10 to-ports=443 protocol=tcp in-interface-list=LAN dst-port=32406 comment="plex cloud hairpin"
 
 
 #
