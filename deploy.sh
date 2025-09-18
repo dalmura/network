@@ -100,6 +100,10 @@ if [ "${TYPE}" == 'devices' ]; then
         USE_HTTP='false'
     fi
 
+    if [ "${HTTPS_PORT}" == '' ]; then
+        HTTPS_PORT='8443'
+    fi
+
     TMP_CONFIG_FILE=$(mktemp)
 
     echo "{\"site\":\"${SITE}\", \"device\":\"${DATA}\", \"device_upgrade\": ${DEVICE_UPGRADE}}" > ${TMP_CONFIG_FILE}
@@ -180,6 +184,12 @@ if [ "${TYPE}" == 'devices' ]; then
         SCHEME='https'
     fi
 
+    if [ "${SCHEME}" == 'https' ]; then
+        PORT=":${HTTPS_PORT}"
+    else
+        PORT=''
+    fi
+
     echo "INFO: Downloading 'rendered/${DATA}.rsc' onto device (via ${SCHEME})"
 
     curl \
@@ -188,7 +198,7 @@ if [ "${TYPE}" == 'devices' ]; then
         -X POST \
         --header 'content-type: application/json' \
         --data "{\"mode\":\"http\",\"url\":\"http://${MY_IP}:8000/rendered/${DATA}.rsc\"${DST_PATH}}" \
-        "${SCHEME}://${DEVICE_IP}/rest/tool/fetch"
+        "${SCHEME}://${DEVICE_IP}${PORT}/rest/tool/fetch"
     echo ''
 
     kill "${PYTHON_PID}"
@@ -202,7 +212,7 @@ if [ "${TYPE}" == 'devices' ]; then
             -X POST \
             --header 'content-type: application/json' \
             --data "{\"keep-users\":\"yes\",\"no-defaults\":\"yes\",\"run-after-reset\":\"${RUN_PATH}${DATA}.rsc\"}" \
-            "${SCHEME}://${DEVICE_IP}/rest/system/reset-configuration"
+            "${SCHEME}://${DEVICE_IP}${PORT}/rest/system/reset-configuration"
         echo ''
         echo 'INFO: Reset, wait for the reboot and double check'
     else
@@ -214,7 +224,7 @@ if [ "${TYPE}" == 'devices' ]; then
             -X POST \
             --header 'content-type: application/json' \
             --data "{\"file-name\":\"${RUN_PATH}${DATA}.rsc\"}" \
-            "${SCHEME}://${DEVICE_IP}/rest/import"
+            "${SCHEME}://${DEVICE_IP}${PORT}/rest/import"
         echo ''
         echo 'INFO: Applied, please check'
     fi
