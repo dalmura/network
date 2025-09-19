@@ -146,8 +146,12 @@ if [ "${TYPE}" == 'devices' ]; then
 
     if [ "${MY_IP}" == '' ]; then
         # Just give it go and fail if not
+
         # This is usually the default interface on a Mac
-        MY_IP=$(ipconfig getifaddr en0)
+        #MY_IP=$(ipconfig getifaddr en0)
+
+        # Just try for the first wifi interface
+        MY_IP=$(ifconfig wlp1s0 | grep 'inet 192' | cut -d ' ' -f10)
 
         if [ "${MY_IP}" == '' ]; then
             echo "ERROR: Unable to determine your LAN IP, please set MY_IP"

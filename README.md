@@ -67,19 +67,29 @@ The above represents a hierarchy as well, with files lower in the list taking pr
 You are required to be on the same network as the RouterOS device as it needs to be able to perform a HTTP GET against the client IP running this script (for the router to download it). This is because there is currently no easy way to upload a file to a RouterOS device.
 
 ```bash
-# Required
-export ROUTEROS_USERNAME='my-device-username'
-export ROUTEROS_PASSWORD='my-device-password'
+# Required (with a leading space to skip history)
+ export ROUTEROS_USERNAME='my-device-username'
+ export ROUTEROS_PASSWORD='my-device-password'
 
 # Optional
+
+# If the default local IP detection fails
 export MY_IP='192.168.0.2'
+
+# If your device is older and has flash memory
+export REQUIRES_FLASH='true'
+
+# If you're running part2 and the https config isn't deployed yet post-reset
+# Just prefix the deploy command, don't export, as part3 onwards won't need this
+USE_HTTP='true'
+
 
 ./deploy.sh [SITE] devices [DEVICE]
 
 # Examples
-./deploy.sh indigo devices dal-indigo-fw-0
-./deploy.sh indigo devices dal-indigo-sw-0
-./deploy.sh indigo devices dal-indigo-wap-0
+./deploy.sh indigo devices dal-indigo-fw-0_part1
+./deploy.sh indigo devices dal-indigo-sw-0_part2
+./deploy.sh indigo devices dal-indigo-wap-0_part3
 ```
 
 If you just want to 'render' the device config files but not deploy, you can replace `devices` with `render` and the script will 'render' the device config in question and then exit before deploying anything.
@@ -88,6 +98,6 @@ If you just want to 'render' the device config files but not deploy, you can rep
 ./deploy.sh [SITE] render [DEVICE]
 
 # Examples
-./deploy.sh indigo render dal-indigo-wap-0
-./deploy.sh indigo render dal-indigo-wap-1
+./deploy.sh indigo render dal-indigo-wap-0_part1
+./deploy.sh indigo render dal-indigo-wap-1_part2
 ```
