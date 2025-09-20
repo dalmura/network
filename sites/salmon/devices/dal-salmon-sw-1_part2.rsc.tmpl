@@ -18,7 +18,7 @@ sign ca=root-ca server name=server
 set root-ca trusted=yes
 set server trusted=yes
 
-/ip/service/set www-ssl tls-version=only-1.2 address=192.168.75.192/26 certificate=server disabled=no
+/ip/service/set www-ssl port=8443 tls-version=only-1.2 address=192.168.75.192/26 certificate=server disabled=no
 /ip/service/set api-ssl tls-version=only-1.2 address=192.168.75.192/26 certificate=server disabled=no
 
 /ip/service/set api disabled=yes
