@@ -1,0 +1,168 @@
+#
+# dal-salmon-wap-1
+#
+
+#
+# Naming
+#
+
+/system/identity/set name="dal-salmon-wap-1"
+
+
+#
+# Network Overview
+#
+
+# SSID                      | VLAN
+# dal-salmon-general        | 100
+# dal-salmon-guest          | 101
+# dal-salmon-iot-internet   | 105
+# dal-salmon-iot-restricted | 106
+# dal-salmon-management     | 109
+
+
+#
+# Bridge
+#
+
+/interface/bridge/add name=CORE vlan-filtering=no
+
+
+#
+# Wireless (wifi-qcom) Interfaces & VLAN
+#
+
+/interface/wifi/security
+add name=dalmura authentication-types=wpa2-psk,wpa3-psk wps=disable
+
+/interface/wifi/channel
+add name=dalmura-2ghz band=2ghz-ax width=20/40mhz reselect-interval=1h..2h
+add name=dalmura-5ghz band=5ghz-ax width=20/40/80mhz reselect-interval=1h..2h
+
+/interface/wifi/configuration
+add name=dalmura mode=ap country=Australia security=dalmura
+
+/interface/wifi
+# General Wireless & VLAN
+set wifi1 configuration=dalmura configuration.ssid="{{ wifi['general']['ssid_5ghz'] | default(value='dal-salmon-general') }}" channel=dalmura-5ghz security.passphrase="{{ wifi['general']['password'] }}" datapath.vlan-id=100
+set wifi2 configuration=dalmura configuration.ssid="{{ wifi['general']['ssid_2ghz'] | default(value='dal-salmon-general') }}" channel=dalmura-2ghz security.passphrase="{{ wifi['general']['password'] }}" datapath.vlan-id=100
+
+# Guest Wireless & VLAN
+add name=wifi1-guest master-interface=wifi1 configuration=dalmura configuration.ssid="{{ wifi['guest']['ssid_5ghz'] | default(value='dal-salmon-guest') }}" channel=dalmura-5ghz security.passphrase="{{ wifi['guest']['password'] }}" datapath.vlan-id=101 datapath.client-isolation=yes
+add name=wifi2-guest master-interface=wifi2 configuration=dalmura configuration.ssid="{{ wifi['guest']['ssid_2ghz'] | default(value='dal-salmon-guest') }}" channel=dalmura-2ghz security.passphrase="{{ wifi['guest']['password'] }}" datapath.vlan-id=101 datapath.client-isolation=yes
+
+# IoT Internet Wireless & VLAN
+add name=wifi1-iot-internet master-interface=wifi1 configuration=dalmura configuration.ssid="{{ wifi['iot_internet']['ssid_5ghz'] | default(value='dal-salmon-iot-internet') }}" channel=dalmura-5ghz security.passphrase="{{ wifi['iot_internet']['password'] }}" datapath.vlan-id=105
+add name=wifi2-iot-internet master-interface=wifi2 configuration=dalmura configuration.ssid="{{ wifi['iot_internet']['ssid_2ghz'] | default(value='dal-salmon-iot-internet') }}" channel=dalmura-2ghz security.passphrase="{{ wifi['iot_internet']['password'] }}" datapath.vlan-id=105
+
+# IoT Restricted Wireless & VLAN
+add name=wifi1-iot-restricted master-interface=wifi1 configuration=dalmura configuration.ssid="{{ wifi['iot_restricted']['ssid_5ghz'] | default(value='dal-salmon-iot-restricted') }}" channel=dalmura-5ghz security.passphrase="{{ wifi['iot_restricted']['password'] }}" datapath.vlan-id=106
+add name=wifi2-iot-restricted master-interface=wifi2 configuration=dalmura configuration.ssid="{{ wifi['iot_restricted']['ssid_2ghz'] | default(value='dal-salmon-iot-restricted') }}" channel=dalmura-2ghz security.passphrase="{{ wifi['iot_restricted']['password'] }}" datapath.vlan-id=106
+
+# Management Wireless & VLAN
+add name=wifi1-management master-interface=wifi1 configuration=dalmura configuration.ssid="{{ wifi['management']['ssid_5ghz'] | default(value='dal-salmon-management') }}" channel=dalmura-5ghz security.passphrase="{{ wifi['management']['password'] }}" datapath.vlan-id=109
+add name=wifi2-management master-interface=wifi2 configuration=dalmura configuration.ssid="{{ wifi['management']['ssid_2ghz'] | default(value='dal-salmon-management') }}" channel=dalmura-2ghz security.passphrase="{{ wifi['management']['password'] }}" datapath.vlan-id=109
+
+# Turn everything on
+enable [find]
+
+
+#
+# Trunk Ports
+#
+
+/interface/bridge/port
+add bridge=CORE interface=ether1                        comment="dal-salmon-sw-0"
+add bridge=CORE interface=ether2               pvid=109 comment=""
+add bridge=CORE interface=wifi1                         comment=""
+add bridge=CORE interface=wifi2                         comment=""
+add bridge=CORE interface=wifi1-guest                   comment=""
+add bridge=CORE interface=wifi2-guest                   comment=""
+add bridge=CORE interface=wifi1-iot-internet            comment=""
+add bridge=CORE interface=wifi2-iot-internet            comment=""
+add bridge=CORE interface=wifi1-iot-restricted          comment=""
+add bridge=CORE interface=wifi2-iot-restricted          comment=""
+add bridge=CORE interface=wifi1-management              comment=""
+add bridge=CORE interface=wifi2-management              comment=""
+
+/interface/bridge/vlan
+add bridge=CORE tagged=CORE,ether1,wifi1,wifi2 vlan-ids=100
+add bridge=CORE tagged=CORE,ether1,wifi1-guest,wifi2-guest vlan-ids=101
+add bridge=CORE tagged=CORE,ether1,wifi1-iot-internet,wifi2-iot-internet vlan-ids=105
+add bridge=CORE tagged=CORE,ether1,wifi1-iot-restricted,wifi2-iot-restricted vlan-ids=106
+add bridge=CORE tagged=CORE,ether1,wifi1-management,wifi2-management untagged=ether2 vlan-ids=109
+
+
+#
+# IP Addressing & Routing
+#
+
+# Management VLAN
+/interface/vlan/add interface=CORE name=MANAGEMENT_VLAN vlan-id=109
+/ip/address/add address=192.168.75.197/26 interface=MANAGEMENT_VLAN
+
+
+#
+# Firewall & NAT
+#
+
+/interface/list/add name=MANAGEMENT
+/interface/list/member/add interface=MANAGEMENT_VLAN list=MANAGEMENT
+
+/ip/firewall/filter
+
+# Input Chain
+add chain=input action=accept connection-state=established,related,untracked comment="accept established,related,untracked"
+add chain=input action=accept connection-state=invalid comment="drop invalid"
+add chain=input action=accept dst-address=127.0.0.1 comment="accept to local loopback (for CAPsMAN)"
+
+# Add more general input related access here
+add chain=input action=accept in-interface=MANAGEMENT_VLAN comment="allow MANAGEMENT_VLAN access"
+
+# Finally drop everything else
+add chain=input action=accept log=yes log-prefix=input-catch comment="catchall" disabled=yes
+add chain=input action=drop log=no log-prefix=input-drop comment="drop all other input"
+
+
+#
+# VLAN Security
+#
+
+/interface/bridge/port
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether1]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=ether2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-guest]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-guest]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-iot-internet]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-iot-internet]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-iot-restricted]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-iot-restricted]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi1-management]
+set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=wifi2-management]
+
+
+#
+# MAC Server
+#
+
+/ip/neighbor/discovery-settings/set discover-interface-list=MANAGEMENT
+/tool/mac-server/mac-winbox/set allowed-interface-list=MANAGEMENT
+/tool/mac-server/set allowed-interface-list=MANAGEMENT
+
+
+#
+# Enable VLAN Filtering
+#
+
+/interface/bridge/set CORE vlan-filtering=yes
+
+#
+# Device Configuration
+#
+
+/ip/dns/set servers="192.168.75.193"
+/ip/route/add dst-address=0.0.0.0/0 gateway=192.168.75.193
+/ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
+/ip/cloud/advanced/set use-local-address=yes
