@@ -236,6 +236,9 @@ add chain=forward action=accept protocol=tcp dst-port=8971 in-interface-list=INT
 ## Allow INTERNAL_PRIVATE_ACCESS => SERVERS_VLAN (Websites)
 add chain=forward action=accept protocol=tcp dst-port=443 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Private Websites"
 
+## Allow GENERAL_VLAN => SERVERS (SMB)
+add chain=forward action=accept protocol=tcp dst-port=445 in-interface=GENERAL_VLAN out-interface=SERVERS_VLAN comment="accept GENERAL_VLAN => SERVERS_VLAN SMB1"
+
 ## Allow GENERAL_VLAN => IOT_INTERNET_VLAN
 add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_INTERNET_VLAN comment="accept GENERAL_VLAN => IOT_INTERNET_VLAN" log-prefix="general2iot"
 
