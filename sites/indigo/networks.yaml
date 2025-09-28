@@ -161,6 +161,7 @@ networks:
           "192.168.79.195": "dal-indigo-sw-1"
           "192.168.79.196": "dal-indigo-wap-0"
           "192.168.79.197": "dal-indigo-wap-1"
+          "192.168.79.210": "dal-indigo-uptime"
           "192.168.79.220": "dal-indigo-core-1-vip"
       dhcp:
         start: "192.168.79.250"
