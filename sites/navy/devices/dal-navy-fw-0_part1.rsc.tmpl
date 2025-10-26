@@ -224,17 +224,6 @@ add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVE
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT => SERVERS_STAGING_VLAN"
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=WAN_HUB comment="accept MANAGEMENT => WAN_HUB"
 
-## Allow WAN => SERVERS_VLAN (Plex dst-nat traffic)
-add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=SERVERS_VLAN in-interface-list=WAN connection-nat-state=dstnat comment="accept DSTNAT => PLEX"
-add chain=forward action=accept protocol=tcp dst-address=192.168.81.10 dst-port=443 connection-nat-state=dstnat comment="accept DSTNAT => PLEX CLOUD"
-
-## Allow various internal app access
-add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PUBLIC_ACCESS => PLEX"
-add chain=forward action=accept protocol=tcp dst-port=443 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Private Websites"
-add chain=forward action=accept protocol=tcp dst-port=8123 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Home Assistant"
-add chain=forward action=accept protocol=tcp dst-port=8971 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => Frigate"
-add chain=forward action=accept protocol=tcp dst-port=8000 in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PRIVATE_ACCESS => stignore-manager (atlas)"
-
 ## Allow GENERAL_VLAN => IOT_INTERNET_VLAN
 add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_INTERNET_VLAN comment="accept GENERAL_VLAN => IOT_INTERNET_VLAN" log-prefix="general2iot"
 
@@ -268,11 +257,6 @@ add chain=forward action=drop log=no log-prefix=forward-drop comment="drop all o
 add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade comment="Default masquerade"
 
 # Add more general NAT access here
-
-## dst-nat Plex => servers
-add chain=dstnat action=dst-nat to-address=192.168.81.65 to-ports=32400 protocol=tcp in-interface-list=WAN dst-port=32405 ipsec-policy=in,none comment="plex atlas"
-add chain=dstnat action=dst-nat to-address=192.168.81.10 to-ports=443 protocol=tcp in-interface-list=WAN dst-port=32406 ipsec-policy=in,none comment="plex cloud"
-add chain=dstnat action=dst-nat to-address=192.168.81.10 to-ports=443 protocol=tcp in-interface-list=LAN dst-port=32406 comment="plex cloud hairpin"
 
 
 #
