@@ -157,11 +157,6 @@ networks:
         end: "192.168.83.249"
         allocations:
           "192.168.83.193": "dal-navy-fw-0"
-          "192.168.83.194": "dal-navy-sw-0"
-          "192.168.83.195": "dal-navy-sw-1"
-          "192.168.83.196": "dal-navy-wap-0"
-          "192.168.83.197": "dal-navy-wap-1"
-          "192.168.83.210": "dal-navy-uptime"
           "192.168.83.220": "dal-navy-core-1-vip"
       dhcp:
         start: "192.168.83.250"
