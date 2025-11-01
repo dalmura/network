@@ -18,3 +18,10 @@ module "email_sender_user" {
 
   site_name = local.site_name
 }
+
+# IAM Vendor IAM User
+module "iam_vendor_user" {
+  source = "../../../shared/terraform_modules/site_iam_vendor_user"
+
+  site_name = local.site_name
+}
