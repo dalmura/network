@@ -44,9 +44,17 @@ In order to obtain statefile values like IAM User credentials you'll need to man
 ```
 export AWS_PROFILE='my-aws-profile'
 
+# S3 Backups
 tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.backup_user.aws_iam_access_key.k8s_backups_key'
+
+# DNS Updater
 tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.dns_update_user.aws_iam_access_key.k8s_dns_updater_key'
+
+# SMTP Sender
 tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.email_sender_user.aws_iam_access_key.k8s_email_sender_key'
+
+# IAM Vendor
+tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.iam_vendor_user.aws_iam_access_key.iam_vendor_key'
 ```
 
 ## RouterOS
