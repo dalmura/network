@@ -3,6 +3,10 @@ resource "aws_iam_user" "iam_vendor" {
   name = "dal-${var.site_name}-iam-vendor"
 }
 
+resource "aws_iam_access_key" "iam_vendor_key" {
+  user = aws_iam_user.iam_vendor.name
+}
+
 data "aws_iam_policy_document" "iam_vendor_permissions" {
   statement {
     sid = "GrantVendorAccess"
