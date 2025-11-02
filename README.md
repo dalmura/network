@@ -55,6 +55,7 @@ tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.email_sender
 
 # IAM Vendor
 tofu -chdir='sites/indigo/infra' state show -show-sensitive 'module.iam_vendor_user.aws_iam_access_key.iam_vendor_key'
+tofu -chdir='sites/indigo/infra' state show 'module.iam_vendor_user.aws_iam_policy.iam_vended_permissions'
 ```
 
 ## RouterOS
