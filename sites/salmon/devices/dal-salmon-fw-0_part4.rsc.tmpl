@@ -1,0 +1,47 @@
+#
+# dal-salmon-fw-0
+#
+
+#
+# Containers
+#
+
+/interface/veth/add
+
+# Kuma Uptime interface
+name=veth1-uptime address=192.168.75.210/26 gateway=192.168.75.193 comment="Uptime Kuma Container"
+
+
+/interface/bridge/port
+
+# Uptime Kuma - MANAGEMENT
+add bridge=CORE interface=veth1-uptime pvid=109 comment="Uptime Kuma" ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged
+
+
+/interface/bridge/vlan
+
+# Add or append the interface
+:global untagged [get [find vlan-ids=109] untagged]
+
+:if (untagged="") do={
+  set [find vlan-ids=109] untagged=veth1-uptime
+} else={
+  set [find vlan-ids=109] untagged=($untagged,veth1-uptime)
+}
+
+
+/container/config
+
+# Set the Github Container Registry URL
+set registry-url=https://ghcr.io tmpdir=usb1/tmp
+
+/container/mounts
+
+# Add our application data mount
+add name=UPTIMEKUMA_DATA src=usb1/volumes/uptime-kuma/data dst=/app/data
+
+
+/container
+
+# Create the container
+add remote-image="louislam/uptime-kuma:2.0.2" interface=veth1-uptime root-dir=usb1/images/uptime-kuma mounts=UPTIMEKUMA_DATA name=uptime-kuma start-on-boot=yes logging=yes

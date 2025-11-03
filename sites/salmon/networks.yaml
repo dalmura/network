@@ -152,6 +152,7 @@ networks:
           "192.168.75.195": "dal-salmon-sw-1"
           "192.168.75.196": "dal-salmon-wap-0"
           "192.168.75.197": "dal-salmon-wap-1"
+          "192.168.75.210": "dal-salmon-uptime"
           "192.168.75.220": "dal-salmon-core-1-vip"
       dhcp:
         start: "192.168.75.250"
