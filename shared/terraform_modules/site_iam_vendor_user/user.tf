@@ -60,7 +60,7 @@ data "aws_iam_policy_document" "iam_vended_permissions" {
 
     resources = [
       "arn:aws:s3:::${data.aws_s3_bucket.global_backups.id}",
-      "arn:aws:s3:::${data.aws_s3_bucket.global_backups.id}/${var.site_name}/${aws:PrincipalTag/app}/${aws:PrincipalTag/role}/*",
+      "arn:aws:s3:::${data.aws_s3_bucket.global_backups.id}/${var.site_name}/$${aws:PrincipalTag/app}/$${aws:PrincipalTag/role}/*",
     ]
 
     condition {
@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "iam_vended_permissions" {
       variable = "s3:prefix"
 
       values = [
-        "${var.site_name}/${aws:PrincipalTag/app}/${aws:PrincipalTag/role}/"
+        "${var.site_name}/$${aws:PrincipalTag/app}/$${aws:PrincipalTag/role}/"
       ]
     }
   }
