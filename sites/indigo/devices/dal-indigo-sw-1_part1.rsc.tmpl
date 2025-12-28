@@ -130,18 +130,18 @@ add bridge=CORE interface=sfp-sfpplus3 pvid=103 comment="dal-indigo-atlas"
 # untagged - SERVERS
 add bridge=CORE interface=sfp-sfpplus4 pvid=103 comment=""
 
-# untagged - SERVERS
-add bridge=CORE interface=bond-g3c1    pvid=103 comment=""
+# hybrid - SERVERS_STAGING/SERVERS,IOT_INTERNET,IOT_RESTRICTED
+add bridge=CORE interface=bond-g3c1    pvid=104 comment=""
 
 
 /interface/bridge/vlan
 add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether1 vlan-ids=100
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=101
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=102
-add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1 untagged=ether19,ether20,ether21,ether22,ether23,sfp-sfpplus2,sfp-sfpplus3,sfp-sfpplus4,bond-g3c1 vlan-ids=103
-add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16 vlan-ids=104
-add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1 vlan-ids=105
-add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1 vlan-ids=106
+add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1,bond-g3c1 untagged=ether19,ether20,ether21,ether22,ether23,sfp-sfpplus2,sfp-sfpplus3,sfp-sfpplus4 vlan-ids=103
+add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,bond-g3c1 vlan-ids=104
+add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1,bond-g3c1 vlan-ids=105
+add bridge=CORE tagged=CORE,ether1,ether2,ether3,ether4,ether5,ether6,ether7,ether8,ether9,ether10,ether11,ether12,ether13,ether14,ether15,ether16,sfp-sfpplus1,bond-g3c1 vlan-ids=106
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=107
 add bridge=CORE tagged=CORE,sfp-sfpplus1 vlan-ids=108
 add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether24 vlan-ids=109
@@ -211,7 +211,7 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp-sfpplus2]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp-sfpplus3]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=sfp-sfpplus4]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged [find interface=bond-g3c1]
+set bridge=CORE ingress-filtering=yes frame-types=admit-all [find interface=bond-g3c1]
 
 
 #
