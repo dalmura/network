@@ -139,6 +139,12 @@ add bridge=CORE interface=sfp-sfpplus4 pvid=103 comment=""
 # hybrid - SERVERS_STAGING/SERVERS,IOT_INTERNET,IOT_RESTRICTED
 add bridge=CORE interface=bond-g3c1    pvid=104 comment=""
 
+# hybrid - SERVERS_STAGING/SERVERS,IOT_INTERNET,IOT_RESTRICTED
+add bridge=CORE interface=bond-g3c2    pvid=104 comment=""
+
+# hybrid - SERVERS_STAGING/SERVERS,IOT_INTERNET,IOT_RESTRICTED
+add bridge=CORE interface=bond-g3c3    pvid=104 comment=""
+
 
 /interface/bridge/vlan
 add bridge=CORE tagged=CORE,sfp-sfpplus1 untagged=ether1 vlan-ids=100
