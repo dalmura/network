@@ -226,7 +226,7 @@ add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=
 
 ## Allow WAN => SERVERS_VLAN (Plex dst-nat traffic)
 add chain=forward action=accept protocol=tcp dst-port=32400 out-interface=SERVERS_VLAN in-interface-list=WAN connection-nat-state=dstnat comment="accept DSTNAT => PLEX"
-add chain=forward action=accept protocol=tcp dst-address=192.168.77.10 dst-port=443 connection-nat-state=dstnat comment="accept DSTNAT => PLEX CLOUD"
+add chain=forward action=accept protocol=tcp dst-address=192.168.77.11 dst-port=443 connection-nat-state=dstnat comment="accept DSTNAT => PLEX CLOUD"
 
 ## Allow various internal app access
 add chain=forward action=accept protocol=tcp dst-port=32400 in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN comment="accept INTERNAL_PUBLIC_ACCESS => PLEX"
@@ -271,8 +271,8 @@ add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade 
 
 ## dst-nat Plex => servers
 add chain=dstnat action=dst-nat to-address=192.168.77.65 to-ports=32400 protocol=tcp in-interface-list=WAN dst-port=32405 ipsec-policy=in,none comment="plex atlas"
-add chain=dstnat action=dst-nat to-address=192.168.77.10 to-ports=443 protocol=tcp in-interface-list=WAN dst-port=32406 ipsec-policy=in,none comment="plex cloud"
-add chain=dstnat action=dst-nat to-address=192.168.77.10 to-ports=443 protocol=tcp in-interface-list=LAN dst-port=32406 comment="plex cloud hairpin"
+add chain=dstnat action=dst-nat to-address=192.168.77.11 to-ports=443 protocol=tcp in-interface-list=WAN dst-port=32406 ipsec-policy=in,none comment="plex cloud"
+add chain=dstnat action=dst-nat to-address=192.168.77.11 to-ports=443 protocol=tcp in-interface-list=LAN dst-port=32406 comment="plex cloud hairpin"
 
 
 #
