@@ -33,9 +33,9 @@ openssl s_client -showcerts -connect ghcr.io:443
 
 Copy the ----BEGIN CERTIFICATE--- => ----END CERTIFICATE---- blobs into a file.
 
-Alternatively upload the `ghcr_certs.pem` file from the root of this repo into the router
+Alternatively use the `ghcr_certs.pem` file in the root of this repo.
 
-Import the cert chain via System => Certificates (ensure it's trusted).
+Upload the file onto the router and import the cert chain via System => Certificates (ensure it's trusted).
 
 The following device parts require these steps to have been performed:
 * [`devices/dal-indigo-fw-0_part4.rsc.tmpl`](./devices/dal-indigo-fw-0_part4.rsc.tmpl)

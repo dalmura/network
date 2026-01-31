@@ -44,4 +44,4 @@ add name=UPTIMEKUMA_DATA src=usb1/volumes/uptime-kuma/data dst=/app/data
 /container
 
 # Create the container
-add remote-image="louislam/uptime-kuma:2.0.0-beta.4" interface=veth1-uptime root-dir=usb1/images/uptime-kuma mounts=UPTIMEKUMA_DATA name=uptime-kuma start-on-boot=yes logging=yes
+add remote-image="louislam/uptime-kuma:2.1.0-beta.3" interface=veth1-uptime root-dir=usb1/images/uptime-kuma mounts=UPTIMEKUMA_DATA name=uptime-kuma start-on-boot=yes logging=yes
