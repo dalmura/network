@@ -224,6 +224,10 @@ add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVE
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT => SERVERS_STAGING_VLAN"
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=WAN_HUB comment="accept MANAGEMENT => WAN_HUB"
 
+## Allow INTERNAL_PUBLIC/PRIVATE_ACCESS => Various Internal Services
+add chain=forward action=accept protocol=tcp in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN dst-address=192.168.81.11 dst-port=443 comment="accept INTERNAL_PRIVATE_ACCESS => Private Ingress"
+add chain=forward action=accept protocol=tcp in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN dst-address=192.168.81.10 dst-port=443 comment="accept INTERNAL_PRIVATE_ACCESS => Public Ingress"
+
 ## Allow GENERAL_VLAN => IOT_INTERNET_VLAN
 add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_INTERNET_VLAN comment="accept GENERAL_VLAN => IOT_INTERNET_VLAN" log-prefix="general2iot"
 
@@ -235,6 +239,10 @@ add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=
 
 ## Allow LAN => WAN_HUB
 add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN_HUB comment="accept LAN => WAN_HUB" log-prefix="lan2wanhub"
+
+## Allow WAN_HUB => Various Internal Services
+add chain=forward action=accept protocol=tcp in-interface-list=WAN_HUB out-interface=SERVERS_VLAN dst-address=192.168.81.11 dst-port=443 comment="accept WAN_HUB => Private Ingress"
+add chain=forward action=accept protocol=tcp in-interface-list=WAN_HUB out-interface=SERVERS_VLAN dst-address=192.168.81.10 dst-port=443 comment="accept WAN_HUB => Public Ingress"
 
 ## Allow WAN_HUB => SERVERS_VLAN
 add chain=forward action=accept in-interface-list=WAN_HUB out-interface=SERVERS_VLAN comment="accept WAN_HUB => SERVERS_VLAN" log-prefix="wanhub2servers"
