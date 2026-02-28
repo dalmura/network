@@ -253,6 +253,9 @@ add chain=forward action=accept protocol=tcp in-interface-list=WAN_HUB out-inter
 ## Allow SERVERS_VLAN => IOT_RESTRICTED_VLAN
 add chain=forward action=accept protocol=tcp in-interface=SERVERS_VLAN out-interface=IOT_RESTRICTED_VLAN comment="accept SERVERS_VLAN => IOT_RESTRICTED_VLAN"
 
+## Allow SERVERS_VLAN => IOT_INTERNET_VLAN
+add chain=forward action=accept protocol=tcp in-interface=SERVERS_VLAN out-interface=IOT_INTERNET_VLAN comment="accept SERVERS_VLAN => IOT_INTERNET_VLAN"
+
 # Finally drop everything else
 add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall forward" disabled=yes
 add chain=forward action=drop log=no log-prefix=forward-drop comment="drop all other forward"
