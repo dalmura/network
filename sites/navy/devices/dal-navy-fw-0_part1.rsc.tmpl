@@ -219,6 +219,11 @@ add chain=forward action=drop in-interface-list=WAN connection-state=new connect
 add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN comment="accept LAN to WAN"
 add chain=forward action=accept connection-state=new in-interface-list=INTERNET_ONLY out-interface-list=WAN comment="accept INTERNET_ONLY to WAN"
 
+## Allow SERVERS_VLAN => MANAGEMENT
+add chain=forward action=accept protocol=tcp dst-port=11434 in-interface=SERVERS_VLAN out-interface-list=MANAGEMENT comment="Allow SERVERS_VLAN => MANAGEMENT (port 11434 - Ollama)"
+add chain=forward action=accept protocol=tcp dst-port=8001 in-interface=SERVERS_VLAN out-interface-list=MANAGEMENT comment="Allow SERVERS_VLAN => MANAGEMENT (port 8001 - STT)"
+add chain=forward action=accept protocol=tcp dst-port=8002 in-interface=SERVERS_VLAN out-interface-list=MANAGEMENT comment="Allow SERVERS_VLAN => MANAGEMENT (port 8002 - TTS)"
+
 ## Allow management to various network segments
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_VLAN comment="accept MANAGEMENT => SERVERS_VLAN"
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT => SERVERS_STAGING_VLAN"
@@ -251,7 +256,7 @@ add chain=forward action=accept in-interface-list=WAN_HUB out-interface=SERVERS_
 add chain=forward action=accept protocol=tcp in-interface=SERVERS_VLAN out-interface=IOT_RESTRICTED_VLAN comment="accept SERVERS_VLAN => IOT_RESTRICTED_VLAN" log-prefix="servers2restrict"
 
 # Finally drop everything else
-add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall" disabled=yes
+add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall" disabled=yes`
 add chain=forward action=drop log=no log-prefix=forward-drop comment="drop all other forward"
 
 
