@@ -4,6 +4,10 @@ This site has the following attributes:
 * Hub site
 * Hosts services
 
+## Secrets
+
+After copying `secrets.yaml.example` from the repo directory, and populating it with configuration. Ensure it is uploaded into the `Dalmura Cloud - Indigo` vault.
+
 ## Container Management
 
 For device `dal-indigo-fw-0` containers are used for a few small services.
