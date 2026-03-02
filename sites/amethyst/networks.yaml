@@ -150,7 +150,8 @@ networks:
           "192.168.71.193": "dal-amethyst-fw-0"
           # "192.168.71.194": "dal-amethyst-sw-0"
           "192.168.71.195": "dal-amethyst-wap-0"
-          # "192.168.71.196": "dal-amethyst-wap-1"
+          "192.168.71.196": "dal-amethyst-wap-1"
+          "192.168.71.197": "dal-amethyst-wap-2"
       dhcp:
         start: "192.168.71.250"
         end: "192.168.71.254"
