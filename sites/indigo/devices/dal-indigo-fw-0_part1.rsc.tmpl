@@ -208,7 +208,7 @@ add chain=input action=accept log=yes log-prefix=input-catch comment="catchall i
 add chain=input action=drop log=no log-prefix=input-drop comment="drop all other input"
 
 # Forward Chain
-add chain=forward action=fasttrack-connection connection-state=established comment="fasttrack"
+add chain=forward action=fasttrack-connection connection-state=established in-interface-list=!WAN out-interface-list=!WAN comment="fasttrack (except WAN)"
 add chain=forward action=accept connection-state=established,related,untracked comment="accept established,related,untracked"
 add chain=forward action=drop connection-state=invalid comment="drop invalid"
 add chain=forward action=drop in-interface-list=WAN connection-state=new connection-nat-state=!dstnat comment="drop all from WAN not DSTNATed"
@@ -220,9 +220,8 @@ add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN com
 add chain=forward action=accept connection-state=new in-interface-list=INTERNET_ONLY out-interface-list=WAN comment="accept INTERNET_ONLY to WAN"
 
 ## Allow management to various network segments
-add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_VLAN comment="accept MANAGEMENT => SERVERS_VLAN"
-add chain=forward action=accept in-interface-list=MANAGEMENT out-interface=SERVERS_STAGING_VLAN comment="accept MANAGEMENT => SERVERS_STAGING_VLAN"
 add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=WAN_HUB comment="accept MANAGEMENT => WAN_HUB"
+add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=VLAN comment="accept MANAGEMENT => VLAN" log-prefix="management2vlan"
 
 ## Allow WAN => SERVERS_VLAN (Plex dst-nat traffic)
 add chain=forward action=accept protocol=tcp out-interface=SERVERS_VLAN dst-address=192.168.77.11 dst-port=32406 connection-nat-state=dstnat comment="accept DSTNAT => PLEX CLOUD"
@@ -232,14 +231,13 @@ add chain=forward action=accept protocol=tcp in-interface-list=INTERNAL_PUBLIC_A
 add chain=forward action=accept protocol=tcp in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN dst-address=192.168.77.10 dst-port=443 comment="accept INTERNAL_PRIVATE_ACCESS => Private Ingress"
 add chain=forward action=accept protocol=tcp in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN dst-address=192.168.77.11 dst-port=443 comment="accept INTERNAL_PRIVATE_ACCESS => Public Ingress"
 
-## Allow GENERAL_VLAN => IOT_INTERNET_VLAN
+## Allow GENERAL_VLAN => IOT VLANS
 add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_INTERNET_VLAN comment="accept GENERAL_VLAN => IOT_INTERNET_VLAN" log-prefix="general2iot"
-
-## Allow GENERAL_VLAN => IOT_RESTRICTED_VLAN
 add chain=forward action=accept in-interface=GENERAL_VLAN out-interface=IOT_RESTRICTED_VLAN comment="accept GENERAL_VLAN => IOT_RESTRICTED_VLAN" log-prefix="general2restricted"
 
-## Allow MANAGEMENT => VLAN
-add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=VLAN comment="accept MANAGEMENT => VLAN" log-prefix="management2vlan"
+## Allow SERVERS_VLAN => IOT VLANS
+add chain=forward action=accept protocol=tcp in-interface=SERVERS_VLAN out-interface=IOT_RESTRICTED_VLAN comment="accept SERVERS_VLAN => IOT_RESTRICTED_VLAN"
+add chain=forward action=accept protocol=tcp in-interface=SERVERS_VLAN out-interface=IOT_INTERNET_VLAN comment="accept SERVERS_VLAN => IOT_INTERNET_VLAN"
 
 ## Allow LAN => WAN_HUB
 add chain=forward action=accept in-interface-list=LAN out-interface-list=WAN_HUB comment="accept LAN => WAN_HUB" log-prefix="lan2wanhub"
@@ -249,12 +247,6 @@ add chain=forward action=accept protocol=tcp in-interface-list=WAN_HUB out-inter
 add chain=forward action=accept protocol=tcp in-interface-list=WAN_HUB out-interface=SERVERS_VLAN dst-address=192.168.77.10 dst-port=443 comment="accept WAN_HUB => Private Ingress"
 add chain=forward action=accept protocol=tcp in-interface-list=WAN_HUB out-interface=SERVERS_VLAN dst-address=192.168.77.11 dst-port=443 comment="accept WAN_HUB => Public Ingress"
 add chain=forward action=accept protocol=tcp in-interface-list=WAN_HUB out-interface=SERVERS_VLAN dst-address=192.168.77.65 comment="accept WAN_HUB => Atlas"
-
-## Allow SERVERS_VLAN => IOT_RESTRICTED_VLAN
-add chain=forward action=accept protocol=tcp in-interface=SERVERS_VLAN out-interface=IOT_RESTRICTED_VLAN comment="accept SERVERS_VLAN => IOT_RESTRICTED_VLAN"
-
-## Allow SERVERS_VLAN => IOT_INTERNET_VLAN
-add chain=forward action=accept protocol=tcp in-interface=SERVERS_VLAN out-interface=IOT_INTERNET_VLAN comment="accept SERVERS_VLAN => IOT_INTERNET_VLAN"
 
 # Finally drop everything else
 add chain=forward action=accept log=yes log-prefix=forward-catch comment="catchall forward" disabled=yes
@@ -331,3 +323,10 @@ add chain=input action=accept protocol=udp src-port=5353 dst-port=5353 dst-addre
 move ([/ip firewall filter get [find comment="Allow mDNS comms between networks"]]->".id") ([/ip firewall filter get [find comment="drop all other input"]]->".id")
 
 /ip/dns set mdns-repeat-ifaces=GENERAL_VLAN,IOT_INTERNET_VLAN,IOT_RESTRICTED_VLAN
+
+#
+# Queues (CAKE)
+#
+
+/queue/type/add name=cake-wan kind=cake cake-bandwidth=0 cake-flowmode=triple-isolate cake-nat=yes cake-ack-filter=filter
+/queue/simple/add name=WAN-Queue target=ether1 max-limit=90M/240M queue=cake-wan/cake-wan comment="Internet CAKE"
