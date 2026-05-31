@@ -49,3 +49,10 @@ Once you have deployed `dal-indigo-fw-0_part4` and the container is running you 
 * Create a Username & Password
 
 From the main page you can add one or more monitors, setup notifications, etc.
+
+## App Management
+
+Review documentation for apps yaml config/etc:
+* [Best resource of knowledge](https://forum.mikrotik.com/t/amm0s-manual-for-custom-app-containers-7-22beta/268036)
+* [Tailscale config](https://www.reddit.com/r/mikrotik/comments/1tm6hgk/tailscale_custom_app_on_mikrotik_yaml/)
+* [Official docs (kinda shitty)](https://help.mikrotik.com/docs/spaces/ROS/pages/343244823/Apps)

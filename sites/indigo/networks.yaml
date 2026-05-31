@@ -83,6 +83,10 @@ networks:
             end: "192.168.77.149"
             allocations:
               "192.168.77.130": "dal-indigo-core-1-vip"
+            subranges:
+              vips-metallb:
+                start: "192.168.77.140"
+                end: "192.168.77.149"
           nodes:
             start: "192.168.77.150"
             end: "192.168.77.191"

@@ -3,45 +3,72 @@
 #
 
 #
-# Containers
+# Network Overview
 #
 
-/interface/veth/add
+# 100 = GENERAL         = 192.168.76.0/25    = 126
+# 101 = GUEST           = 192.168.76.128/26  =  62
+# 102 = VPN             = 192.168.76.192/26  =  62
+# 103 = SERVERS         = 192.168.77.0/25    = 126
+# 104 = SERVERS_STAGING = 192.168.77.128/25  = 126
+# 105 = IOT_INTERNET    = 192.168.78.0/25    = 126
+# 106 = IOT_RESTRICTED  = 192.168.78.128/25  = 126
+# 107 =                 = 192.168.79.0/25    = 126
+# 108 = SERVICES        = 192.168.79.128/26  =  62
+# 109 = MANAGEMENT      = 192.168.79.192/26  =  62
 
-# Kuma Uptime interface
-name=veth1-uptime address=192.168.79.210/26 gateway=192.168.79.193 comment="Uptime Kuma Container"
+#
+# App Global Configuration
+#
+
+/app/settings/set disk=usb1 auto-update=yes lan-bridge=CORE
+
+#
+# App - Uptime Kuma
+#
+
+/app add yaml="name: dal-uptime-kuma
+descr: A self-hosted monitoring tool
+page: https://uptime.kuma.pet
+category: monitoring
+default-credentials: none
+services:
+  uptime-kuma:
+    image: ghcr.io/louislam/uptime-kuma:2
+    volumes:
+      - data:/app/data
+    ports:
+      - 3002:3001:tcp
+    restart: unless-stopped
+"
+
+/app/set dal-uptime-kuma network-pvid=109 use-https=no network=CORE
+/app/enable dal-uptime-kuma
 
 
-/interface/bridge/port
+#
+# App - Tailscale
+#
 
-# Uptime Kuma - MANAGEMENT
-add bridge=CORE interface=veth1-uptime pvid=109 comment="Uptime Kuma" ingress-filtering=yes frame-types=admit-only-untagged-and-priority-tagged
+/app add yaml="name: dal-tailscale
+descr: Tailscale for Mikrotik
+page: https://github.com/Fluent-networks/tailscale-mikrotik
+category: networking
+default-credentials: none
+services:
+  tailscale:
+    image: ghcr.io/fluent-networks/tailscale-mikrotik:latest
+    volumes:
+      - tailscale:/var/lib/tailscale
+    environment:
+      PASSWORD: '{{ tailscale_root_password }}'
+      AUTH_KEY: '{{ tailscale_auth_key }}'
+      ADVERTISE_ROUTES: '192.168.76.0/22'
+      CONTAINER_GATEWAY: '192.168.79.193'
+      UPDATE_TAILSCALE: 'Y'
+      TAILSCALE_ARGS: '--accept-routes'
+    restart: unless-stopped
+"
 
-
-/interface/bridge/vlan
-
-# Add or append the interface
-:global untagged [get [find vlan-ids=109] untagged]
-
-:if (untagged="") do={
-  set [find vlan-ids=109] untagged=veth1-uptime
-} else={
-  set [find vlan-ids=109] untagged=($untagged,veth1-uptime)
-}
-
-
-/container/config
-
-# Set the Github Container Registry URL
-set registry-url=https://ghcr.io tmpdir=usb1/tmp
-
-/container/mounts
-
-# Add our application data mount
-add name=UPTIMEKUMA_DATA src=usb1/volumes/uptime-kuma/data dst=/app/data
-
-
-/container
-
-# Create the container
-add remote-image="louislam/uptime-kuma:2.1.0-beta.3" interface=veth1-uptime root-dir=usb1/images/uptime-kuma mounts=UPTIMEKUMA_DATA name=uptime-kuma start-on-boot=yes logging=yes
+/app/set dal-tailscale network-pvid=109 use-https=no network=CORE
+/app/enable dal-tailscale
