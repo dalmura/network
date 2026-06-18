@@ -25,3 +25,17 @@ module "iam_vendor_user" {
 
   site_name = local.site_name
 }
+
+# For Notes (TODO) app
+module "iam_todo_user" {
+  source = "../../../shared/terraform_modules/site_iam_vendor_user"
+
+  site_name = local.site_name
+}
+
+# For N8N app
+module "iam_n8n_user" {
+  source = "../../../shared/terraform_modules/site_iam_vendor_user"
+
+  site_name = local.site_name
+}
