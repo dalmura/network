@@ -329,4 +329,4 @@ move ([/ip firewall filter get [find comment="Allow mDNS comms between networks"
 #
 
 /queue/type/add name=cake-wan kind=cake cake-bandwidth=0 cake-flowmode=triple-isolate cake-nat=yes cake-ack-filter=filter
-/queue/simple/add name=WAN-Queue target=ether1 max-limit=90M/240M queue=cake-wan/cake-wan comment="Internet CAKE"
+/queue/simple/add name=WAN-Queue target=ether1 max-limit=190M/480M queue=cake-wan/cake-wan comment="Internet CAKE"
