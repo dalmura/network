@@ -23,7 +23,7 @@
 {% if value.peers is defined -%}
 ## {{ interface }} peers
 {% for peer in value.peers -%}
-/interface/wireguard/peers/add allowed-address={{ peer.allowed_address }}{% if peer.endpoint is defined %} endpoint-address={{ peer.endpoint.address }} endpoint-port={{ peer.endpoint.port }}{% endif %} interface={{ interface }} public-key="{{ peer.public_key }}" persistent-keepalive=25 preshared-key="{{ peer.preshared_key }}" comment="{{ peer.comment }}"
+/interface/wireguard/peers/add allowed-address={{ peer.allowed_address }}{% if peer.endpoint is defined %} endpoint-address={{ peer.endpoint.address }} endpoint-port={{ peer.endpoint.port }}{% endif %} interface={{ interface }} public-key="{{ peer.public_key }}"{% if key == "roadwarriors" %} responder=yes{% endif %} persistent-keepalive=25 preshared-key="{{ peer.preshared_key }}" comment="{{ peer.comment }}"
 /ip/route/add dst-address={{ peer.allowed_address }} gateway="{{ interface }}" comment="Wireguard - {{ peer.comment }}"
 {% endfor -%}
 {% endif -%}
