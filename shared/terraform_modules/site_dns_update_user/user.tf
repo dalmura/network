@@ -28,7 +28,26 @@ data "aws_iam_policy_document" "k8s_dns_permissions" {
       variable = "route53:ChangeResourceRecordSetsNormalizedRecordNames"
 
       values = [
-        "*.${local.site_domain}",
+        "*.${local.site_global_domain}",
+      ]
+    }
+  }
+
+  statement {
+    actions = [
+      "route53:ChangeResourceRecordSets",
+    ]
+
+    resources = [
+      data.aws_route53_zone.global_au.arn,
+    ]
+
+    condition {
+      test     = "ForAllValues:StringLike"
+      variable = "route53:ChangeResourceRecordSetsNormalizedRecordNames"
+
+      values = [
+        "*.${local.site_au_domain}",
       ]
     }
   }
