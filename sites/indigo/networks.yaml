@@ -63,6 +63,11 @@ networks:
       dhcp:
         start: "192.168.77.64"
         end: "192.168.77.126"
+        allocations:
+          "192.168.77.67": "talos-e45f019d4d95"
+          "192.168.77.68": "talos-78553600f3ef"
+          "192.168.77.69": "talos-e8ff1ed8884b"
+          "192.168.77.70": "talos-785536031758"
 
   SERVERS_STAGING:
     description: "Hardware staging area"
