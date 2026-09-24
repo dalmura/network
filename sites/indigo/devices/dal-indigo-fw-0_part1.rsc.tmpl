@@ -52,22 +52,19 @@ add bridge=CORE interface=ether6       comment=""
 add bridge=CORE interface=ether7       comment=""
 
 # trunk
-add bridge=CORE interface=ether8       comment=""
-
-# trunk
 add bridge=CORE interface=sfp-sfpplus1 comment="dal-indigo-sw-0"
 
 /interface/bridge/vlan
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=100
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=101
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=102
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=103
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=104
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=105
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=106
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=107
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=108
-add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp-sfpplus1 vlan-ids=109
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,sfp-sfpplus1 vlan-ids=100
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,sfp-sfpplus1 vlan-ids=101
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,sfp-sfpplus1 vlan-ids=102
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,sfp-sfpplus1 vlan-ids=103
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,sfp-sfpplus1 vlan-ids=104
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,sfp-sfpplus1 vlan-ids=105
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,sfp-sfpplus1 vlan-ids=106
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,sfp-sfpplus1 vlan-ids=107
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,sfp-sfpplus1 vlan-ids=108
+add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,sfp-sfpplus1 vlan-ids=109
 
 
 #
@@ -136,6 +133,12 @@ add bridge=CORE tagged=CORE,ether2,ether3,ether4,ether5,ether6,ether7,ether8,sfp
 /ip/dhcp-server/add address-pool=management-dhcp interface=MANAGEMENT_VLAN name=management-dhcp disabled=no
 /ip/dhcp-server/network/add address=192.168.79.192/26 dns-server=192.168.79.193 gateway=192.168.79.193 comment="MANAGEMENT_VLAN"
 
+# Navy Transit
+/ip/address/add interface=ether8 address=10.80.80.1/29 comment="dal-navy-fw-0 transit"
+/ip/pool/add name=navy-transit ranges=10.80.80.2-10.80.80.6
+/ip/dhcp-server/add address-pool=navy-transit interface=ether8 name=navy-transit disabled=no
+/ip/dhcp-server/network/add address=10.80.80.0/29 dns-server=10.80.80.1 gateway=10.80.80.1 comment="NAVY_TRANSIT"
+
 {% if static_dhcp_leases -%}
 # Optional Static DHCP Leases
 /ip/dhcp-server/lease
@@ -178,6 +181,7 @@ add interface=MANAGEMENT_VLAN      list=LAN
 add interface=GUEST_VLAN           list=INTERNET_ONLY
 add interface=SERVERS_STAGING_VLAN list=INTERNET_ONLY
 add interface=IOT_INTERNET_VLAN    list=INTERNET_ONLY
+add interface=ether8               list=INTERNET_ONLY
 add interface=IOT_RESTRICTED_VLAN  list=BLACKHOLE
 add interface=MANAGEMENT_VLAN      list=MANAGEMENT
 add interface=GENERAL_VLAN         list=INTERNAL_PUBLIC_ACCESS
@@ -203,6 +207,11 @@ add chain=input action=accept in-interface-list=MANAGEMENT comment="allow MANAGE
 add chain=input action=accept protocol=udp dst-port=13231 in-interface-list=WAN comment="Wireguard Roadwarrior Tunnels"
 add chain=input action=accept protocol=udp dst-port=13232 in-interface-list=WAN comment="Wireguard Site Tunnels"
 
+# Navy Transit
+add chain=input action=accept protocol=udp dst-port=67-68 in-interface=ether8 comment="allow DHCP from Navy transit"
+add chain=input action=accept protocol=icmp in-interface=ether8 comment="accept ICMP from Navy transit"
+add chain=input action=accept protocol=udp dst-port=13232 in-interface=ether8 comment="Wireguard Site Tunnels (Navy transit)"
+
 # Finally drop everything else
 add chain=input action=accept log=yes log-prefix=input-catch comment="catchall input" disabled=yes
 add chain=input action=drop log=no log-prefix=input-drop comment="drop all other input"
@@ -226,8 +235,14 @@ add chain=forward action=accept in-interface-list=MANAGEMENT out-interface-list=
 ## Allow WAN => SERVERS_VLAN (Plex dst-nat traffic)
 add chain=forward action=accept protocol=tcp out-interface=SERVERS_VLAN dst-address=192.168.77.11 dst-port=32406 connection-nat-state=dstnat comment="accept DSTNAT => PLEX CLOUD"
 
+## Allow WAN => SERVERS_VLAN (Matrix RTC dst-nat traffic)
+add chain=forward action=accept protocol=udp out-interface=SERVERS_VLAN dst-address=192.168.77.12 dst-port=30002 connection-nat-state=dstnat comment="accept DSTNAT => Matrix RTC (UDP/30002)"
+add chain=forward action=accept protocol=tcp out-interface=SERVERS_VLAN dst-address=192.168.77.12 dst-port=30001 connection-nat-state=dstnat comment="accept DSTNAT => Matrix RTC (TCP/30001)"
+
 ## Allow INTERNAL_PUBLIC/PRIVATE_ACCESS => Various Internal Services
 add chain=forward action=accept protocol=tcp in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN dst-address=192.168.77.11 dst-port=32406 comment="accept INTERNAL_PUBLIC_ACCESS => PLEX CLOUD"
+add chain=forward action=accept protocol=udp in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN dst-address=192.168.77.12 dst-port=30002 comment="accept INTERNAL_PUBLIC_ACCESS => Matrix RTC (UDP/30002)"
+add chain=forward action=accept protocol=tcp in-interface-list=INTERNAL_PUBLIC_ACCESS out-interface=SERVERS_VLAN dst-address=192.168.77.12 dst-port=30001 comment="accept INTERNAL_PUBLIC_ACCESS => Matrix RTC (TCP/30001)"
 add chain=forward action=accept protocol=tcp in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN dst-address=192.168.77.10 dst-port=443 comment="accept INTERNAL_PRIVATE_ACCESS => Private Ingress (TCP/443)"
 add chain=forward action=accept protocol=tcp in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN dst-address=192.168.77.10 dst-port=22 comment="accept INTERNAL_PRIVATE_ACCESS => Private Ingress (TCP/22)"
 add chain=forward action=accept protocol=tcp in-interface-list=INTERNAL_PRIVATE_ACCESS out-interface=SERVERS_VLAN dst-address=192.168.77.11 dst-port=443 comment="accept INTERNAL_PRIVATE_ACCESS => Public Ingress"
@@ -269,6 +284,15 @@ add chain=srcnat out-interface-list=WAN ipsec-policy=out,none action=masquerade 
 ## dst-nat Plex => servers
 add chain=dstnat action=dst-nat in-interface-list=WAN protocol=tcp dst-port=32406 to-address=192.168.77.11 to-ports=32406 ipsec-policy=in,none comment="plex cloud"
 
+## dst-nat Matrix RTC => servers
+add chain=dstnat action=dst-nat in-interface-list=WAN protocol=udp dst-port=30002 to-addresses=192.168.77.12 to-ports=30002 ipsec-policy=in,none comment="matrix rtc udp"
+add chain=dstnat action=dst-nat in-interface-list=WAN protocol=tcp dst-port=30001 to-addresses=192.168.77.12 to-ports=30001 ipsec-policy=in,none comment="matrix rtc tcp"
+
+## Hairpin NAT for Matrix RTC (internal VLANs to LiveKit SFU via WAN IP)
+add chain=dstnat action=dst-nat in-interface-list=VLAN dst-address-type=local protocol=udp dst-port=30002 to-addresses=192.168.77.12 to-ports=30002 comment="hairpin: matrix rtc udp"
+add chain=dstnat action=dst-nat in-interface-list=VLAN dst-address-type=local protocol=tcp dst-port=30001 to-addresses=192.168.77.12 to-ports=30001 comment="hairpin: matrix rtc tcp"
+add chain=srcnat action=masquerade in-interface-list=VLAN out-interface=SERVERS_VLAN dst-address=192.168.77.12 comment="hairpin: masquerade to matrix rtc"
+
 
 #
 # VLAN Security
@@ -281,7 +305,6 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether5]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether6]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether7]
-set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=ether8]
 set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find interface=sfp-sfpplus1]
 
 
@@ -310,6 +333,8 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 # General router settings
 /ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
 /ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
+
+/ip/dns/static/add name=rtc-matrix.indigo.dalmura.cloud address=192.168.77.11 comment="Matrix RTC Signaling"
 
 # mDNS Forwarding
 /interface/list
