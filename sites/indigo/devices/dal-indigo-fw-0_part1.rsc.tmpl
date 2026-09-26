@@ -271,6 +271,14 @@ add chain=forward action=drop log=no log-prefix=forward-drop comment="drop all o
 
 
 #
+# Mangle
+#
+
+/ip/firewall/mangle
+add chain=forward action=change-mss new-mss=clamp-to-pmtu passthrough=yes protocol=tcp tcp-flags=syn comment="Clamp TCP MSS to PMTU"
+
+
+#
 # NAT
 #
 
