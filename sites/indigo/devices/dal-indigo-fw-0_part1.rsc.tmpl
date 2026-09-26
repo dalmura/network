@@ -339,7 +339,7 @@ set bridge=CORE ingress-filtering=yes frame-types=admit-only-vlan-tagged [find i
 /ip/dhcp-client/add interface=ether1 use-peer-dns=no use-peer-ntp=no add-default-route=yes dhcp-options=""
 
 # General router settings
-/ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8"
+/ip/dns/set allow-remote-requests=yes servers="1.1.1.1,8.8.8.8" cache-size=16384KiB
 /ip/cloud/set ddns-enabled=yes ddns-update-interval=15m update-time=yes
 
 /ip/dns/static/add name=rtc-matrix.indigo.dalmura.cloud address=192.168.77.11 comment="Matrix RTC Signaling"
